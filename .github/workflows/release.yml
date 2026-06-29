@@ -36,8 +36,8 @@ jobs:
         run: npm ci
 
       # On a push to main: open or update the "version packages" PR when changesets are pending;
-      # once that PR merges (version bumped, changesets consumed), create the git tag the CLI pins.
-      # The package is private, so changeset publish tags without publishing to npm.
+      # once that PR merges (version bumped, changesets consumed), the publish step tags the
+      # commit as v<version>, which is the ref the CLI pins. Nothing is published to npm.
       - name: Version or tag
         uses: changesets/action@v1
         with:
@@ -45,6 +45,6 @@ jobs:
           publish: npm run release:stable
           title: 'chore: version packages'
           commit: 'chore: version packages'
-          createGithubReleases: true
+          createGithubReleases: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
