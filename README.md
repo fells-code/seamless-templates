@@ -75,7 +75,17 @@ Each template directory carries a `template.json` that tells the CLI where to pl
 }
 ```
 
-The CLI computes the shared values (auth server URL, API URL, service tokens, generated secrets) and resolves the `{{...}}` placeholders. A new framework with different variable names (for example `NEXT_PUBLIC_*`) only needs a different `set` map, not a CLI change.
+The CLI computes the shared values and resolves the `{{...}}` placeholders in `env.set`. A new framework with different variable names (for example `NEXT_PUBLIC_*`) only needs a different `set` map, not a CLI change.
+
+### Placeholder vocabulary
+
+| Placeholder | Resolves to |
+| --- | --- |
+| `{{authServerUrl}}` | URL of the Seamless Auth server |
+| `{{apiUrl}}` | URL of the project's API service |
+| `{{apiToken}}` | Service token shared between the API and the auth server |
+| `{{jwksKid}}` | JWKS key id the auth server signs with |
+| `{{secret:N}}` | A freshly generated N-byte hex secret, unique per scaffold |
 
 ---
 

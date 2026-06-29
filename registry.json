@@ -1,4 +1,21 @@
 {
   "schemaVersion": 1,
-  "templates": []
+  "templates": [
+    {
+      "id": "react-vite",
+      "kind": "web",
+      "framework": "react",
+      "label": "React (Vite)",
+      "status": "stable",
+      "path": "templates/web/react-vite"
+    },
+    {
+      "id": "express",
+      "kind": "api",
+      "framework": "express",
+      "label": "Express",
+      "status": "stable",
+      "path": "templates/api/express"
+    }
+  ]
 }

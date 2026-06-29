@@ -1,0 +1,14 @@
+{
+  "id": "express",
+  "targetDir": "api",
+  "env": {
+    "fromExample": ".env.example",
+    "set": {
+      "AUTH_SERVER_URL": "{{authServerUrl}}",
+      "API_SERVICE_TOKEN": "{{apiToken}}",
+      "JWKS_KID": "{{jwksKid}}",
+      "COOKIE_SIGNING_KEY": "{{secret:32}}"
+    }
+  },
+  "requires": { "cliMin": "0.3.0" }
+}
