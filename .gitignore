@@ -1,0 +1,56 @@
+# ----------------------------
+# Dependencies
+# ----------------------------
+node_modules/
+
+# ----------------------------
+# Build Output
+# ----------------------------
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# ----------------------------
+# Logs
+# ----------------------------
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# ----------------------------
+# Environment Files
+# ----------------------------
+# Templates ship a committed .env.example; real .env files stay out of git.
+.env
+.env.local
+.env.*.local
+
+# ----------------------------
+# Coverage / Testing
+# ----------------------------
+coverage/
+.nyc_output/
+
+# ----------------------------
+# IDE / Editor
+# ----------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# ----------------------------
+# OS
+# ----------------------------
+Thumbs.db
+.DS_Store
+
+# ----------------------------
+# npm pack artifacts
+# ----------------------------
+*.tgz

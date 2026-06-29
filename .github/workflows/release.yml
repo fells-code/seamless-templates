@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    if: github.repository == 'fells-code/seamless-templates'
+    name: Version or tag
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # On a push to main: open or update the "version packages" PR when changesets are pending;
+      # once that PR merges (version bumped, changesets consumed), create the git tag the CLI pins.
+      # The package is private, so changeset publish tags without publishing to npm.
+      - name: Version or tag
+        uses: changesets/action@v1
+        with:
+          version: npm run version-packages
+          publish: npm run release:stable
+          title: 'chore: version packages'
+          commit: 'chore: version packages'
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

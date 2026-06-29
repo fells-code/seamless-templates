@@ -1,0 +1,26 @@
+{
+  "name": "seamless-templates",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Frontend and API starter templates for Seamless Auth, consumed by the Seamless CLI",
+  "homepage": "https://github.com/fells-code/seamless-templates#readme",
+  "bugs": {
+    "url": "https://github.com/fells-code/seamless-templates/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fells-code/seamless-templates.git"
+  },
+  "license": "AGPL-3.0-only",
+  "author": "Fells Code, LLC",
+  "type": "module",
+  "scripts": {
+    "validate": "node scripts/validate-templates.mjs",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release:stable": "changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.31.0"
+  }
+}

@@ -1,0 +1,60 @@
+name: Bug report
+description: Report a problem with a Seamless Auth template
+title: "[Bug]: "
+labels: ["bug"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue.
+
+  - type: input
+    id: template
+    attributes:
+      label: Template
+      description: Which template is affected (its registry id, e.g. react-vite or express)?
+      placeholder: "react-vite"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Templates version
+      description: The seamless-templates tag or commit you scaffolded from, if known.
+      placeholder: "v0.1.0"
+    validations:
+      required: false
+
+  - type: input
+    id: node
+    attributes:
+      label: Node.js version
+      placeholder: "20.11.0"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug clearly and concisely.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / stack traces
+      render: shell
+    validations:
+      required: false
