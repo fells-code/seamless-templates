@@ -51,7 +51,15 @@ validation step skips directory checks for those entries.
 
 - **Do not use em dashes** in public-facing text: commit messages, code comments, PR and issue
   descriptions, changesets, and docs. Use a comma, parentheses, or a separate sentence instead.
-- **Commits**: Conventional Commits (`feat:`, `fix:`, `chore:`, `ci:`, `docs:`).
+- **Commits**: Conventional Commits (`feat:`, `fix:`, `chore:`, `ci:`, `docs:`). This is enforced
+  locally: `npm install` sets up a Husky `commit-msg` hook that runs commitlint
+  (`@commitlint/config-conventional`), and a `pre-commit` hook that runs `npm run validate`. A commit
+  that fails either check is rejected before it lands, matching the rest of the Seamless Auth
+  ecosystem.
+- **Branches**: name branches with a type prefix that matches the change, `feat/`, `fix/`, `bug/`,
+  `chore/`, `ci/`, or `docs/`, followed by a short kebab-case description (for example
+  `feat/react-oauth` or `chore/commit-hygiene`). Do not use a `claude/` or other tool-generated
+  prefix.
 - **Do not add a `Co-Authored-By: Claude ...` trailer (or any AI co-author trailer) to commits.**
   All commits must be authored under the maintainer's own account (verify with `gh auth status`
   and `git config user.email`).
