@@ -37,7 +37,10 @@ jobs:
 
       # On a push to main: open or update the "version packages" PR when changesets are pending;
       # once that PR merges (version bumped, changesets consumed), the publish step tags the
-      # commit as v<version>, which is the ref the CLI pins. Nothing is published to npm.
+      # commit as v<version>, which is the ref the CLI pins, and publishes a GitHub Release for
+      # that tag with notes from CHANGELOG.md. Nothing is published to npm. createGithubReleases
+      # is left off because the Changesets action cannot target the v-prefixed tag scheme; the
+      # publish step (scripts/tag-release.mjs) creates the release via the gh CLI instead.
       - name: Version or tag
         uses: changesets/action@v1
         with:
