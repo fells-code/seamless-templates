@@ -1,0 +1,13 @@
+# Run the cross-repo auth conformance matrix on PRs, testing this repo's templates against
+# the rest of the ecosystem. The reusable workflow lives in seamless-cli and stands up the
+# stack, then runs `seamless verify` against the templates at this PR's ref.
+name: conformance
+
+on:
+  pull_request:
+
+jobs:
+  verify:
+    uses: fells-code/seamless-cli/.github/workflows/verify-conformance.yml@main
+    with:
+      templates-ref: ${{ github.event.pull_request.head.sha }}
