@@ -5,9 +5,19 @@
       "id": "react-vite",
       "kind": "web",
       "framework": "react",
-      "label": "React (Vite)",
+      "label": "React (Vite) - basic example",
+      "alias": "basic",
       "status": "stable",
       "path": "templates/web/react-vite"
+    },
+    {
+      "id": "react-oauth",
+      "kind": "web",
+      "framework": "react",
+      "label": "React (Vite) - OAuth example",
+      "alias": "oauth",
+      "status": "stable",
+      "path": "templates/web/react-oauth"
     },
     {
       "id": "express",
