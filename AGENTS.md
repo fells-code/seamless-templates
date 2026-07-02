@@ -44,7 +44,8 @@ validation step skips directory checks for those entries.
 - On pull requests, CI runs `npm run validate`, then installs and builds every buildable template
   (a `package.json` with a `build` script) as a smoke test. Keep templates green.
 - On a push to `main`, the release workflow opens or updates a "version packages" PR via Changesets;
-  merging it bumps the version and creates the tag the CLI pins.
+  merging it bumps the version, creates the tag the CLI pins, and publishes a GitHub Release for
+  that tag with notes drawn from `CHANGELOG.md`.
 
 ## Conventions
 
