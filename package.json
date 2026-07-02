@@ -18,9 +18,13 @@
     "validate": "node scripts/validate-templates.mjs",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release:stable": "node scripts/tag-release.mjs"
+    "release:stable": "node scripts/tag-release.mjs",
+    "prepare": "husky"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.31.0"
+    "@changesets/cli": "^2.31.0",
+    "@commitlint/cli": "^20.5.3",
+    "@commitlint/config-conventional": "^20.5.3",
+    "husky": "^9.1.7"
   }
 }
