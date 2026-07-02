@@ -12,5 +12,8 @@
     "project": "react",
     "flows": ["oauth"]
   },
+  "setup": {
+    "oauth": true
+  },
   "requires": { "cliMin": "0.3.0" }
 }
