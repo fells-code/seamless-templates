@@ -1,6 +1,6 @@
 {
   "name": "seamless-templates",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "Frontend and API starter templates for Seamless Auth, consumed by the Seamless CLI",
   "homepage": "https://github.com/fells-code/seamless-templates#readme",
