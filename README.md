@@ -47,6 +47,7 @@ Each template is a complete, runnable project. The CLI downloads this repository
       "kind": "web",               // "web" or "api"
       "framework": "react",
       "label": "React (Vite)",     // shown in the CLI prompt
+      "alias": "basic",            // optional: enables `seamless init --basic`
       "status": "stable",          // "stable" | "beta" | "coming-soon"
       "path": "templates/web/react-vite"
     }
@@ -54,7 +55,7 @@ Each template is a complete, runnable project. The CLI downloads this repository
 }
 ```
 
-`status: "coming-soon"` advertises a template in the CLI as a disabled option without requiring its content to exist yet.
+`status: "coming-soon"` advertises a template in the CLI as a disabled option without requiring its content to exist yet. `alias` (optional) lets users select the template directly with `seamless init --<alias>`, skipping the prompt.
 
 ## The template manifest
 
@@ -62,7 +63,7 @@ Each template directory carries a `template.json` that tells the CLI where to pl
 
 ```jsonc
 {
-  "id": "react-vite",
+  "id": "react-oauth",
   "targetDir": "web",
   "env": {
     "fromExample": ".env.example",
@@ -71,11 +72,20 @@ Each template directory carries a `template.json` that tells the CLI where to pl
       "VITE_API_URL": "{{apiUrl}}"
     }
   },
+  "verify": {                    // optional: how `seamless verify` tests this template
+    "project": "react",          // the Playwright project that drives it
+    "flows": ["oauth"]           // which flow tags to run (@oauth); omit to run all
+  },
+  "setup": {                     // optional: interactive setup the CLI runs
+    "oauth": true                // prompt for OIDC providers and wire them into auth
+  },
   "requires": { "cliMin": "0.3.0" }
 }
 ```
 
 The CLI computes the shared values and resolves the `{{...}}` placeholders in `env.set`. A new framework with different variable names (for example `NEXT_PUBLIC_*`) only needs a different `set` map, not a CLI change.
+
+`verify.flows` scopes conformance to the flows a template actually supports (the harness tags specs `@login`, `@oauth`, ...); a template with no `verify` block runs the full browser suite. `setup.oauth` tells the CLI to prompt for OIDC providers (Google, GitHub, Microsoft, GitLab) and wire the chosen ones into the scaffolded auth server. Both fields are ignored by older CLIs, so they degrade gracefully.
 
 ### Placeholder vocabulary
 

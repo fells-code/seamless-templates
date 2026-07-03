@@ -16,9 +16,32 @@ npx seamless-cli init --oauth my-app
 
 The provider buttons are driven by your auth server: whatever OAuth providers you enable there show up here automatically.
 
-## Configuring a provider
+## Configuring OAuth providers
 
-Out of the box the login screen shows a "no providers configured" message until you add an OAuth provider to your Seamless Auth server. Add one (for example Google or GitHub), then the button appears here with no code changes. See the [Seamless Auth documentation](https://docs.seamlessauth.com).
+The provider buttons are driven by your auth server: whatever OAuth providers you enable there show up here automatically, with no code changes.
+
+### With the CLI (recommended)
+
+`seamless init --oauth` prompts you to pick providers and paste each one's client id and secret, then wires them into the scaffolded auth server. Supported out of the box: **Google, GitHub, Microsoft, GitLab**. Providers you leave blank are scaffolded disabled for you to fill in later.
+
+For any provider, register this redirect URI in its OAuth app:
+
+```
+http://localhost:5173/oauth/callback
+```
+
+### Adding a provider by hand
+
+Edit the auth server environment (in `docker-compose.yml`, or `auth/.env` for local mode):
+
+1. Add the provider to the `OAUTH_PROVIDERS` JSON array (`id`, `name`, `clientId`, `clientSecretEnv`, the authorization/token/userinfo URLs, `scopes`, and `redirectUri`), with `"enabled": true`.
+2. Set the env var named by `clientSecretEnv` (for example `GOOGLE_CLIENT_SECRET`) to the client secret.
+
+Then restart the stack. See the [Seamless Auth documentation](https://docs.seamlessauth.com) for the full provider schema.
+
+### Apple
+
+Sign in with Apple needs extra setup and is not offered by the CLI prompts: its client secret is a short-lived JWT you generate from your Team id, a Key id, and a `.p8` private key, and it has no userinfo endpoint (identity comes from the ID token). Configure it manually per the documentation.
 
 ## Running
 
