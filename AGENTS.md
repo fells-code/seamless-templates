@@ -8,6 +8,41 @@ into a new project during `seamless init`.
 This repo is not published to npm. Its `package.json` is `private` and exists only to host the
 validation tooling and the Changesets release flow. The shipped artifact is a git tag.
 
+## Working Standards (fells-code baseline)
+
+These rules apply to every repository in the fells-code org. Repo-specific
+guidance may extend them but must not contradict them.
+
+### Attribution
+- Commit and open PRs solely under the repository owner's identity. Never
+  commit under an agent or assistant identity.
+- Never attribute work to an AI assistant: no `Co-Authored-By: Claude` (or any
+  assistant) trailers, no "Generated with" / "Created with Claude" notes, and no
+  assistant branding or emoji anywhere in commit messages, PR or issue titles
+  and descriptions, changesets, code comments, or docs.
+
+### Comments
+- Comment only when the code genuinely needs explaining: a non-obvious reason, a
+  gotcha, or an invariant. Never narrate what the code plainly does.
+
+### TODOs
+- Every `TODO`/`FIXME` must reference a ticket, e.g. `// TODO(#123): ...`.
+  Do not leave a bare TODO. If no ticket exists, create one first.
+
+### Commits & branches
+- Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `ci:`, `test:`).
+- Descriptive branch names (`feat/...`, `fix/...`); never a `claude/` or other
+  tool-generated prefix.
+
+### Public-facing text
+- No em dashes in commit messages, code comments, PR or issue text, changesets,
+  or docs. Use a comma, parentheses, or a separate sentence.
+
+### Before declaring work done
+- Run the repo's checks (typecheck, lint, format, tests) and report real output.
+  Never claim a change works without running them.
+- Match the surrounding code's style, naming, and comment density.
+
 ## Start Here
 
 - Install tooling: `npm install`
@@ -49,20 +84,11 @@ validation step skips directory checks for those entries.
 
 ## Conventions
 
-- **Do not use em dashes** in public-facing text: commit messages, code comments, PR and issue
-  descriptions, changesets, and docs. Use a comma, parentheses, or a separate sentence instead.
-- **Commits**: Conventional Commits (`feat:`, `fix:`, `chore:`, `ci:`, `docs:`). This is enforced
-  locally: `npm install` sets up a Husky `commit-msg` hook that runs commitlint
-  (`@commitlint/config-conventional`), and a `pre-commit` hook that runs `npm run validate`. A commit
-  that fails either check is rejected before it lands, matching the rest of the Seamless Auth
-  ecosystem.
-- **Branches**: name branches with a type prefix that matches the change, `feat/`, `fix/`, `bug/`,
-  `chore/`, `ci/`, or `docs/`, followed by a short kebab-case description (for example
-  `feat/react-oauth` or `chore/commit-hygiene`). Do not use a `claude/` or other tool-generated
-  prefix.
-- **Do not add a `Co-Authored-By: Claude ...` trailer (or any AI co-author trailer) to commits.**
-  All commits must be authored under the maintainer's own account (verify with `gh auth status`
-  and `git config user.email`).
+- Commit, comment, TODO, branch-naming, and attribution rules live in Working
+  Standards above. In this repo they are enforced locally: `npm install` installs
+  a Husky `commit-msg` hook (commitlint, `@commitlint/config-conventional`) and a
+  `pre-commit` hook that runs `npm run validate`, so a non-conforming commit is
+  rejected before it lands.
 - **Releases use Changesets.** Any change that affects scaffolded projects needs a changeset. Do not
   hand-edit the version or `CHANGELOG.md`.
 - Keep template projects minimal and idiomatic for their framework. They are the first thing a new
