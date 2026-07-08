@@ -17,7 +17,7 @@
         "lint": "npx eslint src"
     },
     "dependencies": {
-        "@seamless-auth/express": "^0.5.3",
+        "@seamless-auth/express": "^0.7.0",
         "cookie-parser": "^1.4.7",
         "cors": "^2.8.5",
         "dotenv": "^16.6.1",
