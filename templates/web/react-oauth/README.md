@@ -47,10 +47,34 @@ Sign in with Apple needs extra setup and is not offered by the CLI prompts: its 
 
 ```bash
 npm install
+cp .env.example .env
 npm run dev
 ```
 
-The app reads its API origin from `VITE_API_URL` (see `.env.example`). The Seamless CLI wires this up for you.
+The app reads a single value, the API origin, from `VITE_API_URL`. The Seamless Auth adapter is
+served by the companion API at `${VITE_API_URL}/auth`, and the SDK lists OAuth providers and starts
+the redirect through it. There is no separate auth server URL here: all traffic goes through the API.
+
+### Local path
+
+`.env.example` ships with a localhost default that points at the companion Express starter:
+
+```text
+VITE_API_URL=http://localhost:3000/
+```
+
+`cp .env.example .env` is enough to run against a local API.
+
+### Managed path (CLI-filled)
+
+When you scaffold with `seamless init --oauth` against a managed instance, the CLI fills `.env` from
+your logged-in profile so the app points at the deployed API instead of localhost:
+
+| `.env` key | Filled from |
+| --- | --- |
+| `VITE_API_URL` | `{{apiUrl}}` (your project's API service URL) |
+
+The placeholder contract is defined in [template.json](template.json).
 
 ## Key files
 

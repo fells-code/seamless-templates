@@ -11,9 +11,9 @@
         "start": "NODE_ENV=production node scripts/runMigrations.js && node dist/src/index.js",
         "db:create": "sequelize-cli db:create",
         "migrate": "sequelize-cli db:migrate --config config/config.js",
-        "docker:up": "docker-compose up --build",
-        "docker:down": "docker-compose down -v",
-        "docker:logs": "docker-compose logs -f api",
+        "docker:up": "docker compose up --build",
+        "docker:down": "docker compose down -v",
+        "docker:logs": "docker compose logs -f api",
         "lint": "npx eslint src"
     },
     "dependencies": {

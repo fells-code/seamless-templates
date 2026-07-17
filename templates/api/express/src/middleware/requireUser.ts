@@ -1,11 +1,11 @@
 import type { Request, NextFunction, Response } from "express";
 
-import getLogger from "../lib/logger";
+import getLogger from "../lib/logger.js";
 import {
   getSeamlessUser,
   SeamlessAuthServerOptions,
 } from "@seamless-auth/express";
-import { User } from "../../models/user";
+import { User } from "../../models/user.js";
 
 const logger = getLogger("requireUser");
 
