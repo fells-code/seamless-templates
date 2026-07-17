@@ -23,14 +23,33 @@ cp .env.example .env
 npm run dev
 ```
 
-The app expects an API origin in `.env`:
+## Configuration
+
+The app reads a single value, the API origin, from `VITE_API_URL`. The companion Express starter
+mounts the Seamless Auth adapter at `/auth`, so the React SDK sends auth requests to
+`${VITE_API_URL}/auth/...` and app requests to the same origin. There is no separate auth server URL
+here: all traffic goes through the API.
+
+### Local path
+
+`.env.example` ships with a localhost default that points at the companion Express starter:
 
 ```text
 VITE_API_URL=http://localhost:3000/
 ```
 
-The companion Express starter mounts the Seamless Auth adapter at `/auth`, so the React SDK sends
-auth requests to `${VITE_API_URL}/auth/...`.
+`cp .env.example .env` is enough to run against a local API.
+
+### Managed path (CLI-filled)
+
+When you scaffold with `seamless init` against a managed instance, the CLI fills `.env` from your
+logged-in profile so the app points at the deployed API instead of localhost:
+
+| `.env` key | Filled from |
+| --- | --- |
+| `VITE_API_URL` | `{{apiUrl}}` (your project's API service URL) |
+
+The placeholder contract is defined in [template.json](template.json).
 
 ## Seamless Auth Wiring
 

@@ -8,7 +8,6 @@ declare global {
   interface Window {
     __SEAMLESS_CONFIG__?: {
       API_URL: string;
-      AUTH_SERVER_URL: string;
     };
   }
 }
