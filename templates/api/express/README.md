@@ -65,7 +65,7 @@ This starter is packed with modern API features that make building secure SaaS a
 ## Directory Structure
 
 ```
-seamless-auth-starter-express/
+your-api/
 │
 ├── config/
 │ └── config.js → Sequelize config (env-driven)
