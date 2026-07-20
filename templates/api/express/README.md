@@ -108,7 +108,6 @@ Generated automatically by `create-seamless`:
 
 ```env
 AUTH_SERVER_URL=http://localhost:5312
-APP_ORIGIN=http://localhost:3000
 UI_ORIGINS=http://localhost:5173,http://localhost:5174
 COOKIE_DOMAIN=
 COOKIE_SIGNING_KEY=<generated>
