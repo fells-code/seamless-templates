@@ -6,6 +6,7 @@ import createSeamlessAuthServer, {
   requireAuth,
   requireRole,
   SeamlessAuthServerOptions,
+  SeamlessAuthMessagingOptions,
 } from "@seamless-auth/express";
 import { connectToDb } from "./db";
 import { initializeModels } from "../models";
@@ -41,6 +42,36 @@ const corsOptions: CorsOptions = {
 const app = express();
 app.get("/", (_req, res) => res.send("Seamless API is running."));
 
+// Configuring `messaging` makes this API responsible for delivering OTPs and
+// magic links: Seamless Auth returns the token to the adapter instead of sending
+// it upstream. In development that lets you read the code straight from these
+// logs without a mail or SMS provider. Swap these handlers for real transports
+// (or set messaging.email / messaging.sms) before deploying, and never log a
+// live token in production.
+const devMessaging: SeamlessAuthMessagingOptions | undefined =
+  process.env.NODE_ENV === "development"
+    ? {
+        handlers: {
+          sendOtpEmail: async ({ to, token }) => {
+            logger.info(`Dev OTP for ${to}: ${token}`);
+            return { accepted: true, provider: "console", channel: "email" };
+          },
+          sendOtpSms: async ({ to, token }) => {
+            logger.info(`Dev OTP for ${to}: ${token}`);
+            return { accepted: true, provider: "console", channel: "sms" };
+          },
+          sendMagicLinkEmail: async ({ to, magicLinkUrl }) => {
+            logger.info(`Dev magic link for ${to}: ${magicLinkUrl}`);
+            return { accepted: true, provider: "console", channel: "email" };
+          },
+          sendBootstrapInviteEmail: async ({ to, inviteUrl }) => {
+            logger.info(`Dev bootstrap invite for ${to}: ${inviteUrl}`);
+            return { accepted: true, provider: "console", channel: "email" };
+          },
+        },
+      }
+    : undefined;
+
 const seamlessAuthOptions: SeamlessAuthServerOptions = {
   authServerUrl: process.env.AUTH_SERVER_URL!,
   cookieSecret: process.env.COOKIE_SIGNING_KEY!,
@@ -48,6 +79,7 @@ const seamlessAuthOptions: SeamlessAuthServerOptions = {
   audience: process.env.AUTH_SERVER_URL!,
   jwksKid: process.env.JWKS_KID!,
   cookieDomain,
+  messaging: devMessaging,
 };
 
 app.use(express.json());
