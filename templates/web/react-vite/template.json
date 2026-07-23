@@ -4,7 +4,6 @@
   "env": {
     "fromExample": ".env.example",
     "set": {
-      "VITE_AUTH_SERVER_URL": "{{authServerUrl}}",
       "VITE_API_URL": "{{apiUrl}}"
     }
   },

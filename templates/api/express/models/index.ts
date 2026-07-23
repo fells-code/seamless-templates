@@ -2,7 +2,7 @@ import { readdirSync } from "fs";
 import path from "path";
 import { Sequelize } from "sequelize";
 import { fileURLToPath } from "url";
-import getLogger from "../src/lib/logger";
+import getLogger from "../src/lib/logger.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 

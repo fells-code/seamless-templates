@@ -1,342 +1,131 @@
-# Seamless Auth — Express Starter API
+# Seamless Auth Express Starter API
 
-A production-grade **Express + TypeScript + Sequelize** API starter designed to work beautifully with **Seamless Auth** using **server-mode authentication**.
+An Express + TypeScript + Sequelize API starter wired for [Seamless Auth](https://seamlessauth.com)
+server-mode authentication.
 
-This template is perfect for **founders, indie builders, and engineering teams** who want a secure, scalable backend with minimal setup and a frictionless developer experience.
+This starter is scaffolded by the Seamless CLI:
 
-Everything included in this template is optimized for:
+```bash
+npx seamless-cli init my-app
+```
 
-- **DX (Developer Experience)**
-- **Security**
-- **Scalability**
-- **Infrastructure readiness (Terraform, ECS, RDS)**
-- **Local + Production clarity**
-
----
+It gives you a Postgres-backed API that mounts the Seamless Auth adapter at `/auth`, resolves the
+current user from the session, and protects an example route by role.
 
 ## Features
 
-This starter is packed with modern API features that make building secure SaaS apps easier and faster.
+- Server-mode Seamless Auth adapter mounted at `/auth` (OAuth, magic-link, OTP, WebAuthn, logout,
+  session, organization, and step-up routes).
+- Automatic user resolution: `requireUser` finds or creates a local `User` keyed by the Seamless
+  Auth user id, and exposes it as `req.appUser`.
+- Role-based access: `GET /beta_users` is gated by `requireRole("beta_user")`.
+- Sequelize + Postgres with migrations that run automatically on boot.
+- Docker Compose for a local Postgres plus the API.
+- ESLint (flat config) and a Node 24 / ESM TypeScript setup.
 
-### Seamless Auth (Server Mode)
+## Environment variables
 
-- Zero-redirect, passwordless authentication
-- Cookie-based session validation
-- OAuth, magic-link, OTP, WebAuthn, logout, session, organization, and step-up routes mounted under `/auth`
-- Role-based access (`requireRole("beta_user")`)
-- Automatic user resolution (`req.user`)
+The committed contract lives in [.env.example](.env.example). Copy it before running locally:
 
-### Sequelize ORM
-
-- Postgres integration
-- Auto-database creation on boot
-- Auto-migration execution in dev & prod
-- `User` model keyed by the Seamless Auth user id with nullable `email` and `phone` contact fields
-
-### Beta-Only API
-
-- `GET /beta_users`
-- Only users with `"beta_user"` role can access it
-
-### Docker-Ready
-
-- Multi-stage Dockerfile (distroless runtime)
-- docker-compose for local PG + API
-- Auto-start database
-- Auto-run migrations
-
-### DX Enhancements
-
-- Nodemon + ts-node/esm dev experience
-- Automatic environment loading
-- Automatic database creation
-- Automatic migrations
-- Clean modular architecture
-
-### Tooling
-
-- ESLint + Prettier
-- Husky pre-commit hooks
-- lint-staged
-- Type-safe directory structure
-
----
-
-## Directory Structure
-
-```
-seamless-auth-starter-express/
-│
-├── config/
-│ └── config.js → Sequelize config (env-driven)
-│
-├── migrations/ → Sequelize migrations
-│ └── YYYY-create-users.js
-│
-├── models/ → Sequelize models
-│ ├── index.js → Model loader
-│ └── user.js → User model
-│
-├── scripts/
-│ ├── ensureDatabase.js → Creates DB if missing
-│ └── runMigrations.js → Executes all migrations
-│
-├── src/
-│ ├── controllers/
-│ │ └── beta.controller.ts
-│ │
-│ ├── routes/
-│ │ └── beta.ts
-│ │
-│ ├── middleware/
-│ │ └── requireUser.ts (optional)
-│ │
-│ └── index.ts → Express entrypoint
-│
-├── Dockerfile
-├── docker-compose.yml
-├── tsconfig.json
-├── package.json
-└── .env
+```bash
+cp .env.example .env
 ```
 
----
+| Variable | Purpose |
+| --- | --- |
+| `AUTH_SERVER_URL` | URL of your Seamless Auth server |
+| `UI_ORIGINS` | Comma-separated web origins allowed by CORS |
+| `COOKIE_DOMAIN` | Optional cookie domain for production, for example `.example.com` |
+| `COOKIE_SIGNING_KEY` | Secret used to sign API-generated cookies |
+| `API_SERVICE_TOKEN` | Service token shared with Seamless Auth (from the portal) |
+| `JWKS_KID` | JWKS key id the auth server signs with |
+| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Postgres connection |
+| `DB_LOGGING` | Set to `true` to log SQL in development |
 
-## Environment Variables
+### Local path
 
-Generated automatically by `create-seamless`:
+`.env.example` ships with localhost defaults, so `cp .env.example .env` is enough to run against a
+local Seamless Auth server and a local Postgres. Set `API_SERVICE_TOKEN` to the value from your auth
+server before calling protected routes.
 
-```env
-AUTH_SERVER_URL=http://localhost:5312
-UI_ORIGINS=http://localhost:5173,http://localhost:5174
-COOKIE_DOMAIN=
-COOKIE_SIGNING_KEY=<generated>
-API_SERVICE_TOKEN=GRAB_FROM_SEAMLESS_AUTH_PORTAL
-JWKS_KID=dev-main
+### Managed path (CLI-filled)
 
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=myuser
-DB_PASSWORD=mypassword
-DB_NAME=seamless_api
-DB_LOGGING=false
-```
+When you scaffold with `seamless init` against a managed instance, the CLI fills the managed values
+into `.env` from your logged-in profile, so the API points at the managed auth server instead of
+localhost:
 
----
+| `.env` key | Filled from |
+| --- | --- |
+| `AUTH_SERVER_URL` | `{{authServerUrl}}` (your managed instance URL) |
+| `API_SERVICE_TOKEN` | `{{apiToken}}` (portal-issued service token) |
+| `JWKS_KID` | `{{jwksKid}}` |
+| `COOKIE_SIGNING_KEY` | `{{secret:32}}` (freshly generated per scaffold) |
 
-## Running Locally
+The database and origin variables keep their `.env.example` defaults; adjust them for your
+deployment. The placeholder contract is defined in [template.json](template.json).
 
-### Install dependencies
+## Running locally
+
+Install dependencies and start with hot reload. The `dev` script runs pending migrations first,
+creating the database if it does not exist yet:
 
 ```bash
 npm install
-```
-
-### Start with:
-
-- auto-database creation
-- auto-migrations
-- hot reload
-
-```bash
+cp .env.example .env
 npm run dev
 ```
 
-API runs at:
+The API runs at `http://localhost:3000`.
 
-```
-http://localhost:3000
-```
+You need a reachable Postgres. Use the Docker Compose stack below, or point `DB_*` at an existing
+Postgres instance.
 
----
+## Running with Docker Compose
 
-## Running via Docker
-
-```bash
-docker-compose up --build
-```
-
-Shut down:
+The [docker-compose.yml](docker-compose.yml) brings up Postgres and the API together. It reads your
+`.env`, overriding `DB_HOST` to reach Postgres over the compose network:
 
 ```bash
-docker-compose down -v
+cp .env.example .env
+npm run docker:up      # docker compose up --build
 ```
 
----
-
-## API Endpoints
-
-### Auth Adapter
-
-The Seamless Auth Express adapter is mounted at `/auth` and exposes the 0.5.x server-mode routes, including:
-
-| Method | Route family                       | Description                           |
-| ------ | ---------------------------------- | ------------------------------------- |
-| POST   | `/auth/login`                      | Starts a login flow                   |
-| GET    | `/auth/oauth/providers`            | Lists configured OAuth providers      |
-| POST   | `/auth/oauth/:providerId/*`        | Starts and completes OAuth login      |
-| GET    | `/auth/magic-link*`                | Requests and verifies magic links     |
-| POST   | `/auth/otp/*`                      | Requests and verifies OTPs            |
-| POST   | `/auth/webAuthn/*`                 | Starts and completes WebAuthn flows   |
-| GET    | `/auth/users/me`                   | Returns the current auth user         |
-| DELETE | `/auth/logout` and `/auth/logout/all` | Ends one or all sessions           |
-| GET    | `/auth/sessions`                   | Lists current-user sessions           |
-| GET    | `/auth/organizations*`             | Proxies organization routes           |
-| POST   | `/auth/step-up/*`                  | Runs step-up authentication flows     |
-
-### Beta Access (Role Protected)
-
-| Method | Route         | Description                   |
-| ------ | ------------- | ----------------------------- |
-| GET    | `/beta_users` | Only accessible by beta users |
-
-Protected via:
-
-```ts
-app.use("/beta_users", requireRole("beta_user"), betaRoute);
-```
-
----
-
-## Developer Experience Highlights
-
-### Auto-DB Creation
-
-Works locally and in AWS RDS:
+Follow the API logs or shut the stack down (including the database volume) with:
 
 ```bash
-node scripts/ensureDatabase.js
+npm run docker:logs    # docker compose logs -f api
+npm run docker:down    # docker compose down -v
 ```
 
-### Auto-Migrations
+## Database
 
-Every dev / prod boot runs:
+Migrations live in `migrations/` and run automatically via `scripts/runMigrations.js` on `npm run
+dev` and `npm run start`. To run them by hand:
 
 ```bash
-node scripts/runMigrations.js
+npm run migrate        # sequelize-cli db:migrate
+npm run db:create      # create the database if it is missing
 ```
 
-### Modern ESM + TypeScript
+## API endpoints
 
-- Native Node 18+ features
-- ts-node/esm for dev
-- First-class module support
+| Method | Route | Description |
+| --- | --- | --- |
+| GET | `/` | Health check |
+| ALL | `/auth/*` | Seamless Auth server-mode adapter |
+| GET | `/beta_users` | Example route, restricted to the `beta_user` role |
 
-### Sequelize ORM
-
-Familiar API for Node developers.
-
-### Docker + Terraform Ready
-
-Matches the target arch for AWS ECS + RDS.
-
----
-
-## Linting, Formatting & Precommit Hooks
-
-### Install tooling:
+## Scripts
 
 ```bash
-npm install -D eslint prettier eslint-config-prettier eslint-plugin-import husky lint-staged
+npm run dev        # run migrations, then start with hot reload
+npm run build      # compile TypeScript to dist/
+npm run start      # run migrations, then start the compiled build
+npm run lint       # eslint src
+npm run migrate    # run pending migrations
+npm run db:create  # create the database if missing
 ```
 
----
+## License
 
-### \`.eslintrc.json\`
-
-```json
-{
-  "env": {
-    "es2021": true,
-    "node": true
-  },
-  "extends": ["eslint:recommended", "plugin:import/recommended", "prettier"],
-  "parserOptions": {
-    "ecmaVersion": "latest",
-    "sourceType": "module"
-  },
-  "rules": {
-    "import/order": ["error"],
-    "no-unused-vars": "warn"
-  }
-}
-```
-
----
-
-### \`.prettierrc\`
-
-```json
-{
-  "singleQuote": true,
-  "trailingComma": "all",
-  "semi": true
-}
-```
-
----
-
-### \`package.json\` updates
-
-```json
-{
-  "scripts": {
-    "lint": "eslint . --ext .ts,.js",
-    "format": "prettier --write .",
-    "prepare": "husky install"
-  },
-  "lint-staged": {
-    "*.{ts,js,json,md}": ["prettier --write", "eslint --fix"]
-  }
-}
-```
-
----
-
-### Add Husky Hook
-
-```bash
-npx husky add .husky/pre-commit "npm run lint && npm run build"
-git add .husky/pre-commit
-```
-
-This ensures:
-
-- Code is linted
-- Code is formatted
-- TypeScript compiles
-- Bad code never enters the repo
-
----
-
-## You're Ready for Production & AWS
-
-This starter already includes:
-
-- Sequelize ORM
-- Auto migrations
-- Role-based auth
-- Docker-ready builds
-- Distroless images
-- ESM TypeScript
-- Precommit pipeline
-- DX-focused architecture
-
-It can be deployed today to:
-
-- AWS ECS/EKS
-- AWS RDS Postgres
-- CloudFront + ALB
-- Fly.io
-- Render
-- DigitalOcean Apps
-
-Next steps (optional):
-
-- Add Terraform modules
-- Add CI/CD
-- Add OpenAPI docs
-- Add unit testing
-- Add worker queues
-
-Happy building with **Seamless Auth**! 🚀
+AGPL-3.0-only

@@ -8,12 +8,12 @@ import createSeamlessAuthServer, {
   SeamlessAuthServerOptions,
   SeamlessAuthMessagingOptions,
 } from "@seamless-auth/express";
-import { connectToDb } from "./db";
-import { initializeModels } from "../models";
+import { connectToDb } from "./db.js";
+import { initializeModels } from "../models/index.js";
 
 import beta from "./routes/beta.js";
-import { requireUser } from "./middleware/requireUser";
-import getLogger from "./lib/logger";
+import { requireUser } from "./middleware/requireUser.js";
+import getLogger from "./lib/logger.js";
 
 dotenv.config();
 

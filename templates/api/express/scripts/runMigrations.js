@@ -5,11 +5,9 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const isProd = process.env.NODE_ENV === "production";
-
-const configPath = isProd
-  ? path.join(__dirname, "../dist/config/config.js")
-  : path.join(__dirname, "../config/config.js");
+// sequelize-cli reads the config, migrations, and models from the source tree at
+// runtime (see .sequelizerc), so the same source config is used in dev and prod.
+const configPath = path.join(__dirname, "../config/config.js");
 
 function run(command) {
   execSync(command, {
