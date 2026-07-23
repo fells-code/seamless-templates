@@ -95,7 +95,7 @@ app.use(
 );
 
 app.use(requireUser(seamlessAuthOptions));
-app.use("/beta_users", requireRole("beta_user"), beta);
+app.use("/beta_users", requireRole("betaUser"), beta);
 
 const models = await initializeModels();
 
