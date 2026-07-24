@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request } from "express";
 import cors, { CorsOptions } from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
@@ -25,19 +25,37 @@ const rawOrigins = process.env.UI_ORIGINS;
 const allowedOrigins = rawOrigins?.split(",").map((o) => o.trim()) ?? [];
 const cookieDomain = process.env.COOKIE_DOMAIN?.trim() || undefined;
 
-const corsOptions: CorsOptions = {
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true); // allow curl/postman
+// A request whose Origin is this server's own host is same-origin and was never
+// a CORS concern. It has to be allowed explicitly because the admin console is
+// served from this API at /console: browsers omit Origin on a same-origin GET but
+// send it on POST/PATCH/DELETE, so without this the console's reads succeed while
+// every write is rejected. Comparing hosts rather than full origins keeps this
+// working behind a TLS-terminating proxy, where req.protocol is http.
+const isSameOrigin = (origin: string, req: Request) => {
+  try {
+    return new URL(origin).host === req.get("host");
+  } catch {
+    return false;
+  }
+};
 
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      logger.warn(`Unknown CORS origin: ${origin}`);
-    }
+const corsOptionsDelegate = (
+  req: Request,
+  callback: (err: Error | null, options?: CorsOptions) => void,
+) => {
+  const origin = req.headers.origin;
 
-    return callback(new Error("Not allowed by CORS"));
-  },
-  credentials: true,
+  // No Origin at all is a same-origin GET or a non-browser caller (curl, tests).
+  if (!origin || isSameOrigin(origin, req) || allowedOrigins.includes(origin)) {
+    return callback(null, { origin: true, credentials: true });
+  }
+
+  logger.warn(`Unknown CORS origin: ${origin}`);
+
+  // Deny by withholding the CORS headers and letting the browser block the
+  // response. Passing an Error here instead would answer every disallowed
+  // request with a 500, which reads as a server fault rather than a policy one.
+  return callback(null, { origin: false, credentials: true });
 };
 
 const app = express();
@@ -100,7 +118,7 @@ app.use(
 );
 
 app.use(express.json());
-app.use(cors(corsOptions));
+app.use(cors(corsOptionsDelegate));
 app.use(cookieParser());
 
 app.use("/auth", createSeamlessAuthServer(seamlessAuthOptions));
