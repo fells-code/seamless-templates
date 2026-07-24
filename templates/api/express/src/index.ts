@@ -3,6 +3,7 @@ import cors, { CorsOptions } from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import createSeamlessAuthServer, {
+  createSeamlessConsoleProxy,
   requireAuth,
   requireRole,
   SeamlessAuthServerOptions,
@@ -81,6 +82,22 @@ const seamlessAuthOptions: SeamlessAuthServerOptions = {
   cookieDomain,
   messaging: devMessaging,
 };
+
+// Serves the Seamless admin dashboard from this API's own origin, so the SPA
+// shares the cookie scope of the /auth routes below.
+//
+// Mounted ahead of the CORS allowlist and requireAuth on purpose. The console is
+// same-origin static content served by this API, not a cross-origin API call, so
+// gating it on UI_ORIGINS would reject the SPA's own asset requests (its module
+// script is crossorigin, so the browser sends an Origin header). It also has to
+// load for a signed-out admin, who then signs in through /auth; the dashboard's
+// own routes enforce the admin role.
+app.use(
+  "/console",
+  createSeamlessConsoleProxy({
+    authServerUrl: seamlessAuthOptions.authServerUrl,
+  }),
+);
 
 app.use(express.json());
 app.use(cors(corsOptions));
