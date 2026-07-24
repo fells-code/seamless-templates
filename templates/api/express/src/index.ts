@@ -110,12 +110,18 @@ const seamlessAuthOptions: SeamlessAuthServerOptions = {
 // script is crossorigin, so the browser sends an Origin header). It also has to
 // load for a signed-out admin, who then signs in through /auth; the dashboard's
 // own routes enforce the admin role.
-app.use(
-  "/console",
-  createSeamlessConsoleProxy({
-    authServerUrl: seamlessAuthOptions.authServerUrl,
-  }),
-);
+//
+// Off when the console is hosted elsewhere (a standalone container, or not at
+// all). Serving it here also requires this API's origin in the auth server's
+// ORIGINS so passkey ceremonies started in the console verify — see README.
+if (process.env.SERVE_ADMIN_CONSOLE === "true") {
+  app.use(
+    "/console",
+    createSeamlessConsoleProxy({
+      authServerUrl: seamlessAuthOptions.authServerUrl,
+    }),
+  );
+}
 
 app.use(express.json());
 app.use(cors(corsOptionsDelegate));

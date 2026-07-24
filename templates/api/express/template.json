@@ -7,8 +7,9 @@
       "AUTH_SERVER_URL": "{{authServerUrl}}",
       "API_SERVICE_TOKEN": "{{apiToken}}",
       "JWKS_KID": "{{jwksKid}}",
-      "COOKIE_SIGNING_KEY": "{{secret:32}}"
+      "COOKIE_SIGNING_KEY": "{{secret:32}}",
+      "SERVE_ADMIN_CONSOLE": "{{serveAdminConsole}}"
     }
   },
-  "requires": { "cliMin": "0.3.0" }
+  "requires": { "cliMin": "0.10.0" }
 }

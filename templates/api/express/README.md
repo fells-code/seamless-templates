@@ -34,6 +34,7 @@ cp .env.example .env
 | Variable | Purpose |
 | --- | --- |
 | `AUTH_SERVER_URL` | URL of your Seamless Auth server |
+| `SERVE_ADMIN_CONSOLE` | `true` to serve the admin dashboard from this API at `/console`; `false` when it is hosted elsewhere |
 | `UI_ORIGINS` | Comma-separated web origins allowed by CORS |
 | `COOKIE_DOMAIN` | Optional cookie domain for production, for example `.example.com` |
 | `COOKIE_SIGNING_KEY` | Secret used to sign API-generated cookies |
@@ -113,18 +114,25 @@ npm run db:create      # create the database if it is missing
 | --- | --- | --- |
 | GET | `/` | Health check |
 | ALL | `/auth/*` | Seamless Auth server-mode adapter |
-| GET | `/console/*` | Seamless admin dashboard, reverse-proxied from the auth server |
+| GET | `/console/*` | Seamless admin dashboard, reverse-proxied from the auth server (only when `SERVE_ADMIN_CONSOLE=true`) |
 | GET | `/beta_users` | Example route, restricted to the `beta_user` role |
 
 ## Admin console
 
-`createSeamlessConsoleProxy` serves the Seamless admin dashboard at `/console`,
-so it loads from this API's origin and shares the cookie scope of `/auth`. It is
-mounted ahead of the CORS allowlist and `requireAuth`: the console is same-origin
-static content rather than a cross-origin API call, and it has to load for a
-signed-out admin who then signs in through `/auth`.
+The admin dashboard can be hosted two ways:
 
-Serving the console from this origin has one requirement on the auth server.
+- **Served from this API (`SERVE_ADMIN_CONSOLE=true`, the default).**
+  `createSeamlessConsoleProxy` serves the dashboard at `/console`, so it loads
+  from this API's origin and shares the cookie scope of `/auth`. It is mounted
+  ahead of the CORS allowlist and `requireAuth`: the console is same-origin
+  static content rather than a cross-origin API call, and it has to load for a
+  signed-out admin who then signs in through `/auth`.
+- **Hosted elsewhere (`SERVE_ADMIN_CONSOLE=false`).** The proxy is not mounted;
+  run the dashboard as a standalone container (or omit it). In that case drop
+  this API's origin from the auth server's `ORIGINS` and add the console's own
+  origin instead.
+
+When served from this API, there is one requirement on the auth server.
 Passkey ceremonies started in the console carry this API's origin, and WebAuthn
 verification checks it, so add this API's origin to the auth server's `ORIGINS`.
 Without it, sign-in and step-up both fail at the finish step even though the
