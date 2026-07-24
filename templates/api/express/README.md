@@ -113,7 +113,23 @@ npm run db:create      # create the database if it is missing
 | --- | --- | --- |
 | GET | `/` | Health check |
 | ALL | `/auth/*` | Seamless Auth server-mode adapter |
+| GET | `/console/*` | Seamless admin dashboard, reverse-proxied from the auth server |
 | GET | `/beta_users` | Example route, restricted to the `beta_user` role |
+
+## Admin console
+
+`createSeamlessConsoleProxy` serves the Seamless admin dashboard at `/console`,
+so it loads from this API's origin and shares the cookie scope of `/auth`. It is
+mounted ahead of the CORS allowlist and `requireAuth`: the console is same-origin
+static content rather than a cross-origin API call, and it has to load for a
+signed-out admin who then signs in through `/auth`.
+
+Serving the console from this origin has one requirement on the auth server.
+Passkey ceremonies started in the console carry this API's origin, and WebAuthn
+verification checks it, so add this API's origin to the auth server's `ORIGINS`.
+Without it, sign-in and step-up both fail at the finish step even though the
+challenge starts normally. The RP ID (`RPID`) ignores the port, so it does not
+need to change.
 
 ## Scripts
 
