@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@seamless-auth/react";
-import type { OAuthProvider, OAuthProvidersResult } from "@seamless-auth/react";
+import type { OAuthProvider } from "@seamless-auth/react";
 
 // The callback route reads this to know which provider to finish the login with.
 export const OAUTH_PROVIDER_STORAGE_KEY = "seamless:oauth:provider";
@@ -17,11 +17,8 @@ export default function Login() {
     let active = true;
 
     listOAuthProviders()
-      .then((result: OAuthProvidersResult) => {
-        if (active) setProviders(result.providers ?? []);
-      })
-      .catch(() => {
-        if (active) setProviders([]);
+      .then(({ data, error }) => {
+        if (active) setProviders(error ? [] : (data.providers ?? []));
       })
       .finally(() => {
         if (active) setLoadingProviders(false);
@@ -48,18 +45,19 @@ export default function Login() {
   // URL; the provider sends the user back to /oauth/callback when they are done.
   const handleSelect = async (providerId: string) => {
     setError("");
-    try {
-      sessionStorage.setItem(OAUTH_PROVIDER_STORAGE_KEY, providerId);
+    sessionStorage.setItem(OAUTH_PROVIDER_STORAGE_KEY, providerId);
 
-      const { authorizationUrl } = await startOAuthLogin({
-        providerId,
-        redirectUri: `${window.location.origin}/oauth/callback`,
-      });
+    const { data, error } = await startOAuthLogin({
+      providerId,
+      redirectUri: `${window.location.origin}/oauth/callback`,
+    });
 
-      window.location.assign(authorizationUrl);
-    } catch {
+    if (error) {
       setError("Could not start sign-in with this provider.");
+      return;
     }
+
+    window.location.assign(data.authorizationUrl);
   };
 
   return (
