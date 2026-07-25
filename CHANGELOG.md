@@ -1,5 +1,74 @@
 # seamless-templates
 
+## 0.3.0
+
+### Minor Changes
+
+- e367c56: Make the Express API template's admin-console proxy opt-in via `SERVE_ADMIN_CONSOLE`.
+
+  The `createSeamlessConsoleProxy` mount at `/console` is now gated on
+  `SERVE_ADMIN_CONSOLE=true` (the default in `.env.example`). Set it to `false`
+  when the dashboard is hosted elsewhere — a standalone container or not at all —
+  and the proxy is skipped. This lets a scaffold choose between serving the console
+  from the API and running it as a separate service without editing source.
+
+  `template.json` exposes the flag as `{{serveAdminConsole}}` so the CLI can
+  pre-configure it, and now requires `cliMin` `0.10.0`.
+
+- 62da514: Serve the Seamless admin dashboard from the Express API template. The template
+  now mounts `createSeamlessConsoleProxy` at `/console`, so the dashboard loads
+  from the API's own origin and shares the cookie scope of its `/auth` routes,
+  with no separate dashboard deployment.
+
+  The proxy is mounted ahead of the CORS allowlist and `requireAuth`. The console
+  is same-origin static content rather than a cross-origin API call, so gating it
+  on `UI_ORIGINS` would reject the SPA's own asset requests (its module script is
+  `crossorigin`, so the browser sends an `Origin` header and the allowlist returns
+  an error). It also has to load for a signed-out admin, who then signs in through
+  `/auth`.
+
+- 1ee9ce6: Log OTP and magic-link tokens to the console in the Express API template when
+  running in development. The template now passes a `messaging` option to
+  `createSeamlessAuthServer` with dev-only handlers, which routes delivery through
+  the adapter so codes appear in the API logs without a mail or SMS provider. The
+  handlers are gated on `NODE_ENV=development` and must be replaced with real
+  transports before deploying.
+- ee3aa99: Upgrade the Express API template to Express 5 and `@seamless-auth/express` 0.8, which requires
+  `express >= 5.0.0` as a peer dependency. The template's `@types/express` was already on v5, so the
+  runtime and its types are now aligned.
+- 4ba52b8: Update the React OAuth template for the `@seamless-auth/react` 0.5 result-object
+  API. Every SDK call now resolves to `{ data, error }` instead of returning the
+  payload directly or throwing, so the login page reads providers from
+  `data.providers`, the provider redirect reads `data.authorizationUrl`, and the
+  OAuth callback checks `error` rather than a `.catch` that the SDK no longer
+  triggers. The template now depends on `@seamless-auth/react` `^0.5.0`.
+- e8a8eda: Pin the templates to the published Seamless Auth SDK releases: the Express API
+  template now depends on `@seamless-auth/express` `^0.9.0`, and the basic React
+  (Vite) template on `@seamless-auth/react` `^0.5.0`. The React OAuth template was
+  already moved to `^0.5.0` alongside its result-object migration.
+
+### Patch Changes
+
+- 9d291f5: Document the admin console in the Express API template README: the `/console`
+  route, why the proxy is mounted ahead of CORS and `requireAuth`, and the auth
+  server requirement that comes with it. Passkey ceremonies started in the console
+  carry this API's origin, and WebAuthn verification checks it, so that origin has
+  to be listed in the auth server's `ORIGINS` or sign-in and step-up fail at the
+  finish step while the challenge starts normally.
+- 58aec6c: Fix the Express template rejecting its own same-origin requests. Now that the API
+  serves the admin console at `/console`, the console calls the API from the API's
+  own origin. Browsers omit `Origin` on a same-origin GET but send it on
+  POST/PATCH/DELETE, so with only `UI_ORIGINS` allowed the console's reads
+  succeeded while every write was refused. Requests whose `Origin` matches the
+  server's own host are now treated as same-origin and allowed.
+
+  Disallowed origins are also refused by withholding the CORS headers instead of
+  passing an error to the `cors` callback, which previously answered them with a
+  500 and made the cause hard to read. Cross-origin preflights from unknown origins
+  still receive no `Access-Control-Allow-Origin`, so they remain blocked.
+
+- e8a4cd4: Drop the dead `issuer` option from the Express API template. `@seamless-auth/express` removes `issuer` from `SeamlessAuthServerOptions` (it moved the silent-refresh service token to the fixed M2M contract constants, so the adopter-supplied value reached nothing), and passing it is now a type error. The template no longer sets `issuer`, and `APP_ORIGIN`, whose only consumer was that option, is removed from `.env.example` and the README.
+
 ## 0.2.4
 
 ### Patch Changes
