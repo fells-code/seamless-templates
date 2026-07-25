@@ -33,6 +33,7 @@ cp .env.example .env
 
 | Variable | Purpose |
 | --- | --- |
+| `NODE_ENV` | `development` enables the dev messaging handlers that log OTP, magic-link, and bootstrap-invite links locally; set to `production` before deploying |
 | `AUTH_SERVER_URL` | URL of your Seamless Auth server |
 | `SERVE_ADMIN_CONSOLE` | `true` to serve the admin dashboard from this API at `/console`; `false` when it is hosted elsewhere |
 | `UI_ORIGINS` | Comma-separated web origins allowed by CORS |
