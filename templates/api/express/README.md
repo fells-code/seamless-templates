@@ -41,7 +41,9 @@ cp .env.example .env
 | `COOKIE_SIGNING_KEY` | Secret used to sign API-generated cookies |
 | `API_SERVICE_TOKEN` | Service token shared with Seamless Auth (from the portal) |
 | `JWKS_KID` | JWKS key id the auth server signs with |
-| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Postgres connection |
+| `DATABASE_URL` | Full Postgres connection string. Wins over the `DB_*` values when set |
+| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Postgres connection, used when `DATABASE_URL` is empty |
+| `DB_SSL_REJECT_UNAUTHORIZED` | Set to `false` only for a certificate that does not chain to a public CA |
 | `DB_LOGGING` | Set to `true` to log SQL in development |
 
 ### Local path
@@ -100,6 +102,30 @@ npm run docker:down    # docker compose down -v
 ```
 
 ## Database
+
+The connection is resolved once and shared by the runtime and the migrations: `DATABASE_URL` when it
+is set, otherwise the discrete `DB_*` values. The local Docker stack uses the `DB_*` path.
+
+### Connecting to a managed Seamless database
+
+A managed database is handed out as a connection string, and it accepts external connections over
+TLS only. `sslmode=require` in the URL is what turns TLS on here, because Sequelize does not act on
+`sslmode` by itself.
+
+`seamless init` writes `DATABASE_URL` with placeholders for the user and password:
+
+```
+DATABASE_URL=postgres://USER:PASSWORD@host:5432/dbname?sslmode=require
+```
+
+Copy the real credentials from the dashboard and replace both placeholders. They are deliberately
+never written to disk for you, and the CLI never asks the control plane to reveal them.
+
+Certificate verification is on. If your database presents a certificate that does not chain to a
+public CA, set `DB_SSL_REJECT_UNAUTHORIZED=false`, which drops protection against an intercepted
+connection.
+
+### Migrations
 
 Migrations live in `migrations/` and run automatically via `scripts/runMigrations.js` on `npm run
 dev` and `npm run start`. To run them by hand:

@@ -8,7 +8,8 @@
       "API_SERVICE_TOKEN": "{{apiToken}}",
       "JWKS_KID": "{{jwksKid}}",
       "COOKIE_SIGNING_KEY": "{{secret:32}}",
-      "SERVE_ADMIN_CONSOLE": "{{serveAdminConsole}}"
+      "SERVE_ADMIN_CONSOLE": "{{serveAdminConsole}}",
+      "DATABASE_URL": "{{databaseUrl}}"
     }
   },
   "requires": { "cliMin": "0.10.0" }
