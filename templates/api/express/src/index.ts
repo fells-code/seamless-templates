@@ -83,10 +83,6 @@ const devMessaging: SeamlessAuthMessagingOptions | undefined =
             logger.info(`Dev magic link for ${to}: ${magicLinkUrl}`);
             return { accepted: true, provider: "console", channel: "email" };
           },
-          sendBootstrapInviteEmail: async ({ to, inviteUrl }) => {
-            logger.info(`Dev bootstrap invite for ${to}: ${inviteUrl}`);
-            return { accepted: true, provider: "console", channel: "email" };
-          },
         },
       }
     : undefined;
