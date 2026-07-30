@@ -1,0 +1,14 @@
+# Dev-focused container for Fastify API
+# NOT a production image
+FROM node:24-alpine
+
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm i
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]

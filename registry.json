@@ -26,6 +26,14 @@
       "label": "Express",
       "status": "stable",
       "path": "templates/api/express"
+    },
+    {
+      "id": "fastify",
+      "kind": "api",
+      "framework": "fastify",
+      "label": "Fastify",
+      "status": "beta",
+      "path": "templates/api/fastify"
     }
   ]
 }
