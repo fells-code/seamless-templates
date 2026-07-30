@@ -1,8 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "@seamless-auth/react";
+import { getOAuthErrorCode, useAuth } from "@seamless-auth/react";
 
 import { OAUTH_PROVIDER_STORAGE_KEY } from "./Login";
+
+// The three failures the auth server reports with a machine-readable code are
+// all conditions at the provider, so retrying cannot fix them. Anything else,
+// including a code from a newer API that `getOAuthErrorCode` does not
+// recognize, keeps the generic message.
+const OAUTH_ERROR_MESSAGES: Record<string, string> = {
+  oauth_missing_email:
+    "That provider did not share an email address, which this application needs to create an account. Sign in with a different provider, or make your email visible in the provider's account settings.",
+  oauth_email_not_verified:
+    "That provider has not verified your email address. Verify it with the provider, then sign in again.",
+  oauth_missing_subject:
+    "That provider did not identify the account. Sign in with a different provider.",
+};
 
 // The provider redirects here with `code` and `state`. We hand both, plus the
 // provider we started with, to the auth server to finish the login and issue a
@@ -29,7 +42,12 @@ export default function OAuthCallback() {
 
     finishOAuthLogin({ providerId, code, state }).then(({ error }) => {
       if (error) {
-        setError("We could not complete sign-in. Please try again.");
+        const errorCode = getOAuthErrorCode(error);
+
+        setError(
+          (errorCode && OAUTH_ERROR_MESSAGES[errorCode]) ||
+            "We could not complete sign-in. Please try again.",
+        );
         return;
       }
 

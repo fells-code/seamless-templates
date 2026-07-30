@@ -83,15 +83,20 @@ Application routes:
 - `/session`
 - `/beta`
 
-Auth routes handled by the Seamless Auth React SDK include:
+Auth routes handled by the Seamless Auth React SDK, as exported in `authRoutePaths`:
 
 - `/login`
-- `/passKeyLogin`
-- `/verifyPhoneOTP`
-- `/verifyEmailOTP`
+- `/passkey-login`
+- `/verify-phone-otp`
+- `/verify-email-otp`
 - `/verify-magiclink`
-- `/registerPasskey`
-- `/magiclinks-sent`
+- `/oauth/callback`
+- `/register-passkey`
+- `/magic-link-sent`
+
+`/verify-magiclink` and `/oauth/callback` keep their spelling because they are fixed outside the SDK:
+the auth API builds the magic-link URL when it sends the email, and the callback is registered with
+OAuth providers as an allowed redirect URI.
 
 `/session` is protected and renders what the SDK knows about the current session: the issued claims,
 roles, organization context, step-up freshness with its expiry, and the registered passkeys. `/beta`
