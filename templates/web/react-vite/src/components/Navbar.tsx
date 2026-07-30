@@ -11,6 +11,7 @@ export default function Navbar() {
   const navLinks = [
     { label: "Home", to: "/" },
     { label: "About", to: "/about" },
+    { label: "Session", to: "/session" },
     { label: "Beta Access", to: "/beta" },
   ];
 

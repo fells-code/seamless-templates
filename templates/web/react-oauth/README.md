@@ -13,6 +13,7 @@ npx seamless-cli init --oauth my-app
 - A focused login screen that lists the auth server's configured OAuth providers and starts the redirect (`useAuth().startOAuthLogin`).
 - An `/oauth/callback` route that completes the login (`useAuth().finishOAuthLogin`) and drops the user into the app.
 - A protected home route that shows the authenticated identity from the session.
+- A protected `/session` route that reads the issued claims, roles, organization context, step-up freshness, and registered passkeys out of `useAuth()`.
 
 The provider buttons are driven by your auth server: whatever OAuth providers you enable there show up here automatically.
 
@@ -64,6 +65,9 @@ VITE_API_URL=http://localhost:3000/
 ```
 
 `cp .env.example .env` is enough to run against a local API.
+
+With `VITE_API_URL` unset, the app renders a configuration page naming the variable instead of
+sending every auth request to its own origin, where the failure would read as an unexplained 404.
 
 ### Managed path (CLI-filled)
 

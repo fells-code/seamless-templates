@@ -9,12 +9,15 @@ import {
 import { AuthProvider, useAuth } from "@seamless-auth/react";
 
 import "./App.css";
+import ConfigurationError from "./components/ConfigurationError";
 import MainLayout from "./layouts/Layout";
 import About from "./pages/About";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import OAuthCallback from "./pages/OAuthCallback";
+import Session from "./pages/Session";
 import { API_URL } from "./lib/api";
+import { MISSING_API_URL_MESSAGE } from "./lib/runtimeConfig";
 
 function LoadingScreen() {
   return (
@@ -29,7 +32,11 @@ function LoadingScreen() {
 function RequireAuth({ children }: { children: ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
 
-  if (loading) {
+  // Re-reading the session raises `loading` again on a page that is already
+  // rendering. Swapping in the loading screen for that would unmount whatever is
+  // mounted and discard its state, so it is only for the first resolution,
+  // before there is a session to render at all.
+  if (loading && !isAuthenticated) {
     return <LoadingScreen />;
   }
 
@@ -56,6 +63,14 @@ function ApplicationRoutes() {
           }
         />
         <Route path="about" element={<About />} />
+        <Route
+          path="session"
+          element={
+            <RequireAuth>
+              <Session />
+            </RequireAuth>
+          }
+        />
       </Route>
 
       <Route path="*" element={<Navigate to="/login" replace />} />
@@ -64,6 +79,10 @@ function ApplicationRoutes() {
 }
 
 const App = () => {
+  if (!API_URL) {
+    return <ConfigurationError message={MISSING_API_URL_MESSAGE} />;
+  }
+
   return (
     <Router>
       <AuthProvider apiHost={API_URL}>

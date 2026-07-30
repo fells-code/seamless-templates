@@ -19,6 +19,8 @@ current user from the session, and protects an example route by role.
 - Automatic user resolution: `requireUser` finds or creates a local `User` keyed by the Seamless
   Auth user id, and exposes it as `req.appUser`.
 - Role-based access: `GET /beta_users` is gated by `requireRole("beta_user")`.
+- A boot-time environment check that refuses to start on missing configuration and names every
+  problem at once.
 - Sequelize + Postgres with migrations that run automatically on boot.
 - Docker Compose for a local Postgres plus the API.
 - ESLint (flat config) and a Node 24 / ESM TypeScript setup.
@@ -45,6 +47,13 @@ cp .env.example .env
 | `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Postgres connection, used when `DATABASE_URL` is empty |
 | `DB_SSL_REJECT_UNAUTHORIZED` | Set to `false` only for a certificate that does not chain to a public CA |
 | `DB_LOGGING` | Set to `true` to log SQL in development |
+
+`assertEnvironment` in [src/lib/env.ts](src/lib/env.ts) runs before the server is built. The auth
+options are read once at startup, so a missing value used to surface as a 500 on the first
+authenticated request instead of as a failure to boot. It lists every problem in one message,
+including a `DATABASE_URL` still carrying the `USER` and `PASSWORD` placeholders `seamless init`
+writes, and warns when `UI_ORIGINS` is empty because CORS will then reject every cross-origin
+browser request.
 
 ### Local path
 

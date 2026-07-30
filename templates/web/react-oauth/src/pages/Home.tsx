@@ -13,17 +13,34 @@ export default function Home() {
       </h1>
 
       <p className="text-gray-700 dark:text-gray-400">
-        You authenticated through an OAuth provider. This is the identity the
-        auth server issued for your session:
+        You authenticated through an OAuth provider. The auth server issued its
+        own identity for the session, so the rest of the app never talks to the
+        provider again.
       </p>
 
-      <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
-        <pre className="text-sm text-gray-800 dark:text-gray-200 overflow-x-auto">
-          {JSON.stringify(user, null, 2)}
-        </pre>
+      <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900 space-y-2">
+        <p className="text-gray-700 dark:text-gray-300">
+          Signed in as{" "}
+          <span className="font-medium text-gray-900 dark:text-gray-100">
+            {user?.email || user?.phone || user?.id}
+          </span>
+        </p>
+
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          {user?.roles.length
+            ? `Roles: ${user.roles.join(", ")}`
+            : "No roles assigned yet."}
+        </p>
       </div>
 
       <div className="flex items-center gap-4">
+        <Link
+          to="/session"
+          className="text-blue-600 dark:text-blue-400 underline"
+        >
+          Inspect this session
+        </Link>
+
         <Link
           to="/about"
           className="text-blue-600 dark:text-blue-400 underline"
