@@ -10,8 +10,10 @@ const isProduction = process.env.NODE_ENV === "production";
  * keeps its diagnostics in the same stream as the rest of the API instead of a
  * second one nobody is watching.
  *
- * pino-pretty is a devDependency and is only wired up outside production, where
- * logs stay as JSON for a log pipeline to parse.
+ * pino-pretty is only wired up outside production, where logs stay as JSON for a
+ * log pipeline to parse. It is a runtime dependency rather than a dev one
+ * because any NODE_ENV other than production loads it, so an install that
+ * omitted dev dependencies would fail to boot on a staging deploy.
  */
 export const rootLogger: Logger = pino({
   level: isProduction ? "info" : "debug",

@@ -21,7 +21,9 @@ dotenv.config();
 
 assertEnvironment();
 
-const PORT = Number(process.env.PORT ?? 3000);
+// `||` rather than `??`: an empty PORT= in .env is a missing value, not a
+// request for port 0, which is what Number("") would bind.
+const PORT = Number(process.env.PORT || 3000);
 const logger = getLogger("index");
 
 const rawOrigins = process.env.UI_ORIGINS;
