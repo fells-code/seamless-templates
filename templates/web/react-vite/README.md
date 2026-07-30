@@ -14,6 +14,7 @@ the companion Express starter.
 - Protected routes with `useAuth()`
 - Role-based UI checks with `hasScopedRole()`
 - Protected app API calls through the companion Express starter
+- A session page that reads the identity, roles, step-up freshness, and passkeys behind the session
 
 ## Quick Start
 
@@ -39,6 +40,9 @@ VITE_API_URL=http://localhost:3000/
 ```
 
 `cp .env.example .env` is enough to run against a local API.
+
+With `VITE_API_URL` unset, the app renders a configuration page naming the variable instead of
+sending every auth request to its own origin, where the failure would read as an unexplained 404.
 
 ### Managed path (CLI-filled)
 
@@ -76,19 +80,27 @@ Application routes:
 
 - `/`
 - `/about`
+- `/session`
 - `/beta`
 
-Auth routes handled by the Seamless Auth React SDK include:
+Auth routes handled by the Seamless Auth React SDK, as exported in `authRoutePaths`:
 
 - `/login`
-- `/passKeyLogin`
-- `/verifyPhoneOTP`
-- `/verifyEmailOTP`
+- `/passkey-login`
+- `/verify-phone-otp`
+- `/verify-email-otp`
 - `/verify-magiclink`
-- `/registerPasskey`
-- `/magiclinks-sent`
+- `/oauth/callback`
+- `/register-passkey`
+- `/magic-link-sent`
 
-`/beta` is protected and checks for the `betaUser` role before calling the example API route.
+`/verify-magiclink` and `/oauth/callback` keep their spelling because they are fixed outside the SDK:
+the auth API builds the magic-link URL when it sends the email, and the callback is registered with
+OAuth providers as an allowed redirect URI.
+
+`/session` is protected and renders what the SDK knows about the current session: the issued claims,
+roles, organization context, step-up freshness with its expiry, and the registered passkeys. `/beta`
+is protected and checks for the `betaUser` role before calling the example API route.
 
 ## Scripts
 

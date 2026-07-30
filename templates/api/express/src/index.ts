@@ -14,9 +14,12 @@ import { initializeModels } from "../models/index.js";
 
 import beta from "./routes/beta.js";
 import { requireUser } from "./middleware/requireUser.js";
+import { assertEnvironment } from "./lib/env.js";
 import getLogger from "./lib/logger.js";
 
 dotenv.config();
+
+assertEnvironment();
 
 const PORT = process.env.PORT || 3000;
 const logger = getLogger("index");

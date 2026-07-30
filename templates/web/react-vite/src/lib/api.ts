@@ -4,11 +4,15 @@
  * See LICENSE file in the project root for full license information
  */
 
-import { getApiUrl } from "./runtimeConfig";
+import { getApiUrl, MISSING_API_URL_MESSAGE } from "./runtimeConfig";
 
 export const API_URL = getApiUrl();
 
 export function buildApiUrl(path: string): string {
+  if (!API_URL) {
+    throw new Error(MISSING_API_URL_MESSAGE);
+  }
+
   const baseUrl = API_URL.replace(/\/+$/, "");
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
 

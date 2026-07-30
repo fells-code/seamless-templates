@@ -48,15 +48,29 @@ export default function Home() {
         You are signed in
       </h1>
 
-      <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900">
-        <p className="text-gray-700 dark:text-gray-300">Signed in as:</p>
+      <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900 space-y-2">
+        <p className="text-gray-700 dark:text-gray-300">
+          Signed in as{" "}
+          <span className="font-medium text-gray-900 dark:text-gray-100">
+            {user?.email || user?.phone || user?.id}
+          </span>
+        </p>
 
-        <pre className="mt-2 text-sm text-gray-800 dark:text-gray-200 overflow-x-auto">
-          {JSON.stringify(user, null, 2)}
-        </pre>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          {user?.roles.length
+            ? `Roles: ${user.roles.join(", ")}`
+            : "No roles assigned yet."}
+        </p>
       </div>
 
       <div className="space-y-2">
+        <Link
+          to="/session"
+          className="block text-blue-600 dark:text-blue-400 underline"
+        >
+          Inspect this session
+        </Link>
+
         <Link
           to="/beta"
           className="block text-blue-600 dark:text-blue-400 underline"
