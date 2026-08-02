@@ -5,7 +5,7 @@
 
 services:
   db:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USER:-myuser}
@@ -14,7 +14,11 @@ services:
     ports:
       - "${DB_PORT:-5432}:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      # PostgreSQL 18+ images store data in a major-versioned subdirectory
+      # (/var/lib/postgresql/18/docker), so the mount goes one level up. Mounting
+      # .../data instead leaves the volume unused and the container refuses to
+      # start. See docker-library/postgres#1259.
+      - pgdata:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-myuser} -d ${DB_NAME:-seamless_api}"]
       interval: 5s
