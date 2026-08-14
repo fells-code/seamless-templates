@@ -32,8 +32,11 @@ jobs:
         id: matrix
         run: echo "matrix=$(node scripts/validate-templates.mjs --matrix)" >> "$GITHUB_OUTPUT"
 
-  build-smoke:
-    name: Build ${{ matrix.id }}
+  # Every step is --if-present so a template that has not adopted one of these yet
+  # is skipped rather than failed. A template that does declare the script has to
+  # pass it: this is the same gate `npm run check` gives a user locally.
+  template-checks:
+    name: Check ${{ matrix.id }}
     needs: validate
     if: needs.validate.outputs.matrix != '[]'
     runs-on: ubuntu-latest
@@ -41,6 +44,9 @@ jobs:
       fail-fast: false
       matrix:
         include: ${{ fromJSON(needs.validate.outputs.matrix) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.path }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -52,8 +58,18 @@ jobs:
 
       - name: Install
         run: npm install
-        working-directory: ${{ matrix.path }}
+
+      - name: Typecheck
+        run: npm run typecheck --if-present
+
+      - name: Lint
+        run: npm run lint --if-present
+
+      - name: Format check
+        run: npm run format:check --if-present
+
+      - name: Test
+        run: npm run test --if-present
 
       - name: Build
         run: npm run build --if-present
-        working-directory: ${{ matrix.path }}

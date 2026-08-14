@@ -21,7 +21,7 @@ try {
   try {
     run(`npx sequelize-cli db:migrate --config ${configPath}`);
     console.log("✅ Database migrations complete.");
-  } catch (err) {
+  } catch {
     console.log("⚠️ Migration failed. Attempting database creation...");
 
     try {

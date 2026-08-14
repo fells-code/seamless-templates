@@ -26,7 +26,8 @@ export const requireUser =
             ? seamlessUser.email.toLowerCase()
             : null;
         const phone =
-          typeof seamlessUser.phone === "string" && seamlessUser.phone.length > 0
+          typeof seamlessUser.phone === "string" &&
+          seamlessUser.phone.length > 0
             ? seamlessUser.phone
             : null;
 

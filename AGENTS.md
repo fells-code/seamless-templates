@@ -76,8 +76,10 @@ validation step skips directory checks for those entries.
 
 ## CI
 
-- On pull requests, CI runs `npm run validate`, then installs and builds every buildable template
-  (a `package.json` with a `build` script) as a smoke test. Keep templates green.
+- On pull requests, CI runs `npm run validate`, then installs every buildable template and runs its
+  `typecheck`, `lint`, `format:check`, `test`, and `build` scripts. Each step is `--if-present`, so
+  a template that has not adopted one is skipped rather than failed, but a declared script has to
+  pass. Keep templates green.
 - On a push to `main`, the release workflow opens or updates a "version packages" PR via Changesets;
   merging it bumps the version, creates the tag the CLI pins, and publishes a GitHub Release for
   that tag with notes drawn from `CHANGELOG.md`.
@@ -93,9 +95,14 @@ validation step skips directory checks for those entries.
   hand-edit the version or `CHANGELOG.md`.
 - Keep template projects minimal and idiomatic for their framework. They are the first thing a new
   user sees, so they should run cleanly right after the CLI completes.
+- Every template declares the same verification scripts: `typecheck`, `lint`, `lint:fix`, `format`,
+  `format:check`, `test`, `test:watch`, `test:coverage`, and a `check` that runs the gate in one
+  command. Tests are Vitest, colocated as `*.test.ts` / `*.test.tsx`, and must pass without a
+  database, an auth server, or network access. A new template adopts the same set.
 
 ## Before You Finish A Change
 
 - Run `npm run validate`.
-- If you added or touched a template, install and build it locally the way CI will.
+- If you added or touched a template, install it and run `npm run check` in it locally, the way CI
+  will.
 - Add a changeset for any user-facing change.
