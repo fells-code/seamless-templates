@@ -21,8 +21,8 @@ import { MISSING_API_URL_MESSAGE } from "./lib/runtimeConfig";
 
 function LoadingScreen() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-6">
-      <div className="text-sm font-medium text-gray-600 dark:text-gray-400">
+    <div className="min-h-screen bg-surface flex items-center justify-center px-6">
+      <div className="text-sm font-medium text-ink-muted">
         Checking session...
       </div>
     </div>

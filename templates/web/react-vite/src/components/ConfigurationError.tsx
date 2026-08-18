@@ -15,17 +15,13 @@ export default function ConfigurationError({
   message,
 }: ConfigurationErrorProps) {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-6">
-      <div className="max-w-xl w-full space-y-6 rounded-xl border border-red-300 dark:border-red-800 bg-white dark:bg-gray-900 p-8">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Configuration needed
-        </h1>
+    <div className="min-h-screen bg-surface flex items-center justify-center px-6">
+      <div className="max-w-xl w-full space-y-6 rounded-card border border-red-300 bg-surface-raised p-8">
+        <h1 className="text-2xl font-bold text-ink">Configuration needed</h1>
 
-        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-          {message}
-        </p>
+        <p className="text-ink-muted leading-relaxed">{message}</p>
 
-        <pre className="text-sm text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 rounded-lg p-4 overflow-x-auto">
+        <pre className="text-sm text-ink bg-surface rounded-card p-4 overflow-x-auto">
           {`cp .env.example .env\n# VITE_API_URL=http://localhost:3000\nnpm run dev`}
         </pre>
       </div>
