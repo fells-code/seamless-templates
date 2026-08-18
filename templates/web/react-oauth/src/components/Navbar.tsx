@@ -1,12 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Link, NavLink } from "react-router-dom";
+import { LogOut, Menu, X } from "lucide-react";
 import { useAuth } from "@seamless-auth/react";
 
+/*
+ * The application chrome: a persistent sidebar on a desktop, a bar and a drawer
+ * on a phone.
+ *
+ * It reads its colours from the `shell` token family rather than from `surface`,
+ * which is what lets a theme put a deep sidebar against light content. One rule
+ * comes with that: emphasis on the shell uses `accent`, never `brand`. A theme is
+ * free to tint the shell with the brand hue, and where it does, a brand-coloured
+ * chip on a brand-coloured panel disappears.
+ */
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const navLinks = [
     { label: "Home", to: "/" },
@@ -14,114 +23,153 @@ export default function Navbar() {
     { label: "Session", to: "/session" },
   ];
 
-  return (
-    <nav className="w-full bg-white dark:bg-black border-b border-gray-200 dark:border-gray-800 relative">
-      <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link
-          to="/"
-          className="text-xl font-semibold text-gray-950 tracking-tight dark:text-white"
-        >
-          Seamless Auth - Template
-        </Link>
+  const appName = "Seamless Auth - Template";
+  const identity = user?.email || user?.phone || user?.id;
+  const initial = (identity ?? appName).trim()[0]?.toUpperCase() ?? "A";
 
-        <div className="hidden md:flex gap-10">
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
+  const monogram = (
+    <span
+      aria-hidden
+      className="grid h-9 w-9 shrink-0 place-items-center rounded-control bg-accent font-display text-sm text-accent-ink"
+    >
+      {appName.trim()[0]?.toUpperCase() ?? "A"}
+    </span>
+  );
+
+  const brand = (
+    <Link to="/" className="flex min-w-0 items-center gap-3">
+      {monogram}
+      <span className="truncate font-display text-base tracking-display text-shell-ink">
+        {appName}
+      </span>
+    </Link>
+  );
+
+  const links = (
+    <nav aria-label="Main" className="flex-1 overflow-y-auto px-3 py-5">
+      <p className="label px-3 pb-3 text-shell-ink-muted">Menu</p>
+
+      <ul className="space-y-1">
+        {navLinks.map((link) => (
+          <li key={link.to}>
+            <NavLink
               to={link.to}
-              className="relative group text-gray-700 dark:text-gray-300 font-medium"
+              end={link.to === "/"}
+              onClick={() => setMobileOpen(false)}
+              className={({ isActive }) =>
+                [
+                  "flex items-center gap-3 rounded-control px-3 py-2 text-sm",
+                  isActive
+                    ? "bg-shell-active font-semibold text-shell-ink"
+                    : "font-medium text-shell-ink-muted hover:bg-shell-active hover:text-shell-ink",
+                ].join(" ")
+              }
             >
-              {link.label}
-
-              <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-[#2169a8] group-hover:w-full transition-all duration-300" />
-            </Link>
-          ))}
-        </div>
-
-        <div className="hidden md:flex items-center gap-5">
-          {isAuthenticated ? (
-            <div className="relative">
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="h-9 w-9 rounded-full bg-[#2169a8] text-white flex items-center justify-center font-semibold"
-                aria-label="Open account menu"
-              >
-                {user?.email?.[0]?.toUpperCase() ?? "U"}
-              </button>
-
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-3 w-48 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg py-1 z-20">
-                  <div className="px-4 py-2 text-sm text-gray-700 dark:text-gray-300">
-                    {user?.email || user?.phone}
-                  </div>
-                  <button
-                    onClick={logout}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                  >
-                    Logout
-                  </button>
-                </div>
+              {({ isActive }) => (
+                <>
+                  <span
+                    aria-hidden
+                    className={
+                      isActive
+                        ? "h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
+                        : "h-1.5 w-1.5 shrink-0 rounded-full bg-shell-line"
+                    }
+                  />
+                  {link.label}
+                </>
               )}
-            </div>
-          ) : (
-            <Link
-              to="/login"
-              className="px-4 py-2 rounded-md text-sm bg-[#2169a8] text-white hover:bg-[#1a568a] transition"
-            >
-              Login
-            </Link>
-          )}
+            </NavLink>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+
+  const account = (
+    <div className="border-t border-shell-line px-3 py-3">
+      {isAuthenticated ? (
+        <div className="flex items-center gap-3 px-1">
+          <span
+            aria-hidden
+            className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-shell-active text-xs font-semibold text-shell-ink"
+          >
+            {initial}
+          </span>
+
+          <span className="min-w-0 flex-1 truncate text-xs text-shell-ink-muted">
+            {identity}
+          </span>
+
+          <button
+            type="button"
+            onClick={logout}
+            aria-label="Sign out"
+            className="rounded-control p-1.5 text-shell-ink-muted hover:bg-shell-active hover:text-shell-ink"
+          >
+            <LogOut size={16} />
+          </button>
         </div>
+      ) : (
+        <Link
+          to="/login"
+          className="block rounded-control bg-accent px-3 py-2 text-center text-sm font-medium text-accent-ink"
+        >
+          Sign in
+        </Link>
+      )}
+    </div>
+  );
+
+  return (
+    <>
+      <aside className="shell-column sticky top-0 hidden h-screen flex-col border-r border-shell-line bg-shell lg:flex">
+        <div className="border-b border-shell-line px-5 py-5">{brand}</div>
+        {links}
+        {account}
+      </aside>
+
+      <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-shell-line bg-shell px-4 py-3 lg:hidden">
+        {brand}
 
         <button
-          className="md:hidden text-gray-700 dark:text-gray-300"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle navigation"
+          type="button"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Open navigation"
+          aria-expanded={mobileOpen}
+          className="rounded-control p-2 text-shell-ink-muted hover:bg-shell-active hover:text-shell-ink"
         >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
+          <Menu size={20} />
         </button>
-      </div>
+      </header>
 
       {mobileOpen && (
-        <div className="md:hidden bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800 px-4 py-4 space-y-4">
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="block text-gray-700 dark:text-gray-300 text-lg font-medium"
-              onClick={() => setMobileOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
+        <div className="fixed inset-0 z-40 flex lg:hidden">
+          <button
+            type="button"
+            aria-label="Close navigation"
+            onClick={() => setMobileOpen(false)}
+            className="flex-1 bg-ink/50"
+          />
 
-          {isAuthenticated ? (
-            <>
-              <div className="text-gray-700 dark:text-gray-300">
-                {user?.email || user?.phone}
-              </div>
+          <div className="shell-column rise-in flex flex-col border-l border-shell-line bg-shell">
+            <div className="flex items-center justify-between gap-3 border-b border-shell-line px-4 py-3">
+              {brand}
 
               <button
-                onClick={() => {
-                  logout();
-                  setMobileOpen(false);
-                }}
-                className="w-full px-4 py-2 rounded-md bg-[#2169a8] text-white hover:bg-[#1a568a] transition"
+                type="button"
+                onClick={() => setMobileOpen(false)}
+                aria-label="Close navigation"
+                className="rounded-control p-2 text-shell-ink-muted hover:bg-shell-active hover:text-shell-ink"
               >
-                Logout
+                <X size={20} />
               </button>
-            </>
-          ) : (
-            <Link
-              to="/login"
-              onClick={() => setMobileOpen(false)}
-              className="block w-full px-4 py-2 text-center rounded-md bg-[#2169a8] text-white hover:bg-[#1a568a] transition"
-            >
-              Login
-            </Link>
-          )}
+            </div>
+
+            {links}
+            {account}
+          </div>
         </div>
       )}
-    </nav>
+    </>
   );
 }

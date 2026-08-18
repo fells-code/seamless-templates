@@ -38,12 +38,8 @@ function deviceTypeLabel(deviceType: Credential["deviceType"]): string {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4">
-      <dt className="w-56 shrink-0 text-sm text-gray-500 dark:text-gray-400">
-        {label}
-      </dt>
-      <dd className="text-sm font-medium text-gray-900 dark:text-gray-100 break-all">
-        {value}
-      </dd>
+      <dt className="w-56 shrink-0 text-sm text-ink-muted">{label}</dt>
+      <dd className="text-sm font-medium text-ink break-all">{value}</dd>
     </div>
   );
 }
@@ -60,12 +56,8 @@ function Section({
   return (
     <section className="space-y-4">
       <div className="space-y-1">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-          {title}
-        </h2>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          {description}
-        </p>
+        <h2 className="text-xl font-semibold text-ink">{title}</h2>
+        <p className="text-sm text-ink-muted">{description}</p>
       </div>
 
       {children}
@@ -75,7 +67,7 @@ function Section({
 
 function Card({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+    <div className="rounded-card border border-line bg-surface-raised p-6">
       {children}
     </div>
   );
@@ -136,19 +128,15 @@ export default function Session() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black px-6 py-16">
+    <div className="min-h-screen bg-surface px-6 py-16">
       <div className="max-w-3xl mx-auto space-y-12">
         <header className="space-y-3">
-          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-            Your session
-          </h1>
-          <p className="text-gray-700 dark:text-gray-400">
+          <h1 className="text-3xl font-extrabold text-ink">Your session</h1>
+          <p className="text-ink-muted">
             Everything on this page comes from{" "}
-            <code className="px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-800">
-              useAuth()
-            </code>
-            . No tokens are handled here: the session travels as an HttpOnly
-            cookie, and the SDK exposes the identity behind it.
+            <code className="px-1 py-0.5 rounded bg-line">useAuth()</code>. No
+            tokens are handled here: the session travels as an HttpOnly cookie,
+            and the SDK exposes the identity behind it.
           </p>
         </header>
 
@@ -179,7 +167,7 @@ export default function Session() {
         >
           <Card>
             {user.roles.length === 0 ? (
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-ink-muted">
                 This user has no roles yet. Assign them in the admin console.
               </p>
             ) : (
@@ -187,7 +175,7 @@ export default function Session() {
                 {user.roles.map((role) => (
                   <li
                     key={role}
-                    className="px-2 py-1 rounded-md text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+                    className="px-2 py-1 rounded-control text-sm font-medium bg-surface text-ink"
                   >
                     {role}
                   </li>
@@ -195,10 +183,10 @@ export default function Session() {
               </ul>
             )}
 
-            <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-4 text-sm text-ink-muted">
               Roles granted through an OAuth signup come from the auth server's
               default roles, not from the provider. Gate on them with{" "}
-              <code className="px-1 py-0.5 rounded bg-gray-200 dark:bg-gray-800">
+              <code className="px-1 py-0.5 rounded bg-line">
                 hasScopedRole("yourRole")
               </code>
               .
@@ -235,7 +223,7 @@ export default function Session() {
                 />
               </dl>
             ) : (
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-ink-muted">
                 Reading step-up status...
               </p>
             )}
@@ -276,7 +264,7 @@ export default function Session() {
         >
           <Card>
             {credentials.length === 0 ? (
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-ink-muted">
                 No passkeys registered. This user signs in with a one-time code
                 or an OAuth provider.
               </p>
@@ -285,9 +273,9 @@ export default function Session() {
                 {credentials.map((credential) => (
                   <li
                     key={credential.id}
-                    className="border-b border-gray-200 dark:border-gray-800 pb-4 last:border-0 last:pb-0"
+                    className="border-b border-line pb-4 last:border-0 last:pb-0"
                   >
-                    <p className="font-medium text-gray-900 dark:text-gray-100">
+                    <p className="font-medium text-ink">
                       {credentialLabel(credential)}
                     </p>
                     <dl className="mt-2 space-y-2">
@@ -325,7 +313,7 @@ export default function Session() {
                 type="button"
                 onClick={handleRefresh}
                 disabled={busy}
-                className="px-4 py-2 rounded-md text-sm bg-[#2169a8] text-white hover:bg-[#1a568a] transition disabled:opacity-50"
+                className="px-4 py-2 rounded-control text-sm bg-brand text-brand-ink hover:bg-brand-hover transition disabled:opacity-50"
               >
                 Refresh session
               </button>
@@ -334,26 +322,22 @@ export default function Session() {
                 type="button"
                 onClick={handleSignOutEverywhere}
                 disabled={busy}
-                className="px-4 py-2 rounded-md text-sm border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition disabled:opacity-50"
+                className="px-4 py-2 rounded-control text-sm border border-line text-ink hover:bg-surface transition disabled:opacity-50"
               >
                 Sign out everywhere
               </button>
             </div>
 
-            {status && (
-              <p className="mt-4 text-sm text-gray-700 dark:text-gray-300">
-                {status}
-              </p>
-            )}
+            {status && <p className="mt-4 text-sm text-ink-muted">{status}</p>}
           </Card>
         </Section>
 
-        <details className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
-          <summary className="cursor-pointer font-medium text-gray-900 dark:text-gray-100">
+        <details className="rounded-card border border-line bg-surface-raised p-6">
+          <summary className="cursor-pointer font-medium text-ink">
             Raw session data
           </summary>
 
-          <pre className="mt-4 text-sm text-gray-800 dark:text-gray-200 overflow-x-auto">
+          <pre className="mt-4 text-sm text-ink overflow-x-auto">
             {JSON.stringify(
               { user, credentials, organizations, activeOrganization },
               null,
