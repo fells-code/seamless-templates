@@ -27,10 +27,16 @@ seamless-templates/
 │  │     └─ ...               # the actual starter project
 │  └─ api/
 │     └─ <framework>/         # one directory per API starter
-└─ scripts/validate-templates.mjs
+├─ shared/
+│  └─ react-app/              # source of truth for what both React starters share
+└─ scripts/
+   ├─ validate-templates.mjs
+   └─ sync-shared.mjs
 ```
 
 Each template is a complete, runnable project. The CLI downloads this repository at a pinned tag, copies the selected template directories into the new project (`web/`, `api/`), and fills their `.env` files from each template's declared contract.
+
+Because the CLI copies one template directory and nothing else, a template cannot reference anything outside itself. Anything two templates share therefore lives in `shared/`, and each template carries a committed copy of it. See [shared/react-app/README.md](shared/react-app/README.md).
 
 ---
 
@@ -105,7 +111,8 @@ The CLI computes the shared values and resolves the `{{...}}` placeholders in `e
 2. Add a committed `.env.example` describing its environment contract.
 3. Add a `template.json` manifest (see above).
 4. Add an entry to `registry.json`.
-5. Run `npm run validate` and open a pull request.
+5. If it is a React web starter, add it to `targets` in `shared/react-app/sync.json` and run `npm run sync:shared`.
+6. Run `npm run validate` and open a pull request.
 
 CI validates the registry and every manifest, then installs each template and runs its typecheck, lint, format check, tests, and build to confirm it works before it ships.
 
@@ -132,7 +139,13 @@ npm install
 npm run validate
 ```
 
-`npm run validate` checks that `registry.json` is well-formed and that every referenced template has a valid `template.json` and `.env.example`.
+`npm run validate` checks that `registry.json` is well-formed, that every referenced template has a valid `template.json` and `.env.example`, and that no template copy of a shared source has drifted from `shared/`.
+
+To change something both React starters use (the design tokens, the app shell layout, or the UI kit), edit the file under `shared/react-app/` and run:
+
+```bash
+npm run sync:shared
+```
 
 ---
 

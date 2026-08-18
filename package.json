@@ -19,6 +19,7 @@
   },
   "scripts": {
     "validate": "node scripts/validate-templates.mjs",
+    "sync:shared": "node scripts/sync-shared.mjs",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release:stable": "node scripts/tag-release.mjs",

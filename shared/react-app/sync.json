@@ -1,0 +1,8 @@
+{
+  "targets": ["templates/web/react-vite", "templates/web/react-oauth"],
+  "files": [
+    { "from": "index.css", "to": "src/index.css" },
+    { "from": "layouts/Layout.tsx", "to": "src/layouts/Layout.tsx" },
+    { "from": "components/kit", "to": "src/components/kit" }
+  ]
+}
