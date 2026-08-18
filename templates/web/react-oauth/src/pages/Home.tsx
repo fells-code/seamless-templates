@@ -1,61 +1,56 @@
 import { useAuth } from "@seamless-auth/react";
-import { Link } from "react-router-dom";
+import { ActionCard, Screen, StatRow } from "../components/kit";
 
-// Rendered only for authenticated users (see RequireAuth in App.tsx), so this is
-// where an OAuth-signed-in user lands after the callback completes.
+/*
+ * Where a signed-in visitor lands, composed from the kit like every other screen.
+ *
+ * Rendered only for authenticated users (see RequireAuth in App.tsx), so this is
+ * where an OAuth-signed-in user arrives once the callback completes. Signing out
+ * lives in the shell, not here.
+ */
 export default function Home() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
+
+  const identity = user?.email || user?.phone || user?.id || "your account";
 
   return (
-    <div className="max-w-xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-        You are signed in
-      </h1>
-
-      <p className="text-gray-700 dark:text-gray-400">
+    <Screen
+      archetype="dashboard"
+      title="You are signed in"
+      tagline={`Signed in as ${identity}.`}
+      band={
+        <StatRow
+          onBand
+          items={[
+            { label: "Roles", value: user?.roles.length ?? 0 },
+            {
+              label: "Account",
+              value: user?.roles.length
+                ? user.roles.join(", ")
+                : "No roles yet",
+            },
+          ]}
+        />
+      }
+    >
+      <p className="max-w-prose text-ink-muted">
         You authenticated through an OAuth provider. The auth server issued its
         own identity for the session, so the rest of the app never talks to the
         provider again.
       </p>
 
-      <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900 space-y-2">
-        <p className="text-gray-700 dark:text-gray-300">
-          Signed in as{" "}
-          <span className="font-medium text-gray-900 dark:text-gray-100">
-            {user?.email || user?.phone || user?.id}
-          </span>
-        </p>
-
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          {user?.roles.length
-            ? `Roles: ${user.roles.join(", ")}`
-            : "No roles assigned yet."}
-        </p>
-      </div>
-
-      <div className="flex items-center gap-4">
-        <Link
+      <div className="stagger mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <ActionCard
           to="/session"
-          className="text-blue-600 dark:text-blue-400 underline"
-        >
-          Inspect this session
-        </Link>
-
-        <Link
+          title="Inspect this session"
+          body="What the auth server knows about you right now."
+        />
+        <ActionCard
           to="/about"
-          className="text-blue-600 dark:text-blue-400 underline"
-        >
-          How this example works
-        </Link>
-
-        <button
-          type="button"
-          onClick={logout}
-          className="px-4 py-2 rounded-md bg-[#2169a8] text-white hover:bg-[#1a568a] transition"
-        >
-          Sign out
-        </button>
+          title="How this works"
+          body="The pieces of Seamless Auth and how they fit together."
+        />
       </div>
-    </div>
+    </Screen>
   );
 }

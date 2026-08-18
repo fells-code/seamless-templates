@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getOAuthErrorCode, useAuth } from "@seamless-auth/react";
 
+import { PrimaryButton } from "../components/kit";
 import { OAUTH_PROVIDER_STORAGE_KEY } from "./Login";
 
 // The three failures the auth server reports with a machine-readable code are
@@ -57,20 +58,18 @@ export default function OAuthCallback() {
   }, [finishOAuthLogin, navigate, searchParams]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
-      <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-surface px-6 text-center">
+      <h2 className="title text-ink">
         {error ? "Sign-in failed" : "Completing sign-in..."}
       </h2>
       {error && (
         <>
-          <p className="mt-3 text-gray-600 dark:text-gray-400">{error}</p>
-          <button
-            type="button"
-            onClick={() => navigate("/login")}
-            className="mt-6 px-4 py-2 rounded-md bg-[#2169a8] text-white hover:bg-[#1a568a] transition"
-          >
-            Back to login
-          </button>
+          <p className="mt-3 max-w-prose text-ink-muted">{error}</p>
+          <div className="mt-6">
+            <PrimaryButton onClick={() => navigate("/login")}>
+              Back to login
+            </PrimaryButton>
+          </div>
         </>
       )}
     </div>

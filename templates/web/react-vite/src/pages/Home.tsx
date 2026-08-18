@@ -1,90 +1,68 @@
-import { AuthRoutes, useAuth } from "@seamless-auth/react";
-import { Link } from "react-router-dom";
+import { useAuth } from "@seamless-auth/react";
+import { Navigate } from "react-router-dom";
+import { ActionCard, Screen, StatRow } from "../components/kit";
 
+/*
+ * Where a signed-in visitor lands. Composed from the kit, like every other screen.
+ */
 export default function Home() {
   const { isAuthenticated, loading, user } = useAuth();
 
   if (loading) {
     return (
-      <div className="max-w-xl mx-auto py-20 text-center text-gray-600 dark:text-gray-400">
+      <div className="px-8 py-20 text-sm text-ink-muted">
         Checking your session...
       </div>
     );
   }
 
+  // Signing out anywhere in the app lands back here, so this redirect is what
+  // returns a signed-out visitor to the auth screens. The OAuth starter gets the
+  // same behaviour from RequireAuth on its index route, and the conformance suite
+  // in seamless-cli asserts it: after logout the sign-in form has to reappear.
   if (!isAuthenticated) {
-    return (
-      <div className="max-w-md mx-auto space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Sign in
-        </h1>
-
-        <p className="text-gray-700 dark:text-gray-400">
-          This application uses Seamless Auth for passwordless authentication.
-          Sign in to see how authentication state flows through the UI and API.
-        </p>
-
-        <AuthRoutes />
-
-        <p className="text-sm text-gray-500 dark:text-gray-500">
-          Learn more in the{" "}
-          <a
-            href="https://docs.seamlessauth.com"
-            target="_blank"
-            rel="noreferrer"
-            className="underline"
-          >
-            Seamless Auth documentation
-          </a>
-          .
-        </p>
-      </div>
-    );
+    return <Navigate to="/login" replace />;
   }
 
+  const identity = user?.email || user?.phone || user?.id || "your account";
+
   return (
-    <div className="max-w-xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-        You are signed in
-      </h1>
-
-      <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 bg-white dark:bg-gray-900 space-y-2">
-        <p className="text-gray-700 dark:text-gray-300">
-          Signed in as{" "}
-          <span className="font-medium text-gray-900 dark:text-gray-100">
-            {user?.email || user?.phone || user?.id}
-          </span>
-        </p>
-
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          {user?.roles.length
-            ? `Roles: ${user.roles.join(", ")}`
-            : "No roles assigned yet."}
-        </p>
-      </div>
-
-      <div className="space-y-2">
-        <Link
+    <Screen
+      archetype="dashboard"
+      title="You are signed in"
+      tagline={`Signed in as ${identity}.`}
+      band={
+        <StatRow
+          onBand
+          items={[
+            { label: "Roles", value: user?.roles.length ?? 0 },
+            {
+              label: "Account",
+              value: user?.roles.length
+                ? user.roles.join(", ")
+                : "No roles yet",
+            },
+          ]}
+        />
+      }
+    >
+      <div className="stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <ActionCard
           to="/session"
-          className="block text-blue-600 dark:text-blue-400 underline"
-        >
-          Inspect this session
-        </Link>
-
-        <Link
+          title="Inspect this session"
+          body="What the auth server knows about you right now."
+        />
+        <ActionCard
           to="/beta"
-          className="block text-blue-600 dark:text-blue-400 underline"
-        >
-          View protected route example
-        </Link>
-
-        <Link
+          title="A protected route"
+          body="A page and an API call that both require a role."
+        />
+        <ActionCard
           to="/about"
-          className="block text-blue-600 dark:text-blue-400 underline"
-        >
-          Learn how this example works
-        </Link>
+          title="How this works"
+          body="The pieces of Seamless Auth and how they fit together."
+        />
       </div>
-    </div>
+    </Screen>
   );
 }

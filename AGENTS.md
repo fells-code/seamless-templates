@@ -58,8 +58,16 @@ guidance may extend them but must not contradict them.
   - `template.json`: the manifest the CLI uses to place the template (`targetDir`) and configure its
     environment (`env.fromExample`, `env.set` with `{{placeholder}}` values the CLI resolves).
   - `.env.example`: the committed environment contract.
+- `shared/react-app/`: the source of truth for what both React starters share (the design tokens in
+  `index.css`, the app shell layout, and the UI kit under `components/kit`). The CLI copies exactly
+  one template directory into a new project, so a template cannot reference anything outside itself.
+  Each template therefore carries a committed copy, written by `npm run sync:shared`. Edit the file
+  under `shared/react-app/`, never a template's copy.
 - [scripts/validate-templates.mjs](scripts/validate-templates.mjs): structural validation of the
-  registry and manifests. The `--matrix` flag emits the buildable template list for CI.
+  registry and manifests, plus the shared-source drift check. The `--matrix` flag emits the buildable
+  template list for CI.
+- [scripts/sync-shared.mjs](scripts/sync-shared.mjs): copies `shared/react-app` into every template
+  listed in `shared/react-app/sync.json`. `--check` reports drift instead of writing.
 
 The registry and manifest schemas are documented in [README.md](README.md). Keep them in sync with
 how the CLI consumes them; a change to either schema is a coordinated change with `seamless-cli`.
@@ -69,7 +77,8 @@ how the CLI consumes them; a change to either schema is a coordinated change wit
 1. Create or edit `templates/<kind>/<framework>/`.
 2. Keep a committed `.env.example` and a `template.json` manifest.
 3. Update `registry.json`.
-4. Run `npm run validate`, then add a changeset.
+4. If the change touches something under `shared/`, edit it there and run `npm run sync:shared`.
+5. Run `npm run validate`, then add a changeset.
 
 A `coming-soon` status advertises a template in the CLI without requiring its content yet, so the
 validation step skips directory checks for those entries.

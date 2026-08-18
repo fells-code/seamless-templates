@@ -1,4 +1,5 @@
-// Validates registry.json and every referenced template manifest.
+// Validates registry.json, every referenced template manifest, and the shared React
+// sources each template carries a copy of.
 //
 // Usage:
 //   node scripts/validate-templates.mjs            human-readable validation, exits 1 on error
@@ -7,10 +8,14 @@
 //
 // The contract enforced here is the same one the Seamless CLI relies on when it reads the
 // registry to build prompts and scaffold a project, so a green run means the CLI can consume it.
+// The shared-source check comes from scripts/sync-shared.mjs and fails when a template copy
+// has been edited instead of the source under shared/react-app.
 
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { checkSharedSync } from "./sync-shared.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const matrixMode = process.argv.includes("--matrix");
@@ -144,6 +149,10 @@ function validate() {
 
 const buildable = validate();
 
+for (const problem of checkSharedSync()) {
+  fail(problem);
+}
+
 if (errors.length > 0) {
   for (const err of errors) {
     console.error(`  x ${err}`);
@@ -155,5 +164,8 @@ if (errors.length > 0) {
 if (matrixMode) {
   process.stdout.write(JSON.stringify(buildable));
 } else {
-  console.log("registry.json and all template manifests are valid.");
+  console.log(
+    "registry.json and all template manifests are valid, and every template copy " +
+      "matches shared/react-app.",
+  );
 }
