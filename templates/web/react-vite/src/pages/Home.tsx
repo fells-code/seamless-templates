@@ -1,5 +1,5 @@
 import { useAuth } from "@seamless-auth/react";
-import { Link } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { ActionCard, Screen, StatRow } from "../components/kit";
 
 /*
@@ -16,23 +16,12 @@ export default function Home() {
     );
   }
 
+  // Signing out anywhere in the app lands back here, so this redirect is what
+  // returns a signed-out visitor to the auth screens. The OAuth starter gets the
+  // same behaviour from RequireAuth on its index route, and the conformance suite
+  // in seamless-cli asserts it: after logout the sign-in form has to reappear.
   if (!isAuthenticated) {
-    return (
-      <div className="px-8 py-20">
-        <h1 className="title text-ink">You are signed out</h1>
-        <p className="mt-3 max-w-prose text-ink-muted">
-          Sign in to see how authentication state flows through the UI and the
-          API.
-        </p>
-
-        <Link
-          to="/login"
-          className="lift mt-8 inline-block rounded-control bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink hover:bg-brand-hover"
-        >
-          Sign in
-        </Link>
-      </div>
-    );
+    return <Navigate to="/login" replace />;
   }
 
   const identity = user?.email || user?.phone || user?.id || "your account";
