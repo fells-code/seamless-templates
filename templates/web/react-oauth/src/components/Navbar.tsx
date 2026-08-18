@@ -16,6 +16,7 @@ import { useAuth } from "@seamless-auth/react";
 export default function Navbar() {
   const { isAuthenticated, logout, user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
 
   const navLinks = [
     { label: "Home", to: "/" },
@@ -85,30 +86,54 @@ export default function Navbar() {
     </nav>
   );
 
+  // The account control is a menu rather than a bare sign-out button because the
+  // conformance suite in seamless-cli drives it by accessible name: it opens
+  // "Open account menu" and then clicks "Logout". Renaming either breaks that
+  // suite rather than anything in this repository.
   const account = (
-    <div className="border-t border-shell-line px-3 py-3">
+    <div className="relative border-t border-shell-line px-3 py-3">
       {isAuthenticated ? (
-        <div className="flex items-center gap-3 px-1">
-          <span
-            aria-hidden
-            className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-shell-active text-xs font-semibold text-shell-ink"
-          >
-            {initial}
-          </span>
+        <>
+          {accountOpen && (
+            <div className="absolute inset-x-3 bottom-full mb-2 overflow-hidden rounded-control border border-shell-line bg-shell shadow-lifted">
+              <p className="truncate border-b border-shell-line px-3 py-2 text-xs text-shell-ink-muted">
+                {identity}
+              </p>
 
-          <span className="min-w-0 flex-1 truncate text-xs text-shell-ink-muted">
-            {identity}
-          </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setAccountOpen(false);
+                  setMobileOpen(false);
+                  logout();
+                }}
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-shell-ink hover:bg-shell-active"
+              >
+                <LogOut size={16} />
+                Logout
+              </button>
+            </div>
+          )}
 
           <button
             type="button"
-            onClick={logout}
-            aria-label="Sign out"
-            className="rounded-control p-1.5 text-shell-ink-muted hover:bg-shell-active hover:text-shell-ink"
+            aria-label="Open account menu"
+            aria-expanded={accountOpen}
+            onClick={() => setAccountOpen((open) => !open)}
+            className="flex w-full items-center gap-3 rounded-control px-1 py-1.5 text-left hover:bg-shell-active"
           >
-            <LogOut size={16} />
+            <span
+              aria-hidden
+              className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-shell-active text-xs font-semibold text-shell-ink"
+            >
+              {initial}
+            </span>
+
+            <span className="min-w-0 flex-1 truncate text-xs text-shell-ink-muted">
+              {identity}
+            </span>
           </button>
-        </div>
+        </>
       ) : (
         <Link
           to="/login"
