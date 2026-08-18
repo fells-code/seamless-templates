@@ -18,9 +18,9 @@ export default function About() {
           </h2>
           <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
             Seamless Auth is a passwordless authentication system designed to be
-            embedded directly into your application. It supports passkeys,
-            magic links, email OTP, phone OTP, and optional OAuth providers
-            while keeping the auth server self-hostable and auditable.
+            embedded directly into your application. It supports passkeys, magic
+            links, email OTP, phone OTP, and optional OAuth providers while
+            keeping the auth server self-hostable and auditable.
           </p>
           <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
             The React SDK manages auth state through `AuthProvider`, built-in

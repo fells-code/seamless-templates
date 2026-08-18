@@ -69,8 +69,8 @@ export default function ProtectedExample() {
           </h2>
           <p className="text-gray-700 dark:text-gray-300">
             You are currently signed in as{" "}
-            <span className="font-medium">{userLabel}</span>.
-            Access to this page is restricted to authenticated users.
+            <span className="font-medium">{userLabel}</span>. Access to this
+            page is restricted to authenticated users.
           </p>
         </section>
 

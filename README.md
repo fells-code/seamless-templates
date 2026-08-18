@@ -107,7 +107,21 @@ The CLI computes the shared values and resolves the `{{...}}` placeholders in `e
 4. Add an entry to `registry.json`.
 5. Run `npm run validate` and open a pull request.
 
-CI validates the registry and every manifest, then installs and builds each template to confirm it works before it ships.
+CI validates the registry and every manifest, then installs each template and runs its typecheck, lint, format check, tests, and build to confirm it works before it ships.
+
+### Checks every template ships
+
+A scaffolded project is expected to be verifiable on the first `npm install`, so each template declares the same script names. CI runs them with `--if-present`, and a user gets the whole set locally with `npm run check`.
+
+| Script | Purpose |
+| --- | --- |
+| `typecheck` | TypeScript with no emit |
+| `lint` | ESLint flat config over the project |
+| `format:check` | Prettier, with `eslint-config-prettier` keeping the two from disagreeing |
+| `test` | Vitest, no database or network needed |
+| `check` | All of the above in one command |
+
+Tests sit next to the code they cover as `*.test.ts` / `*.test.tsx`. They are meant to be a starting point a user extends, not exhaustive coverage: they cover the configuration and startup logic that decides whether a fresh scaffold runs at all.
 
 ---
 

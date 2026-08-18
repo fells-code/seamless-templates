@@ -23,7 +23,9 @@ current user from the session, and protects an example route by role.
   problem at once.
 - Sequelize + Postgres with migrations that run automatically on boot.
 - Docker Compose for a local Postgres plus the API.
-- ESLint (flat config) and a Node 24 / ESM TypeScript setup.
+- ESLint (flat config), Prettier, and a Node 24 / ESM TypeScript setup.
+- Vitest with unit tests covering the database and environment resolution, and a single
+  `npm run check` gate that runs typecheck, lint, format, and tests together.
 
 ## Environment variables
 
@@ -33,20 +35,20 @@ The committed contract lives in [.env.example](.env.example). Copy it before run
 cp .env.example .env
 ```
 
-| Variable | Purpose |
-| --- | --- |
-| `NODE_ENV` | `development` enables the dev messaging handlers that log OTP and magic-link tokens locally; set to `production` before deploying |
-| `AUTH_SERVER_URL` | URL of your Seamless Auth server |
-| `SERVE_ADMIN_CONSOLE` | `true` to serve the admin dashboard from this API at `/console`; `false` when it is hosted elsewhere |
-| `UI_ORIGINS` | Comma-separated web origins allowed by CORS |
-| `COOKIE_DOMAIN` | Optional cookie domain for production, for example `.example.com` |
-| `COOKIE_SIGNING_KEY` | Secret used to sign API-generated cookies |
-| `API_SERVICE_TOKEN` | Service token shared with Seamless Auth (from the portal) |
-| `JWKS_KID` | JWKS key id the auth server signs with |
-| `DATABASE_URL` | Full Postgres connection string. Wins over the `DB_*` values when set |
-| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Postgres connection, used when `DATABASE_URL` is empty |
-| `DB_SSL_REJECT_UNAUTHORIZED` | Set to `false` only for a certificate that does not chain to a public CA |
-| `DB_LOGGING` | Set to `true` to log SQL in development |
+| Variable                                                  | Purpose                                                                                                                           |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `NODE_ENV`                                                | `development` enables the dev messaging handlers that log OTP and magic-link tokens locally; set to `production` before deploying |
+| `AUTH_SERVER_URL`                                         | URL of your Seamless Auth server                                                                                                  |
+| `SERVE_ADMIN_CONSOLE`                                     | `true` to serve the admin dashboard from this API at `/console`; `false` when it is hosted elsewhere                              |
+| `UI_ORIGINS`                                              | Comma-separated web origins allowed by CORS                                                                                       |
+| `COOKIE_DOMAIN`                                           | Optional cookie domain for production, for example `.example.com`                                                                 |
+| `COOKIE_SIGNING_KEY`                                      | Secret used to sign API-generated cookies                                                                                         |
+| `API_SERVICE_TOKEN`                                       | Service token shared with Seamless Auth (from the portal)                                                                         |
+| `JWKS_KID`                                                | JWKS key id the auth server signs with                                                                                            |
+| `DATABASE_URL`                                            | Full Postgres connection string. Wins over the `DB_*` values when set                                                             |
+| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Postgres connection, used when `DATABASE_URL` is empty                                                                            |
+| `DB_SSL_REJECT_UNAUTHORIZED`                              | Set to `false` only for a certificate that does not chain to a public CA                                                          |
+| `DB_LOGGING`                                              | Set to `true` to log SQL in development                                                                                           |
 
 `assertEnvironment` in [src/lib/env.ts](src/lib/env.ts) runs before the server is built. The auth
 options are read once at startup, so a missing value used to surface as a 500 on the first
@@ -67,11 +69,11 @@ When you scaffold with `seamless init` against a managed instance, the CLI fills
 into `.env` from your logged-in profile, so the API points at the managed auth server instead of
 localhost:
 
-| `.env` key | Filled from |
-| --- | --- |
-| `AUTH_SERVER_URL` | `{{authServerUrl}}` (your managed instance URL) |
-| `API_SERVICE_TOKEN` | `{{apiToken}}` (portal-issued service token) |
-| `JWKS_KID` | `{{jwksKid}}` |
+| `.env` key           | Filled from                                      |
+| -------------------- | ------------------------------------------------ |
+| `AUTH_SERVER_URL`    | `{{authServerUrl}}` (your managed instance URL)  |
+| `API_SERVICE_TOKEN`  | `{{apiToken}}` (portal-issued service token)     |
+| `JWKS_KID`           | `{{jwksKid}}`                                    |
 | `COOKIE_SIGNING_KEY` | `{{secret:32}}` (freshly generated per scaffold) |
 
 The database and origin variables keep their `.env.example` defaults; adjust them for your
@@ -146,12 +148,12 @@ npm run db:create      # create the database if it is missing
 
 ## API endpoints
 
-| Method | Route | Description |
-| --- | --- | --- |
-| GET | `/` | Health check |
-| ALL | `/auth/*` | Seamless Auth server-mode adapter |
-| GET | `/console/*` | Seamless admin dashboard, reverse-proxied from the auth server (only when `SERVE_ADMIN_CONSOLE=true`) |
-| GET | `/beta_users` | Example route, restricted to the `beta_user` role |
+| Method | Route         | Description                                                                                           |
+| ------ | ------------- | ----------------------------------------------------------------------------------------------------- |
+| GET    | `/`           | Health check                                                                                          |
+| ALL    | `/auth/*`     | Seamless Auth server-mode adapter                                                                     |
+| GET    | `/console/*`  | Seamless admin dashboard, reverse-proxied from the auth server (only when `SERVE_ADMIN_CONSOLE=true`) |
+| GET    | `/beta_users` | Example route, restricted to the `beta_user` role                                                     |
 
 ## Admin console
 
@@ -175,15 +177,48 @@ Without it, sign-in and step-up both fail at the finish step even though the
 challenge starts normally. The RP ID (`RPID`) ignores the port, so it does not
 need to change.
 
+## Testing, linting, and formatting
+
+Tests run on [Vitest](https://vitest.dev). Test files sit next to the code they cover as
+`*.test.ts`, so `src/lib/env.test.ts` covers `src/lib/env.ts`. There is no config file: the Vitest
+defaults already pick those up and run them in a Node environment.
+
+The shipped tests cover the two pieces of startup logic that decide whether the API can run at all,
+and they need neither a database nor a running auth server:
+
+- [src/lib/databaseUrl.test.ts](src/lib/databaseUrl.test.ts): which connection string wins, how
+  credentials are escaped, and when `sslmode=require` becomes a driver option.
+- [src/lib/env.test.ts](src/lib/env.test.ts): the boot-time check, including the placeholders
+  `seamless init` writes into a managed `DATABASE_URL`.
+
+Add your own alongside them. Anything that talks to Postgres or to the auth server belongs in an
+integration test you run against the Docker Compose stack, not here.
+
+ESLint uses the flat config in [eslint.config.ts](eslint.config.ts) and covers the whole project,
+including `models/`, `migrations/`, and `scripts/`. Prettier owns formatting, and
+`eslint-config-prettier` switches off the ESLint rules that would fight it, so the two never
+disagree about the same line.
+
+`npm run build` compiles with [tsconfig.build.json](tsconfig.build.json), which excludes `*.test.ts`
+so tests stay out of `dist/`. `npm run typecheck` uses the full `tsconfig.json` and does check them.
+
 ## Scripts
 
 ```bash
-npm run dev        # run migrations, then start with hot reload
-npm run build      # compile TypeScript to dist/
-npm run start      # run migrations, then start the compiled build
-npm run lint       # eslint src
-npm run migrate    # run pending migrations
-npm run db:create  # create the database if missing
+npm run dev           # run migrations, then start with hot reload
+npm run build         # compile TypeScript to dist/
+npm run start         # run migrations, then start the compiled build
+npm run check         # typecheck, lint, format check, and tests
+npm run typecheck     # tsc --noEmit, tests included
+npm run lint          # eslint
+npm run lint:fix      # eslint --fix
+npm run format        # prettier --write
+npm run format:check  # prettier --check
+npm test              # vitest run
+npm run test:watch    # vitest in watch mode
+npm run test:coverage # vitest with a v8 coverage report
+npm run migrate       # run pending migrations
+npm run db:create     # create the database if missing
 ```
 
 ## License

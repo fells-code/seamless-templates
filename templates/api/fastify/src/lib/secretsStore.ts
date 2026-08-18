@@ -3,9 +3,9 @@
  * Licensed under the GNU Affero General Public License v3.0
  */
 
-import getLogger from './logger.js';
+import getLogger from "./logger.js";
 
-const logger = getLogger('secret_store');
+const logger = getLogger("secret_store");
 
 export async function getSecret(key: string): Promise<string> {
   const value = process.env[key];

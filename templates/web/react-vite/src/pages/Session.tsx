@@ -163,7 +163,10 @@ export default function Session() {
               <Field label="User id" value={user.id} />
               <Field label="Email" value={user.email} />
               <Field label="Phone" value={user.phone || "not set"} />
-              <Field label="Last login" value={formatDateTime(user.lastLogin)} />
+              <Field
+                label="Last login"
+                value={formatDateTime(user.lastLogin)}
+              />
               <Field
                 label="Active organization id"
                 value={user.activeOrganizationId ?? "none in this token"}
@@ -221,7 +224,10 @@ export default function Session() {
           <Card>
             {stepUpStatus ? (
               <dl className="space-y-3">
-                <Field label="Fresh" value={stepUpStatus.fresh ? "yes" : "no"} />
+                <Field
+                  label="Fresh"
+                  value={stepUpStatus.fresh ? "yes" : "no"}
+                />
                 <Field
                   label="Method"
                   value={stepUpStatus.method ?? "never verified"}

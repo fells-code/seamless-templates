@@ -49,8 +49,8 @@ sending every auth request to its own origin, where the failure would read as an
 When you scaffold with `seamless init` against a managed instance, the CLI fills `.env` from your
 logged-in profile so the app points at the deployed API instead of localhost:
 
-| `.env` key | Filled from |
-| --- | --- |
+| `.env` key     | Filled from                                   |
+| -------------- | --------------------------------------------- |
 | `VITE_API_URL` | `{{apiUrl}}` (your project's API service URL) |
 
 The placeholder contract is defined in [template.json](template.json).
@@ -102,13 +102,45 @@ OAuth providers as an allowed redirect URI.
 roles, organization context, step-up freshness with its expiry, and the registered passkeys. `/beta`
 is protected and checks for the `betaUser` role before calling the example API route.
 
+## Testing, linting, and formatting
+
+Tests run on [Vitest](https://vitest.dev), configured in the `test` block of
+[vite.config.ts](vite.config.ts), so they share the app's Vite resolution and plugins. They run in a
+jsdom environment with [@testing-library/react](https://testing-library.com/docs/react-testing-library/intro),
+and [src/test/setup.ts](src/test/setup.ts) registers the jest-dom matchers and unmounts between
+tests. Test files sit next to the code they cover as `*.test.ts` or `*.test.tsx`.
+
+What ships:
+
+- [src/lib/runtimeConfig.test.ts](src/lib/runtimeConfig.test.ts): which source wins when both the
+  container injects `window.__SEAMLESS_CONFIG__` and `.env` sets `VITE_API_URL`.
+- [src/lib/api.test.ts](src/lib/api.test.ts): URL joining, the error naming `VITE_API_URL` when the
+  origin is unset, and that `apiFetch` sends cookies.
+- [src/components/ConfigurationError.test.tsx](src/components/ConfigurationError.test.tsx): a
+  component test to copy for your own screens.
+
+Nothing here needs a running API. `fetch` is stubbed, so the suite stays fast and offline; point an
+end-to-end tool at the real stack for flows that cross the network.
+
+ESLint uses the flat config in [eslint.config.js](eslint.config.js). Prettier owns formatting, and
+`eslint-config-prettier` switches off the ESLint rules that would fight it, so the two never
+disagree about the same line.
+
 ## Scripts
 
 ```bash
-npm run dev
-npm run lint
-npm run build
-npm run preview
+npm run dev           # vite dev server
+npm run build         # typecheck, then vite build
+npm run preview       # serve the production build
+npm run check         # typecheck, lint, format check, and tests
+npm run typecheck     # tsc -b
+npm run lint          # eslint
+npm run lint:fix      # eslint --fix
+npm run format        # prettier --write
+npm run format:check  # prettier --check
+npm test              # vitest run
+npm run test:watch    # vitest in watch mode
+npm run test:coverage # vitest with a v8 coverage report
 ```
 
 ## Docker
