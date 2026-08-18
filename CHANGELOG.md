@@ -1,5 +1,62 @@
 # seamless-templates
 
+## 0.9.0
+
+### Minor Changes
+
+- 624e3a6: Move both API starters to PostgreSQL 18.
+
+  `seamless-cli` now scaffolds and conformance-tests PostgreSQL 18, so a project created by
+  `seamless init` was naming two different majors in the same directory: `postgres:18` in the
+  CLI-generated compose file and `postgres:16-alpine` in the API starter copied in beside it. Both
+  starters now pin `postgres:18-alpine`.
+
+  The volume mount had to move with the tag. PostgreSQL 18+ images store data in a major-versioned
+  subdirectory (`/var/lib/postgresql/18/docker`), so the mount is now `/var/lib/postgresql` rather than
+  `/var/lib/postgresql/data`. Keeping the old path is not a cosmetic mismatch: the container treats the
+  mount as unused and refuses to start with `Error: in 18+, these Docker images are configured to store
+database data in a format which is compatible with "pg_ctlcluster"`. See docker-library/postgres#1259.
+
+  This does not touch an existing project. Starter files are copied in at scaffold time, so a project
+  keeps the compose file it was created with. Only newly scaffolded projects get 18, on a fresh volume.
+
+- acedd3f: Move both React starters to `@seamless-auth/react` `^0.9.0`.
+
+  0.9.0 makes the bundled auth screens themeable. Every colour in them now reads from a `--seamless-*`
+  CSS custom property with the previous literal as its fallback, so a project can match the auth UI to
+  its brand by setting those variables on `:root` or on any ancestor of `<AuthRoutes />`.
+
+  The upgrade is additive. The public API is unchanged between 0.8.0 and 0.9.0, and a template that
+  sets no variables renders exactly as it did before, so neither starter needed a source change. Both
+  were installed, built, and linted against 0.9.0.
+
+- b722574: Give every template a working test, lint, and format setup out of the box.
+
+  All four starters (React Vite, React OAuth, Express, Fastify) now ship Vitest with tests that pass
+  on a fresh `npm install`, Prettier alongside the existing ESLint config, and the same script names:
+  `typecheck`, `lint`, `lint:fix`, `format`, `format:check`, `test`, `test:watch`, `test:coverage`,
+  and a `check` that runs the whole gate in one command.
+
+  The tests cover the configuration and startup logic that decides whether a scaffolded project runs
+  at all, and need no database, auth server, or network:
+
+  - API starters: connection-string resolution (including `sslmode` and credential escaping) and the
+    boot-time environment check, including the placeholders `seamless init` writes into a managed
+    `DATABASE_URL`.
+  - Web starters: API origin resolution across the container-injected config and `VITE_API_URL`, URL
+    joining and error handling in `apiFetch`, and a component test. The OAuth starter also covers its
+    callback route with the SDK and router stubbed.
+
+  Also in this change:
+
+  - ESLint now covers the whole project in the API starters rather than `src` only, and uses Node
+    globals instead of browser globals. That surfaced an unused catch binding in
+    `scripts/runMigrations.js`, now fixed.
+  - `eslint-config-prettier` is wired in so lint and format never disagree about the same line.
+  - The API starters build with a `tsconfig.build.json` that keeps tests out of `dist/`, while
+    `npm run typecheck` still checks them.
+  - CI runs typecheck, lint, format check, tests, and build for every template on pull requests.
+
 ## 0.8.1
 
 ### Patch Changes
