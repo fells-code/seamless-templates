@@ -42,11 +42,9 @@ export interface ScreenProps {
   band?: ReactNode;
   /**
    * The secondary panel, normally an `<InlineCreateForm>`. Where it lands depends
-   * on the archetype: a rail beside the content, or a panel above it.
+   * on the archetype: a rail beside the content, or a view of its own above it.
    */
   aside?: ReactNode;
-  /** The app's motif, drawn into the header band at full weight. */
-  motif?: ReactNode;
   children: ReactNode;
 }
 
@@ -56,6 +54,8 @@ export interface PageHeaderProps {
   actions?: ReactNode;
   /** Set on a brand-coloured band so the type flips to the band's ink. */
   onBand?: boolean;
+  /** Screen picks this from the archetype. `display` at most once per page. */
+  size?: "title" | "display";
 }
 
 export interface SectionHeadingProps {
@@ -165,8 +165,6 @@ export type LoadState = "loading" | "ready" | "error";
 export interface EmptyStateProps {
   title: string;
   body?: string;
-  /** The app's motif, so an empty screen still carries the subject. */
-  motif?: ReactNode;
   action?: ReactNode;
 }
 
@@ -230,7 +228,6 @@ export interface AuthFrameProps {
   pitch: string;
   /** Three short lines at most: what someone can actually do here. */
   points?: string[];
-  motif?: ReactNode;
   /** The sign-in screens. Rendered once, unchanged. */
   children: ReactNode;
 }

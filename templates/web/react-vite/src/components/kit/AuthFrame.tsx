@@ -1,30 +1,28 @@
+import Vista from "./Vista";
 import type { AuthFrameProps } from "./types";
 
 /**
- * The signed-out surface: a pitch on a full band of brand colour, and the sign-in
- * screens in a calm frame beside it.
+ * The signed-out surface: a pitch on one half, the sign-in screens on the other.
  *
  * `children` is the auth package's own screens. They are rendered once and
  * untouched; nothing here adds an input, a button or a link of its own, because
  * the form is the point of the page and a second call to action beside it is a
  * way of losing people.
  *
- * This is the one screen with nothing to read and exactly one thing to do, which
- * makes it the one screen that can afford to commit half its width to a colour.
+ * This page is outside the application shell, so it mounts the backdrop itself.
  */
 export default function AuthFrame({
   title,
   pitch,
   points = [],
-  motif,
   children,
 }: AuthFrameProps) {
   return (
-    <div className="flex min-h-screen bg-surface">
-      <div className="relative hidden w-1/2 overflow-hidden bg-band text-band-ink lg:flex lg:flex-col lg:justify-center">
-        {motif && <div className="motif motif-hero motif-animate">{motif}</div>}
+    <div className="flex min-h-screen">
+      <Vista />
 
-        <div className="above-motif px-14 py-16 xl:px-20">
+      <div className="band-fill above-vista hidden w-1/2 flex-col justify-center overflow-hidden text-band-ink lg:flex">
+        <div className="px-14 py-16 xl:px-20">
           <h1 className="display max-w-xl">{title}</h1>
 
           <p className="mt-8 max-w-lg text-lg leading-relaxed text-band-ink-muted">
@@ -47,7 +45,7 @@ export default function AuthFrame({
         </div>
       </div>
 
-      <div className="flex w-full flex-col justify-center px-6 py-16 sm:px-10 lg:w-1/2">
+      <div className="above-vista flex w-full flex-col justify-center bg-surface px-6 py-16 sm:px-10 lg:w-1/2">
         <div className="mx-auto w-full max-w-md">{children}</div>
       </div>
     </div>

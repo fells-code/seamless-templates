@@ -17,29 +17,6 @@ export default function Login({ children }: { children: ReactNode }) {
         "Roles enforced in the API and reflected in the UI",
         "A self-hostable auth server you keep control of",
       ]}
-      motif={
-        <svg viewBox="0 0 400 300" aria-hidden="true" fill="none">
-          <circle
-            cx="200"
-            cy="150"
-            r="96"
-            stroke="currentColor"
-            strokeWidth="3"
-          />
-          <circle
-            cx="200"
-            cy="150"
-            r="52"
-            stroke="currentColor"
-            strokeWidth="3"
-          />
-          <path
-            d="M148 150h104M200 98v104"
-            stroke="currentColor"
-            strokeWidth="3"
-          />
-        </svg>
-      }
     >
       {children}
     </AuthFrame>
