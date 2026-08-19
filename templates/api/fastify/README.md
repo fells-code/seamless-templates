@@ -57,20 +57,21 @@ The committed contract lives in [.env.example](.env.example). Copy it before run
 cp .env.example .env
 ```
 
-| Variable                                                  | Purpose                                                                                                                           |
-| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `NODE_ENV`                                                | `development` enables the dev messaging handlers that log OTP and magic-link tokens locally; set to `production` before deploying |
-| `AUTH_SERVER_URL`                                         | URL of your Seamless Auth server                                                                                                  |
-| `SERVE_ADMIN_CONSOLE`                                     | `true` to serve the admin dashboard from this API at `/console`; `false` when it is hosted elsewhere                              |
-| `UI_ORIGINS`                                              | Comma-separated web origins allowed by CORS                                                                                       |
-| `COOKIE_DOMAIN`                                           | Optional cookie domain for production, for example `.example.com`                                                                 |
-| `COOKIE_SIGNING_KEY`                                      | Secret used to sign API-generated cookies, 32 characters minimum                                                                  |
-| `API_SERVICE_TOKEN`                                       | Service token shared with Seamless Auth (from the portal), 32 characters minimum                                                  |
-| `JWKS_KID`                                                | JWKS key id the auth server signs with                                                                                            |
-| `DATABASE_URL`                                            | Full Postgres connection string. Wins over the `DB_*` values when set                                                             |
-| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Postgres connection, used when `DATABASE_URL` is empty                                                                            |
-| `DB_SSL_REJECT_UNAUTHORIZED`                              | Set to `false` only for a certificate that does not chain to a public CA                                                          |
-| `DB_LOGGING`                                              | Set to `true` to log SQL in development                                                                                           |
+| Variable                                                  | Purpose                                                                                                                                               |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NODE_ENV`                                                | `development` enables the dev messaging handlers that log OTP and magic-link tokens locally; set to `production` before deploying                     |
+| `AUTH_SERVER_URL`                                         | URL of your Seamless Auth server                                                                                                                      |
+| `SERVE_ADMIN_CONSOLE`                                     | `true` to serve the admin dashboard from this API at `/console`; `false` when it is hosted elsewhere                                                  |
+| `UI_ORIGINS`                                              | Comma-separated web origins allowed by CORS                                                                                                           |
+| `COOKIE_DOMAIN`                                           | Optional cookie domain for production, for example `.example.com`                                                                                     |
+| `AUTH_COOKIE_PREFIX`                                      | Prefix for this application's auth cookie names, so several Seamless apps can run on one host without signing each other out. Defaults to `seamless-` |
+| `COOKIE_SIGNING_KEY`                                      | Secret used to sign API-generated cookies, 32 characters minimum                                                                                      |
+| `API_SERVICE_TOKEN`                                       | Service token shared with Seamless Auth (from the portal), 32 characters minimum                                                                      |
+| `JWKS_KID`                                                | JWKS key id the auth server signs with                                                                                                                |
+| `DATABASE_URL`                                            | Full Postgres connection string. Wins over the `DB_*` values when set                                                                                 |
+| `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Postgres connection, used when `DATABASE_URL` is empty                                                                                                |
+| `DB_SSL_REJECT_UNAUTHORIZED`                              | Set to `false` only for a certificate that does not chain to a public CA                                                                              |
+| `DB_LOGGING`                                              | Set to `true` to log SQL in development                                                                                                               |
 
 `assertEnvironment` in [src/lib/env.ts](src/lib/env.ts) runs before the server is built. The auth
 options are read once at startup, so a missing value would otherwise surface as a 500 on the first
