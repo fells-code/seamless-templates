@@ -10,11 +10,11 @@ export interface UserAttributes {
 }
 
 export class User extends Model<UserAttributes> implements UserAttributes {
-  public id!: string;
-  public email!: string | null;
-  public phone!: string | null;
-  public readonly created_at!: Date;
-  public readonly updated_at!: Date;
+  declare id: string;
+  declare email: string | null;
+  declare phone: string | null;
+  declare readonly created_at: Date;
+  declare readonly updated_at: Date;
 }
 
 const initializeUserModel = (sequelize: Sequelize) => {
