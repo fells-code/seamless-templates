@@ -9,17 +9,6 @@ export interface UserAttributes {
   updated_at?: Date;
 }
 
-/*
- * Attributes are `declare`, never `public x!: T`.
- *
- * Sequelize installs its attribute getters and setters on the prototype. A
- * public class field is emitted as an own property initialised to undefined,
- * which shadows them: `user.id` reads undefined while `user.get("id")` returns
- * the row's value. Nothing catches it — the types say `string`, so it compiles,
- * and it only surfaces at runtime as a query built with an undefined parameter.
- *
- * `declare` emits no field at all, so the accessors survive.
- */
 export class User extends Model<UserAttributes> implements UserAttributes {
   declare id: string;
   declare email: string | null;
