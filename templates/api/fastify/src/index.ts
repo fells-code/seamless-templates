@@ -30,6 +30,15 @@ const rawOrigins = process.env.UI_ORIGINS;
 const allowedOrigins = rawOrigins?.split(",").map((o) => o.trim()) ?? [];
 const cookieDomain = process.env.COOKIE_DOMAIN?.trim() || undefined;
 
+const cookiePrefix = process.env.AUTH_COOKIE_PREFIX?.trim() || "seamless-";
+
+const cookieNames = {
+  accessCookieName: `${cookiePrefix}access`,
+  refreshCookieName: `${cookiePrefix}refresh`,
+  registrationCookieName: `${cookiePrefix}ephemeral`,
+  preAuthCookieName: `${cookiePrefix}ephemeral`,
+};
+
 // A request whose Origin is this server's own host is same-origin and was never
 // a CORS concern. It has to be allowed explicitly because the admin console is
 // served from this API at /console: browsers omit Origin on a same-origin GET but
@@ -97,6 +106,7 @@ const seamlessAuthOptions: SeamlessAuthServerOptions = {
   audience: process.env.AUTH_SERVER_URL!,
   jwksKid: process.env.JWKS_KID!,
   cookieDomain,
+  ...cookieNames,
   messaging: devMessaging,
 };
 
@@ -140,7 +150,10 @@ await app.register(async (api) => {
 
     secured.addHook(
       "preHandler",
-      requireAuth({ cookieSecret: seamlessAuthOptions.cookieSecret }),
+      requireAuth({
+        cookieSecret: seamlessAuthOptions.cookieSecret,
+        cookieName: seamlessAuthOptions.accessCookieName,
+      }),
     );
     secured.addHook("preHandler", requireUser(seamlessAuthOptions));
 
