@@ -5,22 +5,23 @@ export default function PageHeader({
   tagline,
   actions,
   onBand = false,
+  size = "title",
 }: PageHeaderProps) {
+  const muted = onBand ? "text-band-ink-muted" : "text-ink-muted";
+
   return (
     <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
       <div className="min-w-0">
-        <h1 className={`title ${onBand ? "text-band-ink" : "text-ink"}`}>
+        {size === "display" && tagline && (
+          <p className={`label mb-6 ${muted}`}>{tagline}</p>
+        )}
+
+        <h1 className={`${size} ${onBand ? "text-band-ink" : "text-ink"}`}>
           {title}
         </h1>
 
-        {tagline && (
-          <p
-            className={`mt-2 max-w-prose text-sm ${
-              onBand ? "text-band-ink-muted" : "text-ink-muted"
-            }`}
-          >
-            {tagline}
-          </p>
+        {size !== "display" && tagline && (
+          <p className={`mt-4 max-w-prose text-sm ${muted}`}>{tagline}</p>
         )}
       </div>
 

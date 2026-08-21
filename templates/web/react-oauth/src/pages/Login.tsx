@@ -70,30 +70,6 @@ export default function Login() {
         "The auth server completes the login on the callback route",
         "Roles enforced in the API and reflected in the UI",
       ]}
-      motif={
-        <svg viewBox="0 0 400 300" aria-hidden="true" fill="none">
-          <circle
-            cx="150"
-            cy="150"
-            r="70"
-            stroke="currentColor"
-            strokeWidth="3"
-          />
-          <circle
-            cx="250"
-            cy="150"
-            r="70"
-            stroke="currentColor"
-            strokeWidth="3"
-          />
-          <path
-            d="M200 92v116"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeDasharray="8 10"
-          />
-        </svg>
-      }
     >
       <div className="space-y-6">
         <div className="space-y-2">
