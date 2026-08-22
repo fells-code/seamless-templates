@@ -91,13 +91,17 @@ validation step skips directory checks for those entries.
 
 ## CI
 
-- On pull requests, CI installs every buildable template and runs its `typecheck`, `lint`,
+- The template matrix runs on **the changesets release pull request only**, not on every pull
+  request. On that PR, CI installs every buildable template and runs its `typecheck`, `lint`,
   `format:check`, `test`, and `build` scripts. Each step is `--if-present`, so a template that has
-  not adopted one is skipped rather than failed, but a declared script has to pass. Keep templates
-  green.
-- `npm run validate` and `npm run format:check` are **not** in CI. They need only the root's own
-  dependencies and take about a second together, so they run in the pre-commit hook instead, on the
-  machine that broke them. That trade only holds if the hook is actually installed: see Conventions.
+  not adopted one is skipped rather than failed, but a declared script has to pass. That PR is the
+  last gate before a tag the CLI pins, so it is the one that has to be green.
+- Everything else is local. `npm run validate` and `npm run format:check` run in the pre-commit
+  hook, and each template's own `npm run check` is what to run while working on it. Nothing checks
+  an ordinary pull request for you, so run the template's `check` before opening one. That also
+  means the hook has to be installed: see Conventions.
+- The cross-repo conformance workflow still runs on every pull request. It is owned by
+  `seamless-cli` and tests this repo's templates against the rest of the ecosystem.
 - On a push to `main`, the release workflow opens or updates a "version packages" PR via Changesets;
   merging it bumps the version, creates the tag the CLI pins, and publishes a GitHub Release for
   that tag with notes drawn from `CHANGELOG.md`.

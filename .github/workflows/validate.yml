@@ -2,13 +2,11 @@ name: validate
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
 
 jobs:
   validate:
     name: Plan template checks
+    if: github.head_ref == 'changeset-release/main'
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
@@ -25,11 +23,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # npm run validate and npm run format:check are the pre-commit hook's job.
-      # They need only the root's dependencies, run in about a second, and fail
-      # on the machine that made the change rather than a few minutes later.
-      # This job is left with the one thing a hook cannot do, which is tell the
-      # matrix below what to build.
       - name: Compute build matrix
         id: matrix
         run: echo "matrix=$(node scripts/validate-templates.mjs --matrix)" >> "$GITHUB_OUTPUT"
