@@ -91,10 +91,13 @@ validation step skips directory checks for those entries.
 
 ## CI
 
-- On pull requests, CI runs `npm run validate`, then installs every buildable template and runs its
-  `typecheck`, `lint`, `format:check`, `test`, and `build` scripts. Each step is `--if-present`, so
-  a template that has not adopted one is skipped rather than failed, but a declared script has to
-  pass. Keep templates green.
+- On pull requests, CI installs every buildable template and runs its `typecheck`, `lint`,
+  `format:check`, `test`, and `build` scripts. Each step is `--if-present`, so a template that has
+  not adopted one is skipped rather than failed, but a declared script has to pass. Keep templates
+  green.
+- `npm run validate` and `npm run format:check` are **not** in CI. They need only the root's own
+  dependencies and take about a second together, so they run in the pre-commit hook instead, on the
+  machine that broke them. That trade only holds if the hook is actually installed: see Conventions.
 - On a push to `main`, the release workflow opens or updates a "version packages" PR via Changesets;
   merging it bumps the version, creates the tag the CLI pins, and publishes a GitHub Release for
   that tag with notes drawn from `CHANGELOG.md`.
@@ -104,8 +107,14 @@ validation step skips directory checks for those entries.
 - Commit, comment, TODO, branch-naming, and attribution rules live in Working
   Standards above. In this repo they are enforced locally: `npm install` installs
   a Husky `commit-msg` hook (commitlint, `@commitlint/config-conventional`) and a
-  `pre-commit` hook that runs `npm run validate`, so a non-conforming commit is
-  rejected before it lands.
+  `pre-commit` hook that runs `npm run validate` and `npm run format:check`, so a
+  non-conforming commit is rejected before it lands.
+- **Run `npm install` at the root before your first commit.** Husky writes
+  `.husky/_`, which is gitignored, and sets `core.hooksPath` to it. A clone that
+  has never been installed has `core.hooksPath` pointing at a directory that does
+  not exist, so every hook silently does nothing and there is no message saying
+  so. Since the fast checks moved out of CI, that clone has no gate at all until
+  the template matrix runs on the pull request.
 - **Releases use Changesets.** Any change that affects scaffolded projects needs a changeset. Do not
   hand-edit the version or `CHANGELOG.md`.
 - Keep template projects minimal and idiomatic for their framework. They are the first thing a new
