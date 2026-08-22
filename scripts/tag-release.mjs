@@ -12,12 +12,19 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const pkg = JSON.parse(readFileSync(path.join(repoRoot, "package.json"), "utf8"));
+const repoRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+);
+const pkg = JSON.parse(
+  readFileSync(path.join(repoRoot, "package.json"), "utf8"),
+);
 const tag = `v${pkg.version}`;
 
-const git = (...args) => execFileSync("git", args, { cwd: repoRoot, encoding: "utf8" }).trim();
-const gh = (...args) => execFileSync("gh", args, { cwd: repoRoot, encoding: "utf8" }).trim();
+const git = (...args) =>
+  execFileSync("git", args, { cwd: repoRoot, encoding: "utf8" }).trim();
+const gh = (...args) =>
+  execFileSync("gh", args, { cwd: repoRoot, encoding: "utf8" }).trim();
 
 const existsLocal = () => {
   try {

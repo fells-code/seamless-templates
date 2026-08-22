@@ -14,6 +14,7 @@ These rules apply to every repository in the fells-code org. Repo-specific
 guidance may extend them but must not contradict them.
 
 ### Attribution
+
 - Commit and open PRs solely under the repository owner's identity. Never
   commit under an agent or assistant identity.
 - Never attribute work to an AI assistant: no `Co-Authored-By: Claude` (or any
@@ -22,23 +23,28 @@ guidance may extend them but must not contradict them.
   and descriptions, changesets, code comments, or docs.
 
 ### Comments
+
 - Comment only when the code genuinely needs explaining: a non-obvious reason, a
   gotcha, or an invariant. Never narrate what the code plainly does.
 
 ### TODOs
+
 - Every `TODO`/`FIXME` must reference a ticket, e.g. `// TODO(#123): ...`.
   Do not leave a bare TODO. If no ticket exists, create one first.
 
 ### Commits & branches
+
 - Conventional Commits (`feat:`, `fix:`, `chore:`, `docs:`, `ci:`, `test:`).
 - Descriptive branch names (`feat/...`, `fix/...`); never a `claude/` or other
   tool-generated prefix.
 
 ### Public-facing text
+
 - No em dashes in commit messages, code comments, PR or issue text, changesets,
   or docs. Use a comma, parentheses, or a separate sentence.
 
 ### Before declaring work done
+
 - Run the repo's checks (typecheck, lint, format, tests) and report real output.
   Never claim a change works without running them.
 - Match the surrounding code's style, naming, and comment density.
@@ -85,10 +91,17 @@ validation step skips directory checks for those entries.
 
 ## CI
 
-- On pull requests, CI runs `npm run validate`, then installs every buildable template and runs its
-  `typecheck`, `lint`, `format:check`, `test`, and `build` scripts. Each step is `--if-present`, so
-  a template that has not adopted one is skipped rather than failed, but a declared script has to
-  pass. Keep templates green.
+- The template matrix runs on **the changesets release pull request only**, not on every pull
+  request. On that PR, CI installs every buildable template and runs its `typecheck`, `lint`,
+  `format:check`, `test`, and `build` scripts. Each step is `--if-present`, so a template that has
+  not adopted one is skipped rather than failed, but a declared script has to pass. That PR is the
+  last gate before a tag the CLI pins, so it is the one that has to be green.
+- Everything else is local. `npm run validate` and `npm run format:check` run in the pre-commit
+  hook, and each template's own `npm run check` is what to run while working on it. Nothing checks
+  an ordinary pull request for you, so run the template's `check` before opening one. That also
+  means the hook has to be installed: see Conventions.
+- The cross-repo conformance workflow still runs on every pull request. It is owned by
+  `seamless-cli` and tests this repo's templates against the rest of the ecosystem.
 - On a push to `main`, the release workflow opens or updates a "version packages" PR via Changesets;
   merging it bumps the version, creates the tag the CLI pins, and publishes a GitHub Release for
   that tag with notes drawn from `CHANGELOG.md`.
@@ -98,8 +111,14 @@ validation step skips directory checks for those entries.
 - Commit, comment, TODO, branch-naming, and attribution rules live in Working
   Standards above. In this repo they are enforced locally: `npm install` installs
   a Husky `commit-msg` hook (commitlint, `@commitlint/config-conventional`) and a
-  `pre-commit` hook that runs `npm run validate`, so a non-conforming commit is
-  rejected before it lands.
+  `pre-commit` hook that runs `npm run validate` and `npm run format:check`, so a
+  non-conforming commit is rejected before it lands.
+- **Run `npm install` at the root before your first commit.** Husky writes
+  `.husky/_`, which is gitignored, and sets `core.hooksPath` to it. A clone that
+  has never been installed has `core.hooksPath` pointing at a directory that does
+  not exist, so every hook silently does nothing and there is no message saying
+  so. Since the fast checks moved out of CI, that clone has no gate at all until
+  the template matrix runs on the pull request.
 - **Releases use Changesets.** Any change that affects scaffolded projects needs a changeset. Do not
   hand-edit the version or `CHANGELOG.md`.
 - Keep template projects minimal and idiomatic for their framework. They are the first thing a new

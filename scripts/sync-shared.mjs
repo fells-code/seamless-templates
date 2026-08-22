@@ -16,7 +16,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const repoRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+);
 const sharedRoot = path.join(repoRoot, "shared/react-app");
 const manifestPath = path.join(sharedRoot, "sync.json");
 
@@ -25,7 +28,9 @@ function filesUnder(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     const rel = entry.name;
     if (entry.isDirectory()) {
-      out.push(...filesUnder(path.join(dir, rel)).map((f) => path.join(rel, f)));
+      out.push(
+        ...filesUnder(path.join(dir, rel)).map((f) => path.join(rel, f)),
+      );
     } else {
       out.push(rel);
     }
@@ -45,7 +50,9 @@ function plan() {
     for (const { from, to } of manifest.files) {
       const absFrom = path.join(sharedRoot, from);
       if (!fs.existsSync(absFrom)) {
-        throw new Error(`shared/react-app/sync.json maps "${from}", which is missing.`);
+        throw new Error(
+          `shared/react-app/sync.json maps "${from}", which is missing.`,
+        );
       }
 
       if (fs.statSync(absFrom).isDirectory()) {
@@ -160,7 +167,8 @@ function write() {
 }
 
 const invokedDirectly =
-  process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+  process.argv[1] &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 
 if (invokedDirectly) {
   if (process.argv.includes("--check")) {

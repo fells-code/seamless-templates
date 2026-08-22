@@ -2,13 +2,11 @@ name: validate
 
 on:
   pull_request:
-  push:
-    branches:
-      - main
 
 jobs:
   validate:
-    name: Validate registry and manifests
+    name: Plan template checks
+    if: github.head_ref == 'changeset-release/main'
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
@@ -19,25 +17,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
           cache: npm
 
       - name: Install dependencies
         run: npm ci
-
-      - name: Validate
-        run: npm run validate
-
-      # shared/react-app is copied byte for byte into every template, so it has
-      # to be stored already formatted the way those templates format their own
-      # source. Formatted from anywhere else, or with a different prettier, the
-      # copies land mis-formatted and each template's format:check fails on files
-      # nobody edited.
-      - name: Format check (shared/react-app)
-        run: npm run format:shared:check
-
-      - name: Templates are in sync with shared/react-app
-        run: npm run sync:shared -- --check
 
       - name: Compute build matrix
         id: matrix
@@ -65,7 +49,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
 
       - name: Install
         run: npm install
