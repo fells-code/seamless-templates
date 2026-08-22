@@ -30,7 +30,10 @@ services:
       retries: 10
 
   api:
-    build: .
+    build:
+      context: .
+      # The production image is the default target. Compose wants the dev one.
+      target: dev
     restart: unless-stopped
     env_file:
       - .env
