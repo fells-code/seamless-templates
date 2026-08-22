@@ -35,7 +35,7 @@ export default function PrimaryButton({
         full ? "w-full" : "",
       ].join(" ")}
     >
-      {busy ? busyLabel ?? children : children}
+      {busy ? (busyLabel ?? children) : children}
     </button>
   );
 }

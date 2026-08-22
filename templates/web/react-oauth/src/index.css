@@ -36,12 +36,15 @@
   --app-shell-active: #edf0f2;
   --app-shell-ink: #12100e;
   --app-shell-ink-muted: #515d67;
-  --app-font-display: system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Liberation Sans", sans-serif;
-  --app-font-body: system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Liberation Sans", sans-serif;
-  --app-font-label: system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Liberation Sans", sans-serif;
+  --app-font-display:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Liberation Sans", sans-serif;
+  --app-font-body:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Liberation Sans", sans-serif;
+  --app-font-label:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Liberation Sans", sans-serif;
   --app-root-size: 100%;
   --app-body-leading: 1.5;
   --app-display-size: clamp(2.5rem, 5vw, 3.75rem);
@@ -310,7 +313,8 @@
 
   /* Hover elevation. Flat styles simply resolve to a smaller shadow. */
   .lift {
-    transition: transform var(--app-motion-duration) var(--app-motion-ease),
+    transition:
+      transform var(--app-motion-duration) var(--app-motion-ease),
       box-shadow var(--app-motion-duration) var(--app-motion-ease);
   }
   .lift:hover {

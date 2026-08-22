@@ -28,6 +28,17 @@ jobs:
       - name: Validate
         run: npm run validate
 
+      # shared/react-app is copied byte for byte into every template, so it has
+      # to be stored already formatted the way those templates format their own
+      # source. Formatted from anywhere else, or with a different prettier, the
+      # copies land mis-formatted and each template's format:check fails on files
+      # nobody edited.
+      - name: Format check (shared/react-app)
+        run: npm run format:shared:check
+
+      - name: Templates are in sync with shared/react-app
+        run: npm run sync:shared -- --check
+
       - name: Compute build matrix
         id: matrix
         run: echo "matrix=$(node scripts/validate-templates.mjs --matrix)" >> "$GITHUB_OUTPUT"

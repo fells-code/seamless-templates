@@ -13,6 +13,22 @@ npm run sync:shared
 `npm run validate` fails when a copy has drifted, so CI and the pre-commit hook both
 catch an edit made to a template copy instead of to the source.
 
+## Formatting
+
+The copies are byte for byte identical to the source, so a file here has to be
+stored in the exact form the templates' own `format:check` expects. Format it
+from the repo root, never from somewhere else:
+
+```bash
+npm run format:shared
+```
+
+The root now declares its own prettier and `.prettierrc.json` matching the
+templates'. Without them, prettier resolved no config for this directory and
+`npx` was free to pick up whatever version happened to be on the machine. A
+major behind, and every synced copy failed its template's `format:check` on
+files nobody had edited. `npm run format:shared:check` is what CI runs.
+
 ## Why copies rather than a package or a symlink
 
 `seamless-cli` copies exactly one template directory into a new project. A template
@@ -29,11 +45,11 @@ does not exist in their project would only confuse them.
 
 ## What is in here
 
-| Path                   | Copied to                     |
-| ---------------------- | ----------------------------- |
-| `index.css`            | `src/index.css`               |
-| `layouts/Layout.tsx`   | `src/layouts/Layout.tsx`      |
-| `components/kit/`      | `src/components/kit/`         |
+| Path                 | Copied to                |
+| -------------------- | ------------------------ |
+| `index.css`          | `src/index.css`          |
+| `layouts/Layout.tsx` | `src/layouts/Layout.tsx` |
+| `components/kit/`    | `src/components/kit/`    |
 
 `sync.json` is the manifest the sync script reads. `.prettierrc.json` matches the
 one each template ships, so formatting these sources with the template's Prettier

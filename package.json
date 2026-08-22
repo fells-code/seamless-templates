@@ -20,6 +20,8 @@
   "scripts": {
     "validate": "node scripts/validate-templates.mjs",
     "sync:shared": "node scripts/sync-shared.mjs",
+    "format:shared": "prettier --write shared",
+    "format:shared:check": "prettier --check shared",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release:stable": "node scripts/tag-release.mjs",
@@ -29,6 +31,7 @@
     "@changesets/cli": "^2.31.0",
     "@commitlint/cli": "^20.5.3",
     "@commitlint/config-conventional": "^20.5.3",
-    "husky": "^9.1.7"
+    "husky": "^9.1.7",
+    "prettier": "^3.9.6"
   }
 }

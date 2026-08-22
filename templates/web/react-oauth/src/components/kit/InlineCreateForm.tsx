@@ -72,7 +72,7 @@ export default function InlineCreateForm({
       payload[field.name] =
         field.type === "number" || field.type === "currency"
           ? Number(raw)
-          : raw ?? "";
+          : (raw ?? "");
     }
 
     try {

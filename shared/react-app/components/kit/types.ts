@@ -26,12 +26,7 @@ import type { ReactNode } from "react";
  * - `dashboard`  stat band over a split of two related collections.
  */
 export type Archetype =
-  | "ledger"
-  | "tracker"
-  | "board"
-  | "roster"
-  | "feed"
-  | "dashboard";
+  "ledger" | "tracker" | "board" | "roster" | "feed" | "dashboard";
 
 export interface ScreenProps {
   archetype: Archetype;
@@ -70,11 +65,7 @@ export interface SectionHeadingProps {
 }
 
 export type StatFormat =
-  | "number"
-  | "currency"
-  | "percent"
-  | "duration"
-  | "plain";
+  "number" | "currency" | "percent" | "duration" | "plain";
 
 export interface Stat {
   label: string;
@@ -94,13 +85,7 @@ export interface StatRowProps {
 }
 
 export type FieldType =
-  | "text"
-  | "textarea"
-  | "number"
-  | "currency"
-  | "date"
-  | "select"
-  | "checkbox";
+  "text" | "textarea" | "number" | "currency" | "date" | "select" | "checkbox";
 
 export interface FieldOption {
   value: string;
