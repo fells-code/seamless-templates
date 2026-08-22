@@ -16,18 +16,20 @@ catch an edit made to a template copy instead of to the source.
 ## Formatting
 
 The copies are byte for byte identical to the source, so a file here has to be
-stored in the exact form the templates' own `format:check` expects. Format it
-from the repo root, never from somewhere else:
+stored in the exact form the templates' own `format:check` expects. One prettier
+at the repo root, with a `.prettierrc.json` matching the templates', formats the
+whole repository including this directory:
 
 ```bash
-npm run format:shared
+npm run format
 ```
 
-The root now declares its own prettier and `.prettierrc.json` matching the
-templates'. Without them, prettier resolved no config for this directory and
-`npx` was free to pick up whatever version happened to be on the machine. A
+The pre-commit hook runs `npm run format:check`, so a file formatted with
+anything else does not reach a commit. That matters because the root used to
+declare neither prettier nor a config: prettier resolved no options for this
+directory and `npx` was free to pick up whatever version was on the machine. A
 major behind, and every synced copy failed its template's `format:check` on
-files nobody had edited. `npm run format:shared:check` is what CI runs.
+files nobody had edited.
 
 ## Why copies rather than a package or a symlink
 

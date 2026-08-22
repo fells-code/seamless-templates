@@ -49,15 +49,15 @@ Because the CLI copies one template directory and nothing else, a template canno
   "schemaVersion": 1,
   "templates": [
     {
-      "id": "react-vite",          // unique, kebab-case
-      "kind": "web",               // "web" or "api"
+      "id": "react-vite", // unique, kebab-case
+      "kind": "web", // "web" or "api"
       "framework": "react",
-      "label": "React (Vite)",     // shown in the CLI prompt
-      "alias": "basic",            // optional: enables `seamless init --basic`
-      "status": "stable",          // "stable" | "beta" | "coming-soon"
-      "path": "templates/web/react-vite"
-    }
-  ]
+      "label": "React (Vite)", // shown in the CLI prompt
+      "alias": "basic", // optional: enables `seamless init --basic`
+      "status": "stable", // "stable" | "beta" | "coming-soon"
+      "path": "templates/web/react-vite",
+    },
+  ],
 }
 ```
 
@@ -75,17 +75,19 @@ Each template directory carries a `template.json` that tells the CLI where to pl
     "fromExample": ".env.example",
     "set": {
       "VITE_AUTH_SERVER_URL": "{{authServerUrl}}",
-      "VITE_API_URL": "{{apiUrl}}"
-    }
+      "VITE_API_URL": "{{apiUrl}}",
+    },
   },
-  "verify": {                    // optional: how `seamless verify` tests this template
-    "project": "react",          // the Playwright project that drives it
-    "flows": ["oauth"]           // which flow tags to run (@oauth); omit to run all
+  "verify": {
+    // optional: how `seamless verify` tests this template
+    "project": "react", // the Playwright project that drives it
+    "flows": ["oauth"], // which flow tags to run (@oauth); omit to run all
   },
-  "setup": {                     // optional: interactive setup the CLI runs
-    "oauth": true                // prompt for OIDC providers and wire them into auth
+  "setup": {
+    // optional: interactive setup the CLI runs
+    "oauth": true, // prompt for OIDC providers and wire them into auth
   },
-  "requires": { "cliMin": "0.3.0" }
+  "requires": { "cliMin": "0.3.0" },
 }
 ```
 
@@ -95,13 +97,13 @@ The CLI computes the shared values and resolves the `{{...}}` placeholders in `e
 
 ### Placeholder vocabulary
 
-| Placeholder | Resolves to |
-| --- | --- |
-| `{{authServerUrl}}` | URL of the Seamless Auth server |
-| `{{apiUrl}}` | URL of the project's API service |
-| `{{apiToken}}` | Service token shared between the API and the auth server |
-| `{{jwksKid}}` | JWKS key id the auth server signs with |
-| `{{secret:N}}` | A freshly generated N-byte hex secret, unique per scaffold |
+| Placeholder         | Resolves to                                                |
+| ------------------- | ---------------------------------------------------------- |
+| `{{authServerUrl}}` | URL of the Seamless Auth server                            |
+| `{{apiUrl}}`        | URL of the project's API service                           |
+| `{{apiToken}}`      | Service token shared between the API and the auth server   |
+| `{{jwksKid}}`       | JWKS key id the auth server signs with                     |
+| `{{secret:N}}`      | A freshly generated N-byte hex secret, unique per scaffold |
 
 ---
 
@@ -120,13 +122,13 @@ CI validates the registry and every manifest, then installs each template and ru
 
 A scaffolded project is expected to be verifiable on the first `npm install`, so each template declares the same script names. CI runs them with `--if-present`, and a user gets the whole set locally with `npm run check`.
 
-| Script | Purpose |
-| --- | --- |
-| `typecheck` | TypeScript with no emit |
-| `lint` | ESLint flat config over the project |
+| Script         | Purpose                                                                  |
+| -------------- | ------------------------------------------------------------------------ |
+| `typecheck`    | TypeScript with no emit                                                  |
+| `lint`         | ESLint flat config over the project                                      |
 | `format:check` | Prettier, with `eslint-config-prettier` keeping the two from disagreeing |
-| `test` | Vitest, no database or network needed |
-| `check` | All of the above in one command |
+| `test`         | Vitest, no database or network needed                                    |
+| `check`        | All of the above in one command                                          |
 
 Tests sit next to the code they cover as `*.test.ts` / `*.test.tsx`. They are meant to be a starting point a user extends, not exhaustive coverage: they cover the configuration and startup logic that decides whether a fresh scaffold runs at all.
 

@@ -17,7 +17,10 @@ import { fileURLToPath } from "node:url";
 
 import { checkSharedSync } from "./sync-shared.mjs";
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const repoRoot = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "..",
+);
 const matrixMode = process.argv.includes("--matrix");
 
 const KINDS = new Set(["web", "api"]);
@@ -48,7 +51,9 @@ function validate() {
   }
 
   if (registry.schemaVersion !== 1) {
-    fail(`registry.json schemaVersion must be 1, got ${JSON.stringify(registry.schemaVersion)}.`);
+    fail(
+      `registry.json schemaVersion must be 1, got ${JSON.stringify(registry.schemaVersion)}.`,
+    );
   }
   if (!Array.isArray(registry.templates)) {
     fail("registry.json must have a templates array.");
@@ -96,8 +101,13 @@ function validate() {
     }
 
     const templateDir = path.join(repoRoot, entry.path);
-    if (!fs.existsSync(templateDir) || !fs.statSync(templateDir).isDirectory()) {
-      fail(`${where}: path "${entry.path}" does not exist or is not a directory.`);
+    if (
+      !fs.existsSync(templateDir) ||
+      !fs.statSync(templateDir).isDirectory()
+    ) {
+      fail(
+        `${where}: path "${entry.path}" does not exist or is not a directory.`,
+      );
       continue;
     }
 
@@ -116,9 +126,14 @@ function validate() {
     }
 
     if (manifest.id !== entry.id) {
-      fail(`${where}: template.json id "${manifest.id}" does not match registry id "${entry.id}".`);
+      fail(
+        `${where}: template.json id "${manifest.id}" does not match registry id "${entry.id}".`,
+      );
     }
-    if (typeof manifest.targetDir !== "string" || manifest.targetDir.length === 0) {
+    if (
+      typeof manifest.targetDir !== "string" ||
+      manifest.targetDir.length === 0
+    ) {
       fail(`${where}: template.json must set a non-empty "targetDir".`);
     }
     if (manifest.env == null || typeof manifest.env !== "object") {
@@ -131,11 +146,15 @@ function validate() {
       if (typeof fromExample === "string") {
         const examplePath = path.join(templateDir, fromExample);
         if (!fs.existsSync(examplePath)) {
-          fail(`${where}: env.fromExample points at "${fromExample}", which is missing.`);
+          fail(
+            `${where}: env.fromExample points at "${fromExample}", which is missing.`,
+          );
         }
       }
       if (set != null && (typeof set !== "object" || Array.isArray(set))) {
-        fail(`${where}: env.set must be an object of string values when present.`);
+        fail(
+          `${where}: env.set must be an object of string values when present.`,
+        );
       }
     }
 

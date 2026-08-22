@@ -3,7 +3,6 @@ dist
 coverage
 package-lock.json
 
-# Each template formats its own tree with its own toolchain, and the copies under
-# templates/ are written by sync:shared from shared/react-app. Formatting them
-# from here would use this root's resolution rather than theirs.
-templates
+# A git worktree under .claude is a full checkout of this repo. Formatting or
+# checking it from here would report another branch's files as this one's.
+.claude
