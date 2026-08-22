@@ -1,1 +1,10 @@
+# The fast, repo-wide checks. These need only the root's own dependencies, so
+# they run in about a second and cannot be affected by whether the individual
+# templates have been installed.
+#
+# Deliberately not here: each template's own typecheck, lint, test and build.
+# Those need node_modules inside every template, which is minutes of install on
+# a clean checkout, so they stay in CI where the matrix installs them once per
+# job and runs them in parallel.
 npm run validate
+npm run format:check

@@ -8,7 +8,7 @@ on:
 
 jobs:
   validate:
-    name: Validate registry and manifests
+    name: Plan template checks
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
@@ -25,20 +25,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Validate
-        run: npm run validate
-
-      # shared/react-app is copied byte for byte into every template, so it has
-      # to be stored already formatted the way those templates format their own
-      # source. Formatted from anywhere else, or with a different prettier, the
-      # copies land mis-formatted and each template's format:check fails on files
-      # nobody edited.
-      - name: Format check (shared/react-app)
-        run: npm run format:shared:check
-
-      - name: Templates are in sync with shared/react-app
-        run: npm run sync:shared -- --check
-
+      # npm run validate and npm run format:check are the pre-commit hook's job.
+      # They need only the root's dependencies, run in about a second, and fail
+      # on the machine that made the change rather than a few minutes later.
+      # This job is left with the one thing a hook cannot do, which is tell the
+      # matrix below what to build.
       - name: Compute build matrix
         id: matrix
         run: echo "matrix=$(node scripts/validate-templates.mjs --matrix)" >> "$GITHUB_OUTPUT"
