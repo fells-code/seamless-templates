@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+package-lock.json
+
+# Each template formats its own tree with its own toolchain, and the copies under
+# templates/ are written by sync:shared from shared/react-app. Formatting them
+# from here would use this root's resolution rather than theirs.
+templates

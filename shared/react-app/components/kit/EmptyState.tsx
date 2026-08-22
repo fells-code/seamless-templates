@@ -8,7 +8,7 @@ import type { EmptyStateProps } from "./types";
  */
 export default function EmptyState({ title, body, action }: EmptyStateProps) {
   return (
-    <div className="rounded-card border border-line px-6 py-20 text-center">
+    <div className="panel-empty px-6 py-20 text-center">
       <p className="title text-ink">{title}</p>
       {body && <p className="mx-auto mt-4 max-w-md text-ink-muted">{body}</p>}
       {action && <div className="mt-8 flex justify-center">{action}</div>}

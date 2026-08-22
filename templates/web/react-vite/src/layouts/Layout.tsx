@@ -12,7 +12,7 @@ import { Vista } from "../components/kit";
  */
 export default function MainLayout() {
   return (
-    <div className="min-h-screen text-ink lg:flex">
+    <div className="app-shell-flow min-h-screen text-ink lg:flex">
       <Vista />
       <Navbar />
 

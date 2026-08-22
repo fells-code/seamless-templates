@@ -9,10 +9,7 @@ export default function ActionCard({
   figure,
 }: ActionCardProps) {
   return (
-    <Link
-      to={to}
-      className="lift block rounded-card border border-line bg-surface-raised p-5 shadow-raised"
-    >
+    <Link to={to} className="panel panel-pad lift block">
       <div className="flex items-start justify-between gap-4">
         <h2 className="font-semibold text-ink">{title}</h2>
         {figure && (

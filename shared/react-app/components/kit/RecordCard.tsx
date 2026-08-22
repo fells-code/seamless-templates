@@ -16,7 +16,7 @@ export default function RecordCard({
   footer,
 }: RecordCardProps) {
   return (
-    <article className="lift rounded-card border border-line bg-surface-raised p-5 shadow-raised">
+    <article className="panel panel-pad lift">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <h3 className="truncate font-semibold text-ink">{title}</h3>

@@ -10,7 +10,7 @@ export default function PageHeader({
   const muted = onBand ? "text-band-ink-muted" : "text-ink-muted";
 
   return (
-    <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
+    <div className="band-head gap-x-8 gap-y-4">
       <div className="min-w-0">
         {size === "display" && tagline && (
           <p className={`label mb-6 ${muted}`}>{tagline}</p>

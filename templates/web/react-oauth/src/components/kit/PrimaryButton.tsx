@@ -1,9 +1,16 @@
 import type { PrimaryButtonProps } from "./types";
 
+/*
+ * `onBand` reads its pair from `on-band`, not from the band colour directly.
+ * Half the styles make the header a window onto the backdrop rather than a panel
+ * of brand colour, and on those there is no band to contrast with, the pair
+ * falls back to the brand, and the button stays a button instead of becoming
+ * dark-on-dark.
+ */
 const VARIANTS = {
   primary: "bg-brand text-brand-ink hover:bg-brand-hover",
   quiet: "border border-line bg-surface-raised text-ink hover:bg-surface",
-  onBand: "bg-band-ink text-band hover:opacity-90",
+  onBand: "bg-on-band text-on-band-ink hover:opacity-90",
 } as const;
 
 export default function PrimaryButton({
@@ -23,7 +30,7 @@ export default function PrimaryButton({
       disabled={disabled || busy}
       aria-busy={busy}
       className={[
-        "lift rounded-control px-5 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60",
+        "btn lift disabled:cursor-not-allowed disabled:opacity-60",
         VARIANTS[variant],
         full ? "w-full" : "",
       ].join(" ")}

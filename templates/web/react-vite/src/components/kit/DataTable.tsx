@@ -34,7 +34,7 @@ export default function DataTable<T>({
 
   if (state === "error") {
     return (
-      <div className="rounded-card border border-line bg-surface-raised px-6 py-10 text-center">
+      <div className="panel px-6 py-10 text-center">
         <p className="font-medium text-red-600">
           {error ?? "Something went wrong."}
         </p>
@@ -59,7 +59,7 @@ export default function DataTable<T>({
     ].join(" ");
 
   return (
-    <div className="overflow-x-auto rounded-card border border-line bg-surface-raised shadow-raised">
+    <div className="panel overflow-x-auto">
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-line">
@@ -99,7 +99,10 @@ export default function DataTable<T>({
               {columns.map((column, index) => (
                 <td
                   key={column.key}
-                  className={`${cellClass(column, index)} font-semibold text-ink`}
+                  className={`${cellClass(
+                    column,
+                    index,
+                  )} font-semibold text-ink`}
                 >
                   {footer[column.key] ?? ""}
                 </td>
