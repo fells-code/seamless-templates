@@ -31,8 +31,8 @@ export default function RankedTable<T>({
             place === 1
               ? "bg-accent text-accent-ink"
               : place <= 3
-                ? "bg-surface text-ink"
-                : "text-ink-muted",
+              ? "bg-surface text-ink"
+              : "text-ink-muted",
           ].join(" ")}
         >
           {place}

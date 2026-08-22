@@ -2,10 +2,19 @@ import { Children } from "react";
 import EmptyState from "./EmptyState";
 import type { RecordListProps } from "./types";
 
+/*
+ * How many columns is the theme's decision, not this one's.
+ *
+ * `auto-grid` sets the narrowest a column may be and lets the browser fit as
+ * many as it can, so the same list is two across in a style with a 24rem minimum
+ * and four across in one with 17rem, without either of them naming a breakpoint.
+ * The prop only says whether this collection wants the theme's default density,
+ * one column, or a tighter one.
+ */
 const COLUMNS = {
-  1: "",
-  2: "sm:grid-cols-2",
-  3: "sm:grid-cols-2 xl:grid-cols-3",
+  1: "auto-grid auto-grid-1",
+  2: "auto-grid",
+  3: "auto-grid auto-grid-3",
 } as const;
 
 /**
@@ -25,10 +34,7 @@ export default function RecordList({
   children,
 }: RecordListProps) {
   if (state === "loading") {
-    const shape =
-      layout === "grid"
-        ? `grid gap-4 ${COLUMNS[columns]}`
-        : "flex flex-col gap-3";
+    const shape = layout === "grid" ? COLUMNS[columns] : "stack";
 
     return (
       <div className={shape} aria-busy="true" aria-label="Loading">
@@ -47,7 +53,7 @@ export default function RecordList({
 
   if (state === "error") {
     return (
-      <div className="rounded-card border border-line bg-surface-raised px-6 py-10 text-center">
+      <div className="panel px-6 py-10 text-center">
         <p className="font-medium text-red-600">
           {error ?? "Something went wrong."}
         </p>
@@ -61,11 +67,7 @@ export default function RecordList({
 
   return (
     <div
-      className={
-        layout === "grid"
-          ? `stagger grid gap-4 ${COLUMNS[columns]}`
-          : "stagger flex flex-col gap-3"
-      }
+      className={`stagger ${layout === "grid" ? COLUMNS[columns] : "stack"}`}
     >
       {children}
     </div>

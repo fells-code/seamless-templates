@@ -26,7 +26,12 @@ import type { ReactNode } from "react";
  * - `dashboard`  stat band over a split of two related collections.
  */
 export type Archetype =
-  "ledger" | "tracker" | "board" | "roster" | "feed" | "dashboard";
+  | "ledger"
+  | "tracker"
+  | "board"
+  | "roster"
+  | "feed"
+  | "dashboard";
 
 export interface ScreenProps {
   archetype: Archetype;
@@ -65,7 +70,11 @@ export interface SectionHeadingProps {
 }
 
 export type StatFormat =
-  "number" | "currency" | "percent" | "duration" | "plain";
+  | "number"
+  | "currency"
+  | "percent"
+  | "duration"
+  | "plain";
 
 export interface Stat {
   label: string;
@@ -85,7 +94,13 @@ export interface StatRowProps {
 }
 
 export type FieldType =
-  "text" | "textarea" | "number" | "currency" | "date" | "select" | "checkbox";
+  | "text"
+  | "textarea"
+  | "number"
+  | "currency"
+  | "date"
+  | "select"
+  | "checkbox";
 
 export interface FieldOption {
   value: string;
@@ -231,6 +246,30 @@ export interface AuthFrameProps {
   /** The sign-in screens. Rendered once, unchanged. */
   children: ReactNode;
 }
+
+/*
+ * The layout classes a screen is allowed to use.
+ *
+ * Everything else about a page's geometry belongs to `Screen` and to the theme,
+ * the gutter, the content width, where the content sits, how wide a column may
+ * be. These three are the exception, for the cases where a screen genuinely has
+ * a handful of things to lay out and no collection component owns them.
+ *
+ * Use them instead of naming a column count. `sm:grid-cols-2 xl:grid-cols-3`
+ * reads as harmless and is not: how many columns fit is the one thing each look
+ * was given to differ on, so a page that fixes it renders identically in every
+ * look and switching the look does nothing on that screen.
+ *
+ *   auto-grid    a collection: as many columns as fit, at the theme's own
+ *                minimum width, and every card the same width however many
+ *                there are
+ *   auto-grid-3  the same, tighter, for small cards
+ *   auto-row     a known, small set, the two or three tiles on a landing
+ *                screen, sharing the width between them rather than lining up
+ *                at the left of a row sized for more
+ *   stack        one column, at the theme's own gap
+ */
+export type LayoutClass = "auto-grid" | "auto-grid-3" | "auto-row" | "stack";
 
 export interface ActionCardProps {
   /** A route path, e.g. "/claims". */

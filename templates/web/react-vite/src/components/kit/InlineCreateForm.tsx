@@ -52,7 +52,7 @@ export default function InlineCreateForm({
 
   if (locked) {
     return note ? (
-      <div className="rounded-card border border-line bg-surface-raised p-5">
+      <div className="panel panel-pad">
         <p className="text-sm text-ink-muted">{note}</p>
       </div>
     ) : null;
@@ -72,7 +72,7 @@ export default function InlineCreateForm({
       payload[field.name] =
         field.type === "number" || field.type === "currency"
           ? Number(raw)
-          : (raw ?? "");
+          : raw ?? "";
     }
 
     try {
@@ -93,10 +93,7 @@ export default function InlineCreateForm({
   };
 
   return (
-    <form
-      onSubmit={submit}
-      className="rounded-card border border-line bg-surface-raised p-5 shadow-raised"
-    >
+    <form onSubmit={submit} className="panel panel-pad">
       <h2 className="label mb-4 text-ink-muted">{title}</h2>
 
       <div className={`grid gap-4 ${COLUMNS[columns]}`}>

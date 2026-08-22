@@ -1,8 +1,12 @@
 import Toggle from "./Toggle";
 import type { FieldProps } from "./types";
 
-const CONTROL =
-  "w-full rounded-control border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:border-brand focus:outline-none disabled:opacity-60";
+/*
+ * The frame, the fill and the padding are all `control`, which resolves from the
+ * theme: boxed in one style, underlined in another, unframed and pill-shaped in a
+ * third. Only what does not change is stated here.
+ */
+const CONTROL = "control placeholder:text-ink-muted";
 
 /**
  * One labelled control.
