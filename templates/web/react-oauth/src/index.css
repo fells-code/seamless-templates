@@ -195,8 +195,8 @@
     Geist, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, "Liberation Sans", sans-serif;
   /* Width and optical size, for the two families that carry an axis beyond
-     weight. Archivo runs 62% to 125%, which is the whole distance between
-     Blueprint's condensed capitals and Cinematic's expanded ones. */
+     weight. Archivo runs 62% to 125%, so one download covers everything from
+     condensed capitals to expanded ones. */
   --app-display-stretch: 100%;
   --app-display-optical: auto;
   /* The small type carries its own width, because a theme that sets labels in a
@@ -775,7 +775,8 @@ body {
     font-feature-settings: var(--app-numeric-zero);
   }
 
-  /* Table density is a kit decision: Console is tight, Cinematic is loose. */
+  /* Table density is a theme decision: a readout wants tight rows, a showy
+     theme wants loose ones. */
   .data-cell {
     padding-block: var(--app-row-pad-y);
     padding-inline: var(--app-cell-pad-x);
@@ -947,7 +948,8 @@ body {
     border-radius: var(--app-radius-card);
   }
 
-  /* A section rule. Hairline in most kits, heavy in Editorial, double in Almanac. */
+  /* A section rule. A hairline by default, and a theme is free to make it heavy,
+     or double it into a masthead rule. */
   .rule {
     border-bottom-style: solid;
     border-bottom-width: var(--app-rule-width);
@@ -1052,10 +1054,10 @@ body {
     justify-content: space-between;
   }
 
-  /* Cards. The kit sets the narrowest a column may be and the browser decides how
-     many fit, so the same grid is two columns in Cinematic and four in Blueprint
-     without either of them naming a breakpoint. `min()` keeps the last column
-     from overflowing a phone. */
+  /* Cards. The theme sets the narrowest a column may be and the browser decides
+     how many fit, so an airy theme lands on two columns and a dense one on four,
+     neither of them naming a breakpoint. `min()` keeps the last column from
+     overflowing a phone. */
   .auto-grid {
     display: grid;
     gap: var(--app-grid-gap);
