@@ -58,27 +58,13 @@ export default function Navbar() {
               end={link.to === "/"}
               onClick={() => setMobileOpen(false)}
               className={({ isActive }) =>
-                [
-                  "flex items-center gap-3 rounded-control px-3 py-2 text-sm",
-                  isActive
-                    ? "bg-shell-active font-semibold text-shell-ink"
-                    : "font-medium text-shell-ink-muted hover:bg-shell-active hover:text-shell-ink",
-                ].join(" ")
+                isActive ? "nav-item nav-item-active" : "nav-item"
               }
             >
-              {({ isActive }) => (
-                <>
-                  <span
-                    aria-hidden
-                    className={
-                      isActive
-                        ? "h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
-                        : "h-1.5 w-1.5 shrink-0 rounded-full bg-shell-line"
-                    }
-                  />
-                  {link.label}
-                </>
-              )}
+              <>
+                <span aria-hidden className="nav-marker" />
+                {link.label}
+              </>
             </NavLink>
           </li>
         ))}

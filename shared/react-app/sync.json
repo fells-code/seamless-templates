@@ -3,6 +3,7 @@
   "files": [
     { "from": "index.css", "to": "src/index.css" },
     { "from": "layouts/Layout.tsx", "to": "src/layouts/Layout.tsx" },
-    { "from": "components/kit", "to": "src/components/kit" }
+    { "from": "components/kit", "to": "src/components/kit" },
+    { "from": "fonts", "to": "public/fonts" }
   ]
 }

@@ -54,7 +54,7 @@ export default function RecordList({
   if (state === "error") {
     return (
       <div className="panel px-6 py-10 text-center">
-        <p className="font-medium text-red-600">
+        <p className="font-medium text-negative">
           {error ?? "Something went wrong."}
         </p>
       </div>

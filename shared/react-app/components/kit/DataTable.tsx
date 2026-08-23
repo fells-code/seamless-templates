@@ -35,7 +35,7 @@ export default function DataTable<T>({
   if (state === "error") {
     return (
       <div className="panel px-6 py-10 text-center">
-        <p className="font-medium text-red-600">
+        <p className="font-medium text-negative">
           {error ?? "Something went wrong."}
         </p>
       </div>
@@ -58,11 +58,21 @@ export default function DataTable<T>({
       column.secondary ? "hidden lg:table-cell" : "",
     ].join(" ");
 
+  // One column carries the answer and one may carry the raw input it came from.
+  // Giving them the same weight is what makes a table of figures read as a wall
+  // of them.
+  const bodyClass = (column: Column<T>) =>
+    column.lead
+      ? "font-semibold text-ink"
+      : column.quiet
+        ? "text-ink-muted"
+        : "text-ink";
+
   return (
     <div className="panel overflow-x-auto">
       <table className="w-full border-collapse text-sm">
         <thead>
-          <tr className="border-b border-line">
+          <tr className="data-head">
             {columns.map((column, index) => (
               <th
                 key={column.key}
@@ -77,14 +87,11 @@ export default function DataTable<T>({
 
         <tbody className="stagger">
           {rows.map((row) => (
-            <tr
-              key={rowKey(row)}
-              className="border-b border-line last:border-0 hover:bg-surface"
-            >
+            <tr key={rowKey(row)} className="data-row">
               {columns.map((column, index) => (
                 <td
                   key={column.key}
-                  className={`${cellClass(column, index)} text-ink`}
+                  className={`${cellClass(column, index)} ${bodyClass(column)}`}
                 >
                   {column.render(row)}
                 </td>
