@@ -1,14 +1,16 @@
+import Badge from "./Badge";
 import type { RecordCardProps } from "./types";
 
 const TONES = {
   neutral: "text-ink",
-  positive: "text-green-600",
-  negative: "text-red-600",
+  positive: "text-positive",
+  negative: "text-negative",
 } as const;
 
 export default function RecordCard({
   title,
   badge,
+  badgeTone = "neutral",
   figure,
   tone = "neutral",
   meta,
@@ -19,7 +21,7 @@ export default function RecordCard({
     <article className="panel panel-pad lift">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <h3 className="truncate font-semibold text-ink">{title}</h3>
+          <h3 className="font-semibold text-balance text-ink">{title}</h3>
           {meta && <p className="mt-1 text-xs text-ink-muted">{meta}</p>}
         </div>
 
@@ -33,9 +35,9 @@ export default function RecordCard({
       </div>
 
       {badge && (
-        <span className="label mt-4 inline-block rounded-control bg-surface px-2 py-1 text-ink-muted">
-          {badge}
-        </span>
+        <div className="mt-4">
+          <Badge tone={badgeTone}>{badge}</Badge>
+        </div>
       )}
 
       {body && <div className="mt-4 text-sm text-ink-muted">{body}</div>}

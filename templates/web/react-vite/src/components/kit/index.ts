@@ -13,6 +13,7 @@ export { default as Screen } from "./Screen";
 export { default as AuthFrame } from "./AuthFrame";
 export { default as Vista } from "./Vista";
 export { default as ActionCard } from "./ActionCard";
+export { default as Badge } from "./Badge";
 export { default as PageHeader } from "./PageHeader";
 export { default as SectionHeading } from "./SectionHeading";
 export { default as StatRow } from "./StatRow";

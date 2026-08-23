@@ -89,6 +89,23 @@ export interface StatRowProps {
   currency?: string;
   /** Set on a brand-coloured band. */
   onBand?: boolean;
+  /**
+   * Renders the first item as the hero figure: a filled panel, half again the
+   * size of the others. On by default, because a row of equal figures tells the
+   * reader nothing about which one the screen is for. Pass `false` only when the
+   * figures genuinely rank equally.
+   */
+  lead?: boolean;
+}
+
+export type Tone = "neutral" | "accent" | "positive" | "warn" | "negative";
+
+export interface BadgeProps {
+  children: ReactNode;
+  /** Reads from the kit's colour roles, never from a literal colour. */
+  tone?: Tone;
+  /** A filled dot before the label, for a status rather than a category. */
+  dot?: boolean;
 }
 
 export type FieldType =
@@ -190,6 +207,8 @@ export interface RecordCardProps {
   title: string;
   /** A short chip: a category, a grade, a status. */
   badge?: string;
+  /** Colour role for the chip. Defaults to neutral. */
+  badgeTone?: Tone;
   /** The number this record is about, already formatted. Right-aligned. */
   figure?: string;
   /** Whether the figure reads as a gain or a loss. */
@@ -210,6 +229,14 @@ export interface Column<T> {
   render: (row: T) => ReactNode;
   /** Hidden below the `lg` breakpoint, for columns that are not essential. */
   secondary?: boolean;
+  /**
+   * The column carrying the answer. Set on one column at most: a table of
+   * figures where every column is the same weight makes the reader find the one
+   * that matters, which is work the table should have done.
+   */
+  lead?: boolean;
+  /** Dims the column, for a raw input next to the figure derived from it. */
+  quiet?: boolean;
 }
 
 export interface DataTableProps<T> {
@@ -270,6 +297,11 @@ export interface ActionCardProps {
   body?: string;
   /** A figure or count worth showing on the card. */
   figure?: string;
+  /**
+   * A glyph for the card, normally a lucide icon element. A route someone picks
+   * from a landing screen is recognised by shape long before it is read.
+   */
+  icon?: ReactNode;
 }
 
 export interface UseCollection<T> {

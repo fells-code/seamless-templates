@@ -111,7 +111,7 @@ export default function InlineCreateForm({
         ))}
       </div>
 
-      {failed && <p className="mt-4 text-sm text-red-600">{failed}</p>}
+      {failed && <p className="mt-4 text-sm text-negative">{failed}</p>}
 
       {/* Full width in a rail, where the button is the width of the form anyway;
           its own size in a wide panel, where a stretched button reads as a banner. */}

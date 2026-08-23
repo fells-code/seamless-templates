@@ -75,10 +75,11 @@ export default function Screen({
   // therefore the theme's: a style set to a 46rem reading measure collapses it to
   // one track, because a narrow measure with a sidebar bolted to it is neither a
   // reading column nor a working tool.
-  const railed =
-    archetype === "ledger" ||
-    archetype === "roster" ||
-    archetype === "dashboard";
+  // A landing screen is not one of them. The rail is for a create form beside a
+  // long table; a dashboard's content is a grid of cards that already wants the
+  // full width, and pairing the two leaves a 20rem column empty down the length
+  // of the first screen anyone sees. The form gets a view of its own instead.
+  const railed = archetype === "ledger" || archetype === "roster";
 
   const views = [];
 
@@ -101,19 +102,29 @@ export default function Screen({
       </section>,
     );
   } else {
-    if (aside) {
-      views.push(
-        <section key="aside" className="view reveal page-gutter view-pad">
-          <div className="content-column">
-            <div className="aside-column">{aside}</div>
-          </div>
-        </section>,
-      );
-    }
-    views.push(
+    const asideView = aside ? (
+      <section key="aside" className="view reveal page-gutter view-pad">
+        <div className="content-column">
+          <div className="aside-column">{aside}</div>
+        </div>
+      </section>
+    ) : null;
+
+    const bodyView = (
       <section key="body" className="view reveal page-gutter view-pad">
         <div className="content-column">{children}</div>
-      </section>,
+      </section>
+    );
+
+    // On most screens the thing you came to do gets a view of its own ahead of
+    // the thing you came to look at. A landing screen is the exception: it is
+    // the overview, its first job is to say where everything is, and opening it
+    // on a form asks someone to file a record before they have been shown what
+    // the application holds.
+    views.push(
+      ...(landing ? [bodyView, asideView] : [asideView, bodyView]).filter(
+        (view) => view !== null,
+      ),
     );
   }
 

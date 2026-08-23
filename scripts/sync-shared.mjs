@@ -11,6 +11,10 @@
 // check below is what stops the two from drifting. `npm run validate` runs it, so
 // CI and the pre-commit hook both fail on an edit made to a copy instead of the
 // source.
+//
+// Files are compared and copied as buffers rather than as text: the manifest
+// carries the woff2 font binaries as well as the source, and reading one of
+// those through a utf8 decode replaces every byte it cannot map.
 
 import fs from "node:fs";
 import path from "node:path";
@@ -115,9 +119,9 @@ export function checkSharedSync() {
       problems.push(`${target} is missing; it is synced from ${source}.`);
       continue;
     }
-    const want = fs.readFileSync(path.join(repoRoot, source), "utf8");
-    const have = fs.readFileSync(absTarget, "utf8");
-    if (want !== have) {
+    const want = fs.readFileSync(path.join(repoRoot, source));
+    const have = fs.readFileSync(absTarget);
+    if (!want.equals(have)) {
       problems.push(`${target} has drifted from ${source}.`);
     }
   }
@@ -141,14 +145,14 @@ function write() {
 
   for (const { source, target } of pairs) {
     const absTarget = path.join(repoRoot, target);
-    const contents = fs.readFileSync(path.join(repoRoot, source), "utf8");
+    const contents = fs.readFileSync(path.join(repoRoot, source));
     const current = fs.existsSync(absTarget)
-      ? fs.readFileSync(absTarget, "utf8")
+      ? fs.readFileSync(absTarget)
       : null;
-    if (current === contents) continue;
+    if (current !== null && current.equals(contents)) continue;
 
     fs.mkdirSync(path.dirname(absTarget), { recursive: true });
-    fs.writeFileSync(absTarget, contents, "utf8");
+    fs.writeFileSync(absTarget, contents);
     changed.push(target);
   }
 
