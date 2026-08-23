@@ -65,7 +65,14 @@ export interface SectionHeadingProps {
 }
 
 export type StatFormat =
-  "number" | "currency" | "percent" | "duration" | "plain";
+  | "number"
+  | "currency"
+  | "percent"
+  /** Minutes, rounded, as "1h 20m". Wrong unit for anything under an hour. */
+  | "duration"
+  /** Seconds as a clock: "4:15", "1:17:15". Use this for times people race. */
+  | "clock"
+  | "plain";
 
 export interface Stat {
   label: string;
