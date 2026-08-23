@@ -2,16 +2,16 @@
 
 /* The typefaces, served from this application's own origin.
  *
- * A generated application runs on a bare subdomain with no font host, which for
- * a long time was read here as "no webfont at all", and it cost the kits most of
- * what separates them: ten looks drawn in the same system UI face are ten
- * recolourings of one typeface. The constraint is about third-party hosts, not
- * about bundling. These sit in public/fonts, get fingerprinted and served
- * alongside the application, and reach no network the application does not own.
+ * This used to be a system font stack and nothing else, on the grounds that an
+ * application scaffolded from here may ship anywhere, with no font host to
+ * depend on. That reasoning is about third-party hosts rather than about
+ * bundling. These sit in public/fonts, get fingerprinted by the build and served
+ * alongside the application, so the type is the starter's own and no request
+ * leaves the origin.
  *
- * Five families, each variable and subset to Latin and Latin Extended, and each
- * only fetched by a browser that renders a glyph in it. A kit therefore costs
- * one or two files, not all ten: Console pulls the mono and nothing else.
+ * Five families, each variable and subset to Latin and Latin Extended. A browser
+ * downloads only the ones it actually renders a glyph in, so a theme that sets
+ * everything in the mono costs one file rather than five.
  *
  * font-display: swap throughout, so a slow file costs the brand and never the
  * words. Every family keeps a system stack behind it in the tokens below.
@@ -199,10 +199,10 @@
      Blueprint's condensed capitals and Cinematic's expanded ones. */
   --app-display-stretch: 100%;
   --app-display-optical: auto;
-  /* The small type carries its own width, because the kits that set labels in a
-     condensed face do not set their headlines in one. Without this a condensed
-     stack resolves to the family at normal width, which is the family the kit
-     was already using. */
+  /* The small type carries its own width, because a theme that sets labels in a
+     condensed face does not necessarily set its headlines in one. Without this a
+     condensed stack resolves to the family at normal width, which is the family
+     the theme was already using. */
   --app-label-stretch: 100%;
   --app-root-size: 100%;
   --app-body-leading: 1.5;
@@ -219,19 +219,19 @@
   --app-label-weight: 600;
   --app-label-transform: uppercase;
   /* Slashed zero. Right for a readout, wrong almost everywhere else, and until
-     this was a token it was on in all ten kits: Soft rendered a rounded, pastel
-     habit tracker showing 5:OO with a line through both zeros. */
+     this was a token it was on everywhere at once: a rounded, pastel habit
+     tracker rendered 5:00 with a line through both zeros. */
   --app-numeric-zero: "zero" 0;
   /* The one figure on a screen that outranks the rest.
    *
-   * The kits had no way to say this. A screen's four numbers were four identical
+   * There was no way to say this. A screen's four numbers were four identical
    * tiles, and StatRow made it worse by shrinking all of them once there were
    * more than two, so the number the screen exists to show was the same size as
    * the three supporting it. Rank is what separates a designed screen from a
    * populated one, and it cannot come from colour tuning: it has to be a
-   * primitive the kit can shape. A kit that wants no such emphasis sets the fill
-   * to transparent and the size to the plain figure size, and gets its old row
-   * back. */
+   * primitive a theme can shape. A theme that wants no such emphasis sets the
+   * fill to transparent and the size to the plain figure size, and gets its old
+   * row back. */
   --app-lead-fill: var(--app-accent);
   --app-lead-ink: var(--app-accent-ink);
   --app-lead-caption: color-mix(
@@ -808,13 +808,12 @@ body {
 
   /* The hero figure, as a panel rather than a tile.
    *
-   * This is the piece the kits were missing. Everything else on a screen can be
-   * an equal-weight rectangle as long as one thing is not, and this is the one
-   * thing: a filled panel, the kit's loudest colour, a figure half again the
-   * size of every other figure on the page. Its fill is the accent by default
-   * rather than the brand, because the brand is already spent on the band
-   * behind it and a panel of band colour on a band of band colour is not
-   * emphasis. */
+   * Everything else on a screen can be an equal-weight rectangle as long as one
+   * thing is not, and this is the one thing: a filled panel, the theme's loudest
+   * colour, a figure half again the size of every other figure on the page. Its
+   * fill is the accent by default rather than the brand, because the brand is
+   * already spent on the band behind it and a panel of band colour on a band of
+   * band colour is not emphasis. */
   .metric-lead {
     display: flex;
     flex-direction: column;

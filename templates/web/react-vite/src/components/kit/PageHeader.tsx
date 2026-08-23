@@ -23,8 +23,8 @@ export default function PageHeader({
 
   if (size === "display") {
     // A block rather than a flex row, so the controls follow the text alignment
-    // the kit already set on the column around them: flush left in most, up the
-    // middle in the two that centre their headers.
+    // the theme already set on the column around them, whether that is flush
+    // left or up the middle.
     return (
       <div>
         {tagline && <p className={`label mb-6 ${muted}`}>{tagline}</p>}
