@@ -29,7 +29,33 @@ export function formatPercent(value: number): string {
   }).format(value > 1 ? value / 100 : value);
 }
 
-/** Minutes into "1h 20m". */
+/**
+ * Seconds as a clock, "4:15" or "1:17:15".
+ *
+ * The unit is seconds, not minutes, which is the whole reason this exists beside
+ * `formatDuration`. Anything a person races, laps, lifts or cooks is measured in
+ * seconds and lives under an hour, and `formatDuration` can express neither: it
+ * takes minutes and rounds to a whole one, so a 4 minute 15 second station is
+ * either "4h 15m" if you hand it seconds or "4m" if you convert first.
+ */
+export function formatClock(seconds: number): string {
+  const whole = Math.max(0, Math.round(seconds));
+  const hours = Math.floor(whole / 3600);
+  const minutes = Math.floor((whole % 3600) / 60);
+  const rest = whole % 60;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return hours > 0
+    ? `${hours}:${pad(minutes)}:${pad(rest)}`
+    : `${minutes}:${pad(rest)}`;
+}
+
+/**
+ * Minutes into "1h 20m".
+ *
+ * Minutes. Passing seconds here is the mistake this comment exists to prevent,
+ * and it does not look like a mistake: 2640 seconds renders as "44h". Reach for
+ * `formatClock` when the figure is in seconds or when seconds are worth showing.
+ */
 export function formatDuration(minutes: number): string {
   const whole = Math.round(minutes);
   const hours = Math.floor(whole / 60);
@@ -70,6 +96,8 @@ export function formatStat(
       return formatPercent(value);
     case "duration":
       return formatDuration(value);
+    case "clock":
+      return formatClock(value);
     default:
       return formatNumber(value);
   }
