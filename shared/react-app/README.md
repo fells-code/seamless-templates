@@ -61,6 +61,6 @@ produces the same bytes the templates are checked against.
 
 `src/components/Navbar.tsx` is per-template. Each starter lists its own routes in
 the nav, and `react-oauth` has no beta-access route. The file is also an anchor for
-the code generation in the `seamless-idea` repository, which patches generated nav
-links in beside the literal `{ label: "Home", to: "/" },` entry, so the array has to
-stay written out in each template rather than moving behind an abstraction.
+code generation: tooling that scaffolds routes on top of a template patches its own
+nav links in beside the literal `{ label: "Home", to: "/" },` entry, so the array
+has to stay written out in each template rather than moving behind an abstraction.
