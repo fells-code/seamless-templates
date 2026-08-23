@@ -52,6 +52,10 @@ does not exist in their project would only confuse them.
 | `index.css`          | `src/index.css`          |
 | `layouts/Layout.tsx` | `src/layouts/Layout.tsx` |
 | `components/kit/`    | `src/components/kit/`    |
+| `fonts/`             | `public/fonts/`          |
+
+`fonts/` is the one binary entry, so the sync script compares and copies in
+buffers rather than as text.
 
 `sync.json` is the manifest the sync script reads. `.prettierrc.json` matches the
 one each template ships, so formatting these sources with the template's Prettier
