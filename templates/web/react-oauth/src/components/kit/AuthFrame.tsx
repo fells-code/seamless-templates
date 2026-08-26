@@ -33,9 +33,13 @@ export default function AuthFrame({
             <ul className="mt-12 space-y-3">
               {points.map((point) => (
                 <li key={point} className="flex items-start gap-3">
+                  {/* Anything drawn on the band reads from the band's own pair,
+                      the same one PrimaryButton's onBand variant uses. The accent
+                      is picked for a surface, so a kit that chooses a deep one
+                      loses these marks against the band entirely. */}
                   <span
                     aria-hidden
-                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
+                    className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-on-band"
                   />
                   <span className="text-sm text-band-ink-muted">{point}</span>
                 </li>
