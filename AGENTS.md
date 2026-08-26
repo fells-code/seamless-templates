@@ -65,7 +65,8 @@ guidance may extend them but must not contradict them.
     environment (`env.fromExample`, `env.set` with `{{placeholder}}` values the CLI resolves).
   - `.env.example`: the committed environment contract.
 - `shared/react-app/`: the source of truth for what both React starters share (the design tokens in
-  `index.css`, the app shell layout, and the UI kit under `components/kit`). The CLI copies exactly
+  `index.css`, the app shell layout, the UI kit under `components/kit`, and the fetch seam under
+  `lib/` that the kit calls). The CLI copies exactly
   one template directory into a new project, so a template cannot reference anything outside itself.
   Each template therefore carries a committed copy, written by `npm run sync:shared`. Edit the file
   under `shared/react-app/`, never a template's copy.

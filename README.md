@@ -143,7 +143,7 @@ npm run validate
 
 `npm run validate` checks that `registry.json` is well-formed, that every referenced template has a valid `template.json` and `.env.example`, and that no template copy of a shared source has drifted from `shared/`.
 
-To change something both React starters use (the design tokens, the app shell layout, or the UI kit), edit the file under `shared/react-app/` and run:
+To change something both React starters use (the design tokens, the app shell layout, the UI kit, or the fetch seam under `lib/`), edit the file under `shared/react-app/` and run:
 
 ```bash
 npm run sync:shared
