@@ -304,6 +304,18 @@ export interface ActionCardProps {
   icon?: ReactNode;
 }
 
+export interface UseCollectionOptions {
+  /**
+   * Refetch every this many milliseconds, and whenever the window is looked at
+   * again. Off by default, and off is right for a collection only its owner
+   * edits. Turn it on where more than one person is looking at the same records
+   * and a stale screen would mislead them: a shared list, a thread, a rota. A few
+   * seconds reads as live to a group of a dozen, and costs one request each,
+   * which is the whole reason not to reach for a socket server.
+   */
+  live?: number | false;
+}
+
 export interface UseCollection<T> {
   records: T[];
   state: LoadState;
@@ -311,5 +323,12 @@ export interface UseCollection<T> {
   /** Posts, and shows the new record immediately. Rolls back if the post fails. */
   create: (values: FieldValues) => Promise<T>;
   creating: boolean;
+  /** Fetches again from the start, loading state and all. For a retry button. */
   reload: () => void;
+  /**
+   * Fetches again underneath the reader: no loading state, no error cleared, and
+   * a record still being created is kept. `live` calls this for you; call it
+   * directly after something you know changed the collection on the server.
+   */
+  refresh: () => void;
 }
