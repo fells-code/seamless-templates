@@ -23,6 +23,7 @@ export { default as RecordCard } from "./RecordCard";
 export { default as DataTable } from "./DataTable";
 export { default as RankedTable } from "./RankedTable";
 export { default as EmptyState } from "./EmptyState";
+export { default as WakingState } from "./WakingState";
 export { default as Field } from "./Field";
 export { default as Toggle } from "./Toggle";
 export { default as PrimaryButton } from "./PrimaryButton";

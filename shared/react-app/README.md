@@ -1,7 +1,8 @@
 # Shared React sources
 
 The source of truth for the parts of the React starters that must stay identical:
-the design tokens, the app shell layout, and the UI kit.
+the design tokens, the app shell layout, the UI kit, and the fetch seam the kit
+calls.
 
 Both `templates/web/react-vite` and `templates/web/react-oauth` carry a committed
 copy of everything here. Edit the file in this directory, then run:
@@ -52,10 +53,17 @@ does not exist in their project would only confuse them.
 | `index.css`          | `src/index.css`          |
 | `layouts/Layout.tsx` | `src/layouts/Layout.tsx` |
 | `components/kit/`    | `src/components/kit/`    |
+| `lib/`               | `src/lib/`               |
 | `fonts/`             | `public/fonts/`          |
 
 `fonts/` is the one binary entry, so the sync script compares and copies in
 buffers rather than as text.
+
+`lib/` is here because the kit imports it. `useCollection` reaches for
+`../../lib/api`, so the two cannot be maintained apart: a change to what
+`apiFetch` throws is a change to what the kit has to handle. The two copies were
+already byte for byte identical before the manifest listed them, with nothing
+keeping them that way.
 
 `sync.json` is the manifest the sync script reads. `.prettierrc.json` matches the
 one each template ships, so formatting these sources with the template's Prettier

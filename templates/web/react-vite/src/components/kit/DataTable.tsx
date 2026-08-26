@@ -1,4 +1,5 @@
 import EmptyState from "./EmptyState";
+import WakingState from "./WakingState";
 import type { Column, DataTableProps } from "./types";
 
 /**
@@ -30,6 +31,10 @@ export default function DataTable<T>({
         ))}
       </div>
     );
+  }
+
+  if (state === "waking") {
+    return <WakingState />;
   }
 
   if (state === "error") {

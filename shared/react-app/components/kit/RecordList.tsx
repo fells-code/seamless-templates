@@ -1,5 +1,6 @@
 import { Children } from "react";
 import EmptyState from "./EmptyState";
+import WakingState from "./WakingState";
 import type { RecordListProps } from "./types";
 
 /*
@@ -18,7 +19,7 @@ const COLUMNS = {
 } as const;
 
 /**
- * The four states every collection has: arriving, broken, empty, and full.
+ * The states every collection has: arriving, waking, broken, empty, and full.
  *
  * Handling them once is most of what the kit is for. A screen that renders nothing
  * while loading reads as broken, and one that renders a bare sentence when empty
@@ -49,6 +50,10 @@ export default function RecordList({
         )}
       </div>
     );
+  }
+
+  if (state === "waking") {
+    return <WakingState />;
   }
 
   if (state === "error") {

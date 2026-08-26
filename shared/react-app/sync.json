@@ -4,6 +4,7 @@
     { "from": "index.css", "to": "src/index.css" },
     { "from": "layouts/Layout.tsx", "to": "src/layouts/Layout.tsx" },
     { "from": "components/kit", "to": "src/components/kit" },
+    { "from": "lib", "to": "src/lib" },
     { "from": "fonts", "to": "public/fonts" }
   ]
 }

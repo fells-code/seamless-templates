@@ -1,9 +1,14 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { apiFetch } from "../../lib/api";
+import { ApiError, apiFetch } from "../../lib/api";
 import { useCollection } from "./useCollection";
 
-vi.mock("../../lib/api", () => ({ apiFetch: vi.fn() }));
+// Only the request is mocked. `ApiError` stays the real class, because telling a
+// wake from a fault is the thing under test.
+vi.mock("../../lib/api", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../lib/api")>()),
+  apiFetch: vi.fn(),
+}));
 
 interface Note {
   id: number | string;
@@ -151,6 +156,84 @@ describe("useCollection", () => {
     window.dispatchEvent(new Event("focus"));
     document.dispatchEvent(new Event("visibilitychange"));
     await settle();
+
+    expect(fetched).toHaveBeenCalledTimes(1);
+  });
+
+  it("waits out a sleeping API instead of calling it broken", async () => {
+    fetched.mockRejectedValueOnce(new ApiError("API error: 503 ", 503));
+    answerWith([{ id: 1, body: "first" }]);
+
+    const view = renderHook(() => useNotes());
+    await settle();
+
+    expect(view.result.current.state).toBe("waking");
+    expect(view.result.current.error).toBeNull();
+
+    // Nobody presses anything. The retry is the point.
+    await advance(1_000);
+
+    expect(view.result.current.state).toBe("ready");
+    expect(view.result.current.records).toEqual([{ id: 1, body: "first" }]);
+  });
+
+  it("keeps saying it is waking while it retries", async () => {
+    fetched.mockRejectedValueOnce(new ApiError("API error: 503 ", 503));
+    // The retried request stays in flight, which is where a skeleton would show
+    // through if the retry reset the state instead of keeping it.
+    fetched.mockImplementationOnce(() => new Promise<Note[]>(() => {}));
+
+    const view = renderHook(() => useNotes());
+    await settle();
+
+    await advance(1_000);
+
+    expect(fetched).toHaveBeenCalledTimes(2);
+    expect(view.result.current.state).toBe("waking");
+  });
+
+  it("shows an error straight away for a failure a cold start cannot explain", async () => {
+    fetched.mockRejectedValueOnce(new ApiError("API error: 404 ", 404));
+
+    const view = renderHook(() => useNotes());
+    await settle();
+
+    expect(view.result.current.state).toBe("error");
+    expect(view.result.current.error).toBeTruthy();
+
+    await advance(60_000);
+
+    expect(fetched).toHaveBeenCalledTimes(1);
+  });
+
+  it("stops waiting once the wait is longer than a cold start", async () => {
+    fetched.mockRejectedValue(new ApiError("API error: 503 ", 503));
+
+    const view = renderHook(() => useNotes());
+    await settle();
+
+    expect(view.result.current.state).toBe("waking");
+
+    for (let tick = 0; tick < 20; tick += 1) await advance(8_000);
+
+    expect(view.result.current.state).toBe("error");
+    expect(view.result.current.error).toBeTruthy();
+
+    const calls = fetched.mock.calls.length;
+    await advance(60_000);
+    expect(fetched).toHaveBeenCalledTimes(calls);
+  });
+
+  it("stops retrying a wake when it unmounts", async () => {
+    fetched.mockRejectedValue(new ApiError("API error: 503 ", 503));
+
+    const view = renderHook(() => useNotes());
+    await settle();
+
+    expect(fetched).toHaveBeenCalledTimes(1);
+    view.unmount();
+
+    await advance(60_000);
 
     expect(fetched).toHaveBeenCalledTimes(1);
   });
