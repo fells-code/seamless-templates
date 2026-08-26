@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { apiFetch } from "../../lib/api";
+import { ApiError, apiFetch } from "../../lib/api";
 import type {
   FieldValues,
   LoadState,
@@ -10,6 +10,14 @@ import type {
 function isProvisional(record: { id: number | string }): boolean {
   return typeof record.id === "number" && record.id < 0;
 }
+
+// A task that scaled to zero takes tens of seconds to answer, so the retries have
+// to outlast one comfortably before the screen is allowed to call it broken.
+// These add up to about a minute and a half of waiting. The backoff caps early
+// because the request costs nothing and somebody is sitting there watching.
+const WAKE_FIRST_RETRY_MS = 1_000;
+const WAKE_MAX_RETRY_MS = 8_000;
+const WAKE_ATTEMPTS = 14;
 
 /**
  * One collection of records: load it, add to it, keep it current.
@@ -24,6 +32,10 @@ function isProvisional(record: { id: number | string }): boolean {
  * whenever the window is looked at again. For a collection a handful of people
  * share, that reads as live and costs one request, where a socket would cost a
  * server and a handshake.
+ *
+ * A first load that meets a sleeping API waits it out rather than failing. That
+ * is what lets a generated application scale to zero, which is most of what it
+ * costs to run.
  */
 export function useCollection<T extends { id: number | string }>(
   path: string,
@@ -44,18 +56,53 @@ export function useCollection<T extends { id: number | string }>(
   // or before the screen went away, must not land on what replaced it.
   const requestId = useRef(0);
 
+  const wakeAttempt = useRef(0);
+  const wakeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const cancelWake = useCallback(() => {
+    if (wakeTimer.current !== null) {
+      clearTimeout(wakeTimer.current);
+      wakeTimer.current = null;
+    }
+  }, []);
+
   const load = useCallback(
     (background: boolean) => {
+      // Answering a wake with an error screen is a refund; answering it with a
+      // wait is a few seconds. Returns false once the wait has gone on longer
+      // than a cold start can explain.
+      const retryWake = () => {
+        if (wakeAttempt.current >= WAKE_ATTEMPTS) return false;
+
+        const delay = Math.min(
+          WAKE_FIRST_RETRY_MS * 2 ** wakeAttempt.current,
+          WAKE_MAX_RETRY_MS,
+        );
+        wakeAttempt.current += 1;
+
+        setState("waking");
+        wakeTimer.current = setTimeout(() => load(false), delay);
+        return true;
+      };
+
       const id = ++requestId.current;
+
+      // Whatever this load is, it replaces any wake retry that was still queued.
+      if (!background) cancelWake();
 
       // A background refresh swaps the records underneath the reader. Sending the
       // screen back to its skeleton every few seconds would be worse than a row
-      // that is a moment out of date.
-      if (!background) setState("loading");
+      // that is a moment out of date. A wake retry keeps the waking state for the
+      // same reason: it is the same wait, not a new one.
+      if (!background) {
+        setState((current) => (current === "waking" ? current : "loading"));
+      }
 
       apiFetch<T[]>(path)
         .then((data) => {
           if (id !== requestId.current) return;
+          cancelWake();
+          wakeAttempt.current = 0;
           const incoming = Array.isArray(data) ? data : [];
           // A create still in flight is not in the server's answer yet, so its
           // provisional record has to be carried across or the new row leaves the
@@ -66,17 +113,24 @@ export function useCollection<T extends { id: number | string }>(
           ]);
           setState("ready");
         })
-        .catch(() => {
+        .catch((cause) => {
           if (id !== requestId.current) return;
           // A refresh that fails says nothing: the records on screen are still the
           // last good ones, and an error the reader is part way through is not
           // this request's to replace.
           if (background) return;
+
+          if (cause instanceof ApiError && cause.waking && retryWake()) return;
+
+          // The window is spent, so the next attempt gets a fresh one. Somebody
+          // pressing a retry button is asking for the whole wait again, not for
+          // the same immediate refusal.
+          wakeAttempt.current = 0;
           setError("We could not load this just now. Try again in a moment.");
           setState("error");
         });
     },
-    [path],
+    [path, cancelWake],
   );
 
   const reload = useCallback(() => load(false), [load]);
@@ -86,8 +140,9 @@ export function useCollection<T extends { id: number | string }>(
     load(false);
     return () => {
       requestId.current += 1;
+      cancelWake();
     };
-  }, [load]);
+  }, [load, cancelWake]);
 
   useEffect(() => {
     if (!live) return;

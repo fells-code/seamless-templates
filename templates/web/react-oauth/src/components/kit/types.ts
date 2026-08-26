@@ -184,7 +184,17 @@ export interface InlineCreateFormProps {
   note?: string;
 }
 
-export type LoadState = "loading" | "ready" | "error";
+/**
+ * The states a collection can be in.
+ *
+ * `waking` is not a slower `loading`. An application whose API scales to zero
+ * when nobody is using it pays for that with a first request that takes tens of
+ * seconds, and a skeleton held for that long reads as broken. The person who
+ * meets it is almost never the owner: it is somebody who was sent a link, has
+ * never seen the application before, and has nothing to tell them the difference
+ * between waiting and a dead site.
+ */
+export type LoadState = "loading" | "waking" | "ready" | "error";
 
 export interface EmptyStateProps {
   title: string;

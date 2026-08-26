@@ -78,3 +78,74 @@ describe("apiFetch", () => {
     );
   });
 });
+
+describe("ApiError", () => {
+  async function rejection(run: () => Promise<unknown>) {
+    try {
+      await run();
+    } catch (cause) {
+      return cause;
+    }
+    throw new Error("expected the request to fail");
+  }
+
+  it("reads a load balancer's 503 as a wake rather than a fault", async () => {
+    const { apiFetch, ApiError } = await importApi("https://api.example.com");
+    vi.mocked(fetch).mockResolvedValue(new Response("", { status: 503 }));
+
+    const error = await rejection(() => apiFetch("/notes"));
+
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({ status: 503, waking: true });
+  });
+
+  it("reads a fetch the browser would not let it see as a wake", async () => {
+    const { apiFetch, ApiError } = await importApi("https://api.example.com");
+    vi.mocked(fetch).mockRejectedValue(new TypeError("Failed to fetch"));
+
+    const error = await rejection(() => apiFetch("/notes"));
+
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error).toMatchObject({ status: null, waking: true });
+  });
+
+  it("does not read a 404 as a wake", async () => {
+    const { apiFetch } = await importApi("https://api.example.com");
+    vi.mocked(fetch).mockResolvedValue(new Response("", { status: 404 }));
+
+    expect(await rejection(() => apiFetch("/notes"))).toMatchObject({
+      status: 404,
+      waking: false,
+    });
+  });
+
+  it("does not read being offline as a wake", async () => {
+    const { apiFetch } = await importApi("https://api.example.com");
+    vi.mocked(fetch).mockRejectedValue(new TypeError("Failed to fetch"));
+    Object.defineProperty(navigator, "onLine", {
+      configurable: true,
+      get: () => false,
+    });
+
+    expect(await rejection(() => apiFetch("/notes"))).toMatchObject({
+      waking: false,
+    });
+
+    Object.defineProperty(navigator, "onLine", {
+      configurable: true,
+      get: () => true,
+    });
+  });
+
+  it("lets a missing origin stay a configuration error", async () => {
+    const { apiFetch, ApiError } = await importApi(null);
+
+    const error = await rejection(() => apiFetch("/notes"));
+
+    // Not an ApiError, so nothing downstream can mistake a misconfigured build
+    // for an API that is about to answer.
+    expect(error).not.toBeInstanceOf(ApiError);
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).toMatch(/VITE_API_URL is not set/);
+  });
+});
