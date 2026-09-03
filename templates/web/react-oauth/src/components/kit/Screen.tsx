@@ -26,6 +26,7 @@ const BANDED = new Set(["ledger", "tracker", "roster", "dashboard", "board"]);
 
 export default function Screen({
   archetype,
+  landing = "overview",
   title,
   tagline,
   actions,
@@ -33,15 +34,28 @@ export default function Screen({
   aside,
   children,
 }: ScreenProps) {
-  const banded = BANDED.has(archetype);
+  const isLanding = archetype === "dashboard";
 
-  const landing = archetype === "dashboard";
+  /*
+   * A landing composition only means anything on the landing.
+   *
+   * Every other archetype has a header band introducing a working screen, and
+   * asking a ledger's header to behave like a poster would spend the whole
+   * viewport on a title and push the table that is the point of the page under
+   * the fold.
+   */
+  const shape = isLanding ? landing : "overview";
+
+  // The notebook is the one landing with no band: it opens on what happened
+  // rather than on a title, so the title comes back inline above the content at
+  // display size and the figures follow it.
+  const banded = BANDED.has(archetype) && shape !== "notebook";
 
   const header = banded ? (
     <section
       className={`view band-fill band-shape shell-offset relative overflow-hidden text-band-ink ${
-        landing ? "hero-section" : "band-section"
-      }`}
+        isLanding ? "hero-section" : "band-section"
+      }${shape === "poster" ? " poster-section" : ""}`}
     >
       <div className="page-gutter band-pad">
         <div className="band-column">
@@ -50,17 +64,27 @@ export default function Screen({
             tagline={tagline}
             actions={actions}
             onBand
-            size={landing ? "display" : "title"}
+            size={isLanding ? "display" : "title"}
           />
-          {band && <div className="mt-12">{band}</div>}
+          {band && (
+            <div className={shape === "poster" ? "mt-16" : "mt-12"}>{band}</div>
+          )}
         </div>
       </div>
     </section>
   ) : (
     <section className="view shell-offset page-gutter band-pad rule">
       <div className="content-column">
-        <PageHeader title={title} tagline={tagline} actions={actions} />
-        {band && <div className="mt-8">{band}</div>}
+        <PageHeader
+          title={title}
+          tagline={tagline}
+          actions={actions}
+          size={shape === "notebook" ? "display" : "title"}
+        />
+        {/* `band-on-page` resolves the band's ink to the page's, so the
+            `<StatRow onBand>` every generated Home passes still reads here,
+            where there is no band behind it. */}
+        {band && <div className="band-on-page mt-8">{band}</div>}
       </div>
     </section>
   );
@@ -110,9 +134,19 @@ export default function Screen({
       </section>
     ) : null;
 
+    /*
+     * The contents landing prints the same cards as a ruled list rather than a
+     * grid: one oversize row per destination, the way a magazine opens. A class
+     * on the wrapper rather than a different set of children, so a page composes
+     * one landing and gets whichever of the four it was handed.
+     */
     const bodyView = (
       <section key="body" className="view reveal page-gutter view-pad">
-        <div className="content-column">{children}</div>
+        <div
+          className={`content-column${shape === "contents" ? " contents-list" : ""}`}
+        >
+          {children}
+        </div>
       </section>
     );
 
@@ -122,7 +156,7 @@ export default function Screen({
     // on a form asks someone to file a record before they have been shown what
     // the application holds.
     views.push(
-      ...(landing ? [bodyView, asideView] : [asideView, bodyView]).filter(
+      ...(isLanding ? [bodyView, asideView] : [asideView, bodyView]).filter(
         (view) => view !== null,
       ),
     );

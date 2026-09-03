@@ -44,8 +44,34 @@ export type Archetype =
  */
 export type ShellName = "sidebar" | "topbar" | "tabs" | "rail" | "cover";
 
+/**
+ * How a landing screen is composed, which is a separate question from what an
+ * ordinary screen's archetype is.
+ *
+ * The `dashboard` archetype is the screen somebody sees first, and it had one
+ * shape: a band of figures, then a grid of cards. Every application opened on
+ * that, so the screen with the most work to do was the one doing the least. Four
+ * arrangements of the same three slots, and a page passes the same props to all
+ * of them.
+ *
+ * - `overview`  figures in the band, then the cards. What it has always been.
+ * - `poster`    one full viewport, one figure, one action; the rest below.
+ * - `notebook`  no band at all. Opens straight on what happened last.
+ * - `contents`  the cards as oversize ruled rows, like a magazine's contents.
+ *
+ * Ignored on any archetype but `dashboard`, because a ledger's header is not a
+ * landing and should not be asked to behave like one.
+ */
+export type Landing = "overview" | "poster" | "notebook" | "contents";
+
 export interface ScreenProps {
   archetype: Archetype;
+  /**
+   * Which landing composition, when the archetype is `dashboard`. Defaults to
+   * `overview`, so a screen that does not ask is the screen that existed before
+   * there were four.
+   */
+  landing?: Landing;
   title: string;
   /** One short line under the title. */
   tagline?: string;
