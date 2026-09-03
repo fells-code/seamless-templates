@@ -62,6 +62,16 @@ describe("Screen landings", () => {
     expect(container.querySelector(".screen-flow")).not.toBeNull();
   });
 
+  it("puts a cover behind every band, off until something sets one", () => {
+    // The layers are inert while `--app-cover` is `none`, so mounting it costs
+    // nothing; what it buys is that a band never has to be rebuilt to carry a
+    // picture, and the scrim that keeps ink readable over one is always there.
+    const { container } = renderLanding("overview");
+
+    expect(container.querySelector(".cover")).not.toBeNull();
+    expect(container.querySelectorAll(".cover-layer")).toHaveLength(3);
+  });
+
   it("is the overview when nothing asked for a landing", () => {
     const { container } = render(
       <Screen archetype="dashboard" title="Home">

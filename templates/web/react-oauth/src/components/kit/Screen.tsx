@@ -1,3 +1,4 @@
+import Cover from "./Cover";
 import PageHeader from "./PageHeader";
 import type { ScreenProps } from "./types";
 
@@ -57,7 +58,9 @@ export default function Screen({
         isLanding ? "hero-section" : "band-section"
       }${shape === "poster" ? " poster-section" : ""}`}
     >
-      <div className="page-gutter band-pad">
+      <Cover />
+
+      <div className="relative page-gutter band-pad">
         <div className="band-column">
           <PageHeader
             title={title}
