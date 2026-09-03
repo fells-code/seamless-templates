@@ -125,7 +125,12 @@ export default function Navbar() {
                 isActive ? `nav-${kind} nav-${kind}-active` : `nav-${kind}`
               }
             >
-              {link.label}
+              <>
+                {link.icon && (
+                  <link.icon size={16} aria-hidden className="nav-icon" />
+                )}
+                {link.label}
+              </>
             </NavLink>
           </li>
         ))}
