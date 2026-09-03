@@ -327,6 +327,17 @@
   --app-hero-min-height: auto;
   --app-band-min-height: auto;
   --app-band-fill: var(--app-band);
+  /* What sits behind a band: a picture of the subject, or a pattern of it.
+     `none` until something sets it, and every layer of `Cover` is inert when it
+     is. */
+  --app-cover: none;
+  --app-cover-size: cover;
+  --app-cover-position: center;
+  --app-cover-repeat: no-repeat;
+  --app-cover-opacity: 1;
+  --app-cover-tint: none;
+  --app-cover-tint-opacity: 0.85;
+  --app-cover-scrim: none;
   --app-band-image: none;
   --app-band-shape: none;
   --app-band-edge: 0 solid transparent;
@@ -1349,6 +1360,44 @@ body {
   .band-fill {
     background-color: var(--app-band-fill);
     background-image: var(--app-band-image);
+  }
+
+  /* What sits behind a band. Every layer is off until `--app-cover` is set, so a
+     band with no cover renders exactly as it did before covers existed.
+
+     The source is under a tint and a scrim rather than on its own, because the
+     thing behind the type has to be allowed to be interesting and the type still
+     has to be readable. The scrim is what makes that a rule rather than a hope:
+     ink on a band is derived from the band's own fill, so a picture arriving
+     between the two would otherwise decide the contrast by luck. */
+  .cover {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .cover-layer {
+    position: absolute;
+    inset: 0;
+  }
+  .cover-source {
+    background-image: var(--app-cover);
+    background-size: var(--app-cover-size);
+    background-position: var(--app-cover-position);
+    background-repeat: var(--app-cover-repeat);
+    opacity: var(--app-cover-opacity);
+  }
+  /* The brand pair over the source, so a photograph belongs to this application
+     rather than to whoever took it. `color` rather than a flat wash: it takes
+     the hue and leaves the light and shade, which is what stops a tinted picture
+     reading as a picture with a coloured rectangle on it. */
+  .cover-tint {
+    background-image: var(--app-cover-tint);
+    mix-blend-mode: color;
+    opacity: var(--app-cover-tint-opacity);
+  }
+  .cover-scrim {
+    background-image: var(--app-cover-scrim);
   }
   .band-shape {
     clip-path: var(--app-band-shape);

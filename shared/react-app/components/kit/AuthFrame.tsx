@@ -1,3 +1,4 @@
+import Cover from "./Cover";
 import Vista from "./Vista";
 import type { AuthFrameProps } from "./types";
 
@@ -22,8 +23,10 @@ export default function AuthFrame({
     <div className="flex min-h-screen">
       <Vista />
 
-      <div className="band-fill band-shape above-vista hidden w-1/2 flex-col justify-center overflow-hidden text-band-ink lg:flex">
-        <div className="page-gutter band-pad">
+      <div className="band-fill band-shape above-vista relative hidden w-1/2 flex-col justify-center overflow-hidden text-band-ink lg:flex">
+        <Cover />
+
+        <div className="relative page-gutter band-pad">
           <h1 className="display max-w-xl">{title}</h1>
 
           <p className="mt-8 max-w-lg text-lg leading-relaxed text-band-ink-muted">

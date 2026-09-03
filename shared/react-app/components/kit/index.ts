@@ -12,6 +12,7 @@
 export { default as Screen } from "./Screen";
 export { default as AuthFrame } from "./AuthFrame";
 export { default as Vista } from "./Vista";
+export { default as Cover } from "./Cover";
 export { default as ActionCard } from "./ActionCard";
 export { default as Badge } from "./Badge";
 export { default as PageHeader } from "./PageHeader";
