@@ -39,7 +39,7 @@ export default function Screen({
 
   const header = banded ? (
     <section
-      className={`view band-fill band-shape relative overflow-hidden text-band-ink ${
+      className={`view band-fill band-shape shell-offset relative overflow-hidden text-band-ink ${
         landing ? "hero-section" : "band-section"
       }`}
     >
@@ -57,7 +57,7 @@ export default function Screen({
       </div>
     </section>
   ) : (
-    <section className="view page-gutter band-pad rule">
+    <section className="view shell-offset page-gutter band-pad rule">
       <div className="content-column">
         <PageHeader title={title} tagline={tagline} actions={actions} />
         {band && <div className="mt-8">{band}</div>}

@@ -28,6 +28,22 @@ import type { ReactNode } from "react";
 export type Archetype =
   "ledger" | "tracker" | "board" | "roster" | "feed" | "dashboard";
 
+/**
+ * The chrome around every screen, chosen for the application rather than per
+ * screen. `data-shell` on `<html>`, read by `useShell`; absent means `sidebar`.
+ *
+ * The sidebar is what an application renders when nothing has said otherwise, so
+ * a document that has never been told which shell it is looks exactly as it did
+ * before there were five of them.
+ *
+ * - `sidebar`  a column of links beside full-width content. A daily-use tool.
+ * - `topbar`   brand left, links right, content beneath. Reads as a website.
+ * - `tabs`     a strip of tabs under the brand. Two or three screens, no more.
+ * - `rail`     a narrow column of glyphs. Dense tools that want the width.
+ * - `cover`    no persistent chrome; the links as pills over the first band.
+ */
+export type ShellName = "sidebar" | "topbar" | "tabs" | "rail" | "cover";
+
 export interface ScreenProps {
   archetype: Archetype;
   title: string;
