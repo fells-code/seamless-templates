@@ -996,6 +996,12 @@ body {
     justify-content: center;
     padding: 0.5rem;
   }
+  /* A screen's icon, where a screen has one. Same footprint as the marker it
+     replaces, so a nav of icons and a nav without them line their labels up in
+     the same place. */
+  .nav-icon {
+    flex: none;
+  }
   .nav-glyph {
     display: grid;
     place-items: center;

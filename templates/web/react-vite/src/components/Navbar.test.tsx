@@ -88,6 +88,15 @@ describe("Navbar", () => {
     ).toBeGreaterThan(0);
   });
 
+  it("marks a screen with its icon where one is given", () => {
+    // The rail shell cannot exist without them: a column four and a half rem
+    // wide has room for a mark and nothing else. Everywhere else the icon takes
+    // the marker's place, so a nav with icons and one without line their labels
+    // up in the same position.
+    const { container } = renderNavbar("rail");
+    expect(container.querySelector(".nav-glyph")).not.toBeNull();
+  });
+
   it("falls back to the sidebar when the shell is one it does not have", () => {
     const { container } = renderNavbar("hamburger");
 
