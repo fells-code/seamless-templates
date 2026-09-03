@@ -14,3 +14,9 @@ Where an icon is given it takes the marker's place at the same footprint, so a
 nav with icons and one without line their labels up in the same position. The
 icon is a component rather than a name, so only the icons an application actually
 uses reach its bundle.
+
+The icon shows in every arrangement that shows the label, not only in the
+sidebar. Running a generated application was what found that: the top bar, the
+tab strip and the cover's pills were rendering the words with the marks left
+behind, so an application on one of those four shells looked like it had no
+icons at all.
