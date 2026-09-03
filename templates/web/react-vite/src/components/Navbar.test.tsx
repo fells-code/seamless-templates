@@ -64,14 +64,26 @@ describe("Navbar", () => {
   it.each(SHELL_NAMES)("reaches every screen in the %s shell", (shell) => {
     renderNavbar(shell);
 
-    // Named links rather than a count, because two shells render the list twice
-    // (once for the desktop chrome and once inside the phone drawer) and what
-    // matters is that no screen is unreachable.
-    for (const label of ["Home", "About", "Session"]) {
-      expect(
-        screen.getAllByRole("link", { name: label }).length,
-      ).toBeGreaterThan(0);
+    /*
+     * Whatever the nav is carrying, rather than the names this template happens
+     * to ship with.
+     *
+     * This suite runs again inside every application scaffolded from the
+     * starter, and the first thing a scaffold does is take the demo pages out
+     * and put the application's own screens in. A test naming "About" passes
+     * here and fails in every generated application, which turns the starter's
+     * own suite from a correctness oracle into a false alarm.
+     */
+    const links = screen.getAllByRole("link");
+    expect(links.length).toBeGreaterThan(0);
+    for (const link of links) {
+      expect(link).toHaveAttribute("href");
     }
+
+    // Home is the one link every arrangement of this component keeps.
+    expect(
+      screen.getAllByRole("link", { name: "Home" }).length,
+    ).toBeGreaterThan(0);
   });
 
   it("opens the phone drawer from the bar", () => {
