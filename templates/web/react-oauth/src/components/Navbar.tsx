@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { LogOut, Menu, X } from "lucide-react";
+import { LogOut, Menu, X, type LucideIcon } from "lucide-react";
 import { useAuth } from "@seamless-auth/react";
 
 import { useShell } from "./kit";
@@ -35,7 +35,15 @@ export default function Navbar() {
   const [accountOpen, setAccountOpen] = useState(false);
   const shell = useShell();
 
-  const navLinks = [
+  /*
+   * A screen's icon, where it has one.
+   *
+   * Optional because the starter's own screens do not need one and the rail
+   * shell does: a column four and a half rem wide has room for a mark and
+   * nothing else. Whatever scaffolds an application supplies them, since which
+   * icon fits a screen is a question about what the screen is.
+   */
+  const navLinks: Array<{ label: string; to: string; icon?: LucideIcon }> = [
     { label: "Home", to: "/" },
     { label: "About", to: "/about" },
     { label: "Session", to: "/session" },
@@ -81,7 +89,11 @@ export default function Navbar() {
               }
             >
               <>
-                <span aria-hidden className="nav-marker" />
+                {link.icon ? (
+                  <link.icon size={16} aria-hidden className="nav-icon" />
+                ) : (
+                  <span aria-hidden className="nav-marker" />
+                )}
                 {link.label}
               </>
             </NavLink>
@@ -143,7 +155,11 @@ export default function Navbar() {
             >
               <>
                 <span aria-hidden className="nav-glyph">
-                  {link.label.trim()[0]?.toUpperCase()}
+                  {link.icon ? (
+                    <link.icon size={18} />
+                  ) : (
+                    link.label.trim()[0]?.toUpperCase()
+                  )}
                 </span>
                 <span className="sr-only">{link.label}</span>
               </>
