@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiError, apiFetch } from "../../lib/api";
+import { examplesFor } from "../../lib/examples";
 import type {
   FieldValues,
   LoadState,
@@ -133,6 +134,23 @@ export function useCollection<T extends { id: number | string }>(
     [path, cancelWake],
   );
 
+  /*
+   * What a screen shows before anybody has added anything of their own.
+   *
+   * An empty table under a hero is the first thing an owner sees, and it tells
+   * them nothing about the application they have just had built. These rows
+   * stand in for records until there is one: they are never written to the
+   * database, so they cannot be edited into real data and there is nothing to
+   * clear away.
+   *
+   * Held outside `records` rather than seeded into it, which is what keeps a
+   * create from having to remove them: the moment there is a record, the real
+   * collection is non-empty and the stand-ins stop being what this returns.
+   */
+  const examples = examplesFor(path) as unknown as T[];
+  const showingExamples =
+    state === "ready" && records.length === 0 && examples.length > 0;
+
   const reload = useCallback(() => load(false), [load]);
   const refresh = useCallback(() => load(true), [load]);
 
@@ -197,5 +215,13 @@ export function useCollection<T extends { id: number | string }>(
     [path],
   );
 
-  return { records, state, error, create, creating, reload, refresh };
+  return {
+    records: showingExamples ? examples : records,
+    state: showingExamples ? "examples" : state,
+    error,
+    create,
+    creating,
+    reload,
+    refresh,
+  };
 }

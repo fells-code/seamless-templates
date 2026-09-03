@@ -1,5 +1,6 @@
 import { Children } from "react";
 import EmptyState from "./EmptyState";
+import ExampleNote from "./ExampleNote";
 import WakingState from "./WakingState";
 import type { RecordListProps } from "./types";
 
@@ -71,10 +72,14 @@ export default function RecordList({
   }
 
   return (
-    <div
-      className={`stagger ${layout === "grid" ? COLUMNS[columns] : "stack"}`}
-    >
-      {children}
-    </div>
+    <>
+      {state === "examples" && <ExampleNote />}
+
+      <div
+        className={`stagger ${layout === "grid" ? COLUMNS[columns] : "stack"}`}
+      >
+        {children}
+      </div>
+    </>
   );
 }

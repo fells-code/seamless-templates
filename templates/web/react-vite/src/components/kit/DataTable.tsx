@@ -1,4 +1,5 @@
 import EmptyState from "./EmptyState";
+import ExampleNote from "./ExampleNote";
 import WakingState from "./WakingState";
 import type { Column, DataTableProps } from "./types";
 
@@ -74,55 +75,59 @@ export default function DataTable<T>({
         : "text-ink";
 
   return (
-    <div className="panel overflow-x-auto">
-      <table className="w-full border-collapse text-sm">
-        <thead>
-          <tr className="data-head">
-            {columns.map((column, index) => (
-              <th
-                key={column.key}
-                scope="col"
-                className={cellClass(column, index)}
-              >
-                <span className="label text-ink-muted">{column.label}</span>
-              </th>
+    <>
+      {state === "examples" && <ExampleNote />}
+
+      <div className="panel overflow-x-auto">
+        <table className="w-full border-collapse text-sm">
+          <thead>
+            <tr className="data-head">
+              {columns.map((column, index) => (
+                <th
+                  key={column.key}
+                  scope="col"
+                  className={cellClass(column, index)}
+                >
+                  <span className="label text-ink-muted">{column.label}</span>
+                </th>
+              ))}
+            </tr>
+          </thead>
+
+          <tbody className="stagger">
+            {rows.map((row) => (
+              <tr key={rowKey(row)} className="data-row">
+                {columns.map((column, index) => (
+                  <td
+                    key={column.key}
+                    className={`${cellClass(column, index)} ${bodyClass(column)}`}
+                  >
+                    {column.render(row)}
+                  </td>
+                ))}
+              </tr>
             ))}
-          </tr>
-        </thead>
+          </tbody>
 
-        <tbody className="stagger">
-          {rows.map((row) => (
-            <tr key={rowKey(row)} className="data-row">
-              {columns.map((column, index) => (
-                <td
-                  key={column.key}
-                  className={`${cellClass(column, index)} ${bodyClass(column)}`}
-                >
-                  {column.render(row)}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-
-        {footer && (
-          <tfoot>
-            <tr className="border-t-2 border-line bg-surface">
-              {columns.map((column, index) => (
-                <td
-                  key={column.key}
-                  className={`${cellClass(
-                    column,
-                    index,
-                  )} font-semibold text-ink`}
-                >
-                  {footer[column.key] ?? ""}
-                </td>
-              ))}
-            </tr>
-          </tfoot>
-        )}
-      </table>
-    </div>
+          {footer && (
+            <tfoot>
+              <tr className="border-t-2 border-line bg-surface">
+                {columns.map((column, index) => (
+                  <td
+                    key={column.key}
+                    className={`${cellClass(
+                      column,
+                      index,
+                    )} font-semibold text-ink`}
+                  >
+                    {footer[column.key] ?? ""}
+                  </td>
+                ))}
+              </tr>
+            </tfoot>
+          )}
+        </table>
+      </div>
+    </>
   );
 }
