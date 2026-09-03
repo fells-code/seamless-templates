@@ -1,6 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError, apiFetch } from "../../lib/api";
+import { EXAMPLES } from "../../lib/examples";
 import { useCollection } from "./useCollection";
 
 // Only the request is mocked. `ApiError` stays the real class, because telling a
@@ -236,5 +237,61 @@ describe("useCollection", () => {
     await advance(60_000);
 
     expect(fetched).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("useCollection with examples", () => {
+  afterEach(() => {
+    delete EXAMPLES["/notes"];
+  });
+
+  it("stands rows in for a collection that has nothing in it yet", async () => {
+    EXAMPLES["/notes"] = [{ body: "The first one" }];
+    answerWith([]);
+
+    const { result } = renderHook(() => useNotes());
+    await settle();
+
+    expect(result.current.state).toBe("examples");
+    expect(result.current.records).toHaveLength(1);
+    expect(result.current.records[0]!.body).toBe("The first one");
+  });
+
+  it("says ready, not examples, once there is a record", async () => {
+    EXAMPLES["/notes"] = [{ body: "The first one" }];
+    answerWith([{ id: 1, body: "Mine" }]);
+
+    const { result } = renderHook(() => useNotes());
+    await settle();
+
+    expect(result.current.state).toBe("ready");
+    expect(result.current.records).toEqual([{ id: 1, body: "Mine" }]);
+  });
+
+  it("drops the stand-ins the moment something real is created", async () => {
+    EXAMPLES["/notes"] = [{ body: "The first one" }];
+    answerWith([]);
+
+    const { result } = renderHook(() => useNotes());
+    await settle();
+    expect(result.current.state).toBe("examples");
+
+    fetched.mockResolvedValueOnce({ id: 2, body: "Mine" } as never);
+    await act(async () => {
+      await result.current.create({ body: "Mine" });
+    });
+
+    expect(result.current.state).toBe("ready");
+    expect(result.current.records.map((note) => note.body)).toEqual(["Mine"]);
+  });
+
+  it("leaves an empty collection empty when it has no examples", async () => {
+    answerWith([]);
+
+    const { result } = renderHook(() => useNotes());
+    await settle();
+
+    expect(result.current.state).toBe("ready");
+    expect(result.current.records).toEqual([]);
   });
 });

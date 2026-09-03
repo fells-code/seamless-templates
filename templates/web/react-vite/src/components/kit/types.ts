@@ -236,7 +236,14 @@ export interface InlineCreateFormProps {
  * never seen the application before, and has nothing to tell them the difference
  * between waiting and a dead site.
  */
-export type LoadState = "loading" | "waking" | "ready" | "error";
+/**
+ * `examples` is `ready` with nothing of the reader's own in it yet: the rows on
+ * screen stand in for records rather than being any. The kit renders them the
+ * way it renders records and says what they are, because an empty table under a
+ * hero is the first thing an owner sees and it tells them nothing about what
+ * they have just had built.
+ */
+export type LoadState = "loading" | "waking" | "ready" | "examples" | "error";
 
 export interface EmptyStateProps {
   title: string;
