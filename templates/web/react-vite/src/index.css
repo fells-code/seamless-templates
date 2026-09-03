@@ -1249,6 +1249,45 @@ body {
     min-height: var(--app-band-min-height);
   }
 
+  /* The poster landing takes the whole window whatever the kit would otherwise
+     have spent on a header, because a poster that shares the fold with a table
+     is not a poster. It is the one place a landing overrides its kit: every
+     other height on the page is the kit's to decide. */
+  .poster-section {
+    min-height: 100svh;
+  }
+
+  /* A notebook landing has no band, and the figures it carries were written for
+     one. `<StatRow onBand>` is what every generated Home passes, because on
+     three of the four landings that is right; on the fourth it paints band ink
+     on the page surface, which on a light kit is a headline figure at about two
+     to one against its own background. Rather than making the page get the prop
+     right, the header that has no band resolves the band's ink to the page's, so
+     an `onBand` figure reads wherever it lands. The reverse case, a plain figure
+     inside a band, is what `band-fill` already handles. */
+  .band-on-page {
+    --app-band-ink: var(--app-ink);
+    --app-band-ink-muted: var(--app-ink-muted);
+    --app-on-band: var(--app-brand);
+    --app-on-band-ink: var(--app-brand-ink);
+  }
+
+  /* The contents landing prints its destinations as oversize ruled rows rather
+     than as a grid of cards, the way a magazine opens. The children are the same
+     cards; only the frame around them changes, so a page composes one landing
+     and gets whichever of the four it was handed. */
+  .contents-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .contents-list > * {
+    border-top: var(--app-row-line-width) solid var(--app-row-line-color);
+    padding-block: 2rem;
+  }
+  .contents-list > *:last-child {
+    border-bottom: var(--app-row-line-width) solid var(--app-row-line-color);
+  }
+
   /* Whether the header is a panel of brand colour, a gradient, a shape with a
      corner cut off, or a window onto the backdrop is the kit's call. Ink on it is
      derived from whatever it resolved to, so the type stays readable when the
