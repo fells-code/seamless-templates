@@ -20,8 +20,30 @@ export default function AuthFrame({
   children,
 }: AuthFrameProps) {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen flex-col lg:flex-row">
       <Vista />
+
+      {/*
+       * The phone's half of this page, and the screen most people an application
+       * is shared with actually see first.
+       *
+       * Below 64rem the pitch half was hidden outright, so somebody opening a
+       * link in a group chat got a sign-in form on a white page: the starter,
+       * with none of the application on it. This is the same band at the height
+       * a phone can spare, carrying the cover, the name in the kit's display
+       * face and one line of the pitch, with the form under it. The points list
+       * stays behind: three bullets above a form is a page you scroll before you
+       * can sign in.
+       */}
+      <div className="band-fill band-shape above-vista relative overflow-hidden px-6 py-10 text-band-ink sm:px-10 lg:hidden">
+        <Cover />
+
+        <div className="relative">
+          <h1 className="display">{title}</h1>
+
+          <p className="mt-4 max-w-prose text-band-ink-muted">{pitch}</p>
+        </div>
+      </div>
 
       <div className="band-fill band-shape above-vista relative hidden w-1/2 flex-col justify-center overflow-hidden text-band-ink lg:flex">
         <Cover />
