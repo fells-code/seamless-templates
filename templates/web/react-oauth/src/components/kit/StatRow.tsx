@@ -153,9 +153,15 @@ export default function StatRow({
     );
   }
 
-  return (
-    <div className="stagger grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
-      {tiles}
-    </div>
-  );
+  /*
+   * How many figures fit, decided by the space there is rather than by the size
+   * of the window.
+   *
+   * These were Tailwind's responsive column counts, which read the viewport. A
+   * kit that puts the header in a column beside the content has a band about a
+   * sixth of the window wide, and on a desktop the viewport still said four
+   * across, so three figures came out as three unreadable slivers. The row
+   * measures itself now, the same way `auto-grid` does.
+   */
+  return <div className="stat-row stagger">{tiles}</div>;
 }
