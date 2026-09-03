@@ -30,6 +30,7 @@ export { default as PrimaryButton } from "./PrimaryButton";
 
 export { useCollection } from "./useCollection";
 export { SHELL_NAMES, useShell } from "./useShell";
+export { useCompact } from "./useCompact";
 export {
   formatDate,
   formatDuration,

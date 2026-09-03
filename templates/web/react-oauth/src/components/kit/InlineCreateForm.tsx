@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Plus, X } from "lucide-react";
 import Field from "./Field";
 import PrimaryButton from "./PrimaryButton";
 import { today } from "./format";
+import { useCompact } from "./useCompact";
 import type {
   FieldSpec,
   FieldValue,
@@ -49,6 +51,19 @@ export default function InlineCreateForm({
   const [values, setValues] = useState<FieldValues>(() => seed(fields));
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState<string | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const compact = useCompact();
+
+  // A sheet that covers the screen needs a way out that is not hunting for the
+  // control behind it.
+  useEffect(() => {
+    if (!sheetOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSheetOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [sheetOpen]);
 
   if (locked) {
     return note ? (
@@ -85,6 +100,10 @@ export default function InlineCreateForm({
           ]),
         ),
       );
+      // The record is filed and the thing it was filed into is behind the sheet,
+      // so the sheet gets out of the way. On a wide screen the form is already
+      // beside the list and there is nothing to close.
+      setSheetOpen(false);
     } catch {
       setFailed("That did not save. Check the details and try again.");
     } finally {
@@ -92,11 +111,11 @@ export default function InlineCreateForm({
     }
   };
 
-  return (
-    <form onSubmit={submit} className="panel panel-pad">
-      <h2 className="label mb-4 text-ink-muted">{title}</h2>
+  const form = (
+    <form onSubmit={submit} className={compact ? "" : "panel panel-pad"}>
+      {!compact && <h2 className="label mb-4 text-ink-muted">{title}</h2>}
 
-      <div className={`grid gap-4 ${COLUMNS[columns]}`}>
+      <div className={`grid gap-4 ${compact ? "" : COLUMNS[columns]}`}>
         {fields.map((field) => (
           <div key={field.name} className={SPANS[field.span ?? 1]}>
             <Field
@@ -120,11 +139,74 @@ export default function InlineCreateForm({
           type="submit"
           busy={busy}
           busyLabel={busyLabel}
-          full={columns === 1}
+          full={compact || columns === 1}
         >
           {submitLabel}
         </PrimaryButton>
       </div>
     </form>
+  );
+
+  if (!compact) return form;
+
+  /*
+   * On a phone the form is a button and a sheet, not a stack of inputs.
+   *
+   * At 375 a create panel above or below the thing it creates into is the single
+   * loudest "this is a web form" signal an application gives off, and it pushes
+   * the records themselves under the fold on the screen where somebody came to
+   * read them. A button that opens a sheet is what every application anybody has
+   * on their phone does instead.
+   *
+   * One form, moved, rather than two in the document behind a media query: two
+   * copies of the same field names and labels is a worse form for anyone using a
+   * screen reader.
+   */
+  return (
+    <div className="sheet-mount">
+      <button
+        type="button"
+        onClick={() => setSheetOpen(true)}
+        aria-label={title}
+        aria-expanded={sheetOpen}
+        className="btn lift fixed bottom-5 right-5 z-40 gap-2 bg-brand text-brand-ink shadow-lifted"
+      >
+        <Plus size={18} aria-hidden />
+        {submitLabel}
+      </button>
+
+      {sheetOpen && (
+        <div className="fixed inset-0 z-50 flex flex-col justify-end">
+          <button
+            type="button"
+            aria-label="Close"
+            onClick={() => setSheetOpen(false)}
+            className="flex-1 bg-ink/50"
+          />
+
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={title}
+            className="rise-in max-h-[85vh] overflow-y-auto rounded-t-card border-t border-line bg-surface-raised p-5"
+          >
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="label text-ink-muted">{title}</h2>
+
+              <button
+                type="button"
+                onClick={() => setSheetOpen(false)}
+                aria-label="Close"
+                className="rounded-control p-2 text-ink-muted hover:text-ink"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {form}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

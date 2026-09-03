@@ -1255,6 +1255,21 @@ body {
     min-height: var(--app-band-min-height);
   }
 
+  /* A create form on a phone is a fixed button and a sheet, so it mounts but
+     occupies no space. Whatever was holding it would otherwise be several rem of
+     blank page above the records somebody came to read.
+
+     `contents` rather than `none`, and the difference matters: `display: none`
+     on an ancestor hides a fixed descendant too, so hiding the wrapper would
+     take the button with it. `contents` drops the wrapper's own box and leaves
+     what is inside it exactly where it was. */
+  .sheet-mount,
+  .aside-view:has(.sheet-mount),
+  .aside-inline:has(.sheet-mount),
+  .rail-aside:has(.sheet-mount) {
+    display: contents;
+  }
+
   /* Where a screen's header sits relative to its content.
      `contents` is the default and means this element is not in the layout at
      all, so a screen renders exactly as it did before there was a wrapper. A kit
