@@ -1,5 +1,175 @@
 # seamless-templates
 
+## 0.11.0
+
+### Minor Changes
+
+- 6c7ed49: A kit can put a screen's header beside its content, not only above it.
+
+  Every banded screen in every kit ran the same way down the page: a strip of brand
+  colour across the top, then the content under it. `Screen` now wraps its regions
+  in a `screen-flow` element that resolves to `display: contents` by default, which
+  takes it out of the layout entirely, so a screen renders exactly as it did
+  before. A kit that resolves it to a grid instead gets the header in a column of
+  its own with the content beside it, and the header stays put while the views
+  scroll past. Below 64rem it is one column again whatever the kit asked for,
+  because a title column beside a table is two unusable columns on a phone.
+
+  `StatRow` measures the space it has rather than the size of the window. Its
+  column counts were Tailwind's responsive ones, which read the viewport; in a
+  header column about a sixth of the window wide, a desktop still said four across
+  and three figures came out as three unreadable slivers. It fills by available
+  width now, the same way the card grid already did.
+
+- b91cf44: A band can carry a picture of its subject, or a pattern of it.
+
+  Every band in every kit was a flat panel of brand colour or a window onto the
+  backdrop. `Cover` sits behind one in three layers: the source, a tint of the
+  brand pair over it, and a measured scrim. Three rather than one background,
+  because the thing behind the type has to be allowed to be interesting and the
+  type still has to be readable, and ink on a band is derived from the band's own
+  fill, so a picture arriving between the two would otherwise decide the contrast
+  by luck.
+
+  The tint blends as `color`, taking the hue and leaving the light and shade, which
+  is what stops a tinted photograph reading as a photograph with a coloured
+  rectangle on it, and what makes any source belong to the application it is in
+  rather than to whoever took it.
+
+  The source is a token rather than a prop, so it can be a pattern built from the
+  palette, an image the application ships, or nothing, and none of those is a
+  decision a page should be making. `--app-cover` is `none` until something sets
+  it and every layer is inert while it is, so a band with no cover renders exactly
+  as it did before. `Screen`'s banded header and `AuthFrame`'s pitch half both
+  carry one, which are the first two surfaces anybody sees.
+
+- 189d77d: A screen with nothing in it yet shows what it is going to look like.
+
+  An empty table under a hero is the first thing the owner of a new application
+  sees, and it tells them nothing about what they have just had built. `lib/examples`
+  holds rows keyed by the API path a collection loads from, empty in the starter
+  and filled by whatever scaffolds the application. `useCollection` returns them
+  when the collection comes back with nothing in it, under a new `examples` load
+  state, and `RecordList` and `DataTable` say what they are.
+
+  A module rather than a prop, so filling it reaches every screen at once and no
+  page has to be written differently to benefit.
+
+  They are never written to the database. A row that exists only on the screen
+  cannot be mistaken for a record, cannot be edited into one, and needs no control
+  to clear it away: it goes the moment the collection has something real in it,
+  including the optimistic record a create puts there before the post lands.
+
+- 3de93b1: The chrome comes in five arrangements, not one.
+
+  A sidebar is a composition, and an application that always opens on one looks
+  like every other application that always opens on one, whatever colour it is
+  painted. `Navbar` now renders a sidebar, a top bar, a tab strip, a compact icon
+  rail, or a cover with no persistent chrome and the links as pills over the first
+  band. Which one is `data-shell` on the document element, read by the new
+  `useShell` hook, the same way the look is `data-style`. Nothing set means the
+  sidebar, so a starter nobody has told renders exactly as it did before.
+
+  The stylesheet carries the shell's own tokens on the same attribute, so the
+  markup and the layout cannot disagree about which shell is on: `shell-flow`,
+  `shell-width` and a new `shell-offset` that starts a banded screen below a cover
+  rather than behind it. The account control keeps its accessible names in every
+  arrangement, which is the contract the conformance suite drives.
+
+- 8a639ed: The landing screen has four compositions, not one.
+
+  The `dashboard` archetype is the screen somebody sees first, and it had one
+  shape in every application: a band of figures, then a grid of cards. The screen
+  with the most work to do was doing the least of it.
+
+  `Screen` now takes a `landing`, and arranges the same three slots four ways. The
+  overview is what it has always been. A poster takes the whole window for one
+  title, one figure and one action, with everything else below the fold. A notebook
+  drops the band entirely and opens on what happened last, with the title inline at
+  display size. A contents landing prints the same cards as oversize ruled rows,
+  the way a magazine opens.
+
+  A page passes the same props to all four, and a screen that asks for nothing is
+  the overview, so nothing that already composes a dashboard changes. The
+  composition applies only to `dashboard`: a ledger's header introduces a table,
+  and a landing reaching it would spend the fold on a title.
+
+  One thing came out of looking rather than from any check. A notebook has no
+  band, and every generated Home passes its figures as `<StatRow onBand>`, which
+  is right on the other three landings and paints band ink on the page surface on
+  this one. On a light kit that is a headline figure at about two to one against
+  its own background. The header with no band now resolves the band's ink to the
+  page's, so the figures read wherever they land, rather than the page being asked
+  to get the prop right.
+
+- ab66c36: A nav link can carry an icon.
+
+  Optional, because the starter's own screens do not need one and the rail shell
+  does: a column four and a half rem wide has room for a mark and nothing else, and
+  until now it showed the screen's initial. Whatever scaffolds an application
+  supplies the icons, since which one fits a screen is a question about what the
+  screen is rather than about how a nav is built.
+
+  Where an icon is given it takes the marker's place at the same footprint, so a
+  nav with icons and one without line their labels up in the same position. The
+  icon is a component rather than a name, so only the icons an application actually
+  uses reach its bundle.
+
+  The icon shows in every arrangement that shows the label, not only in the
+  sidebar. Running a generated application was what found that: the top bar, the
+  tab strip and the cover's pills were rendering the words with the marks left
+  behind, so an application on one of those four shells looked like it had no
+  icons at all.
+
+- ad61d4b: On a phone the create form is a button and a sheet, not a stack of inputs.
+
+  At 375 a create panel above or below the thing it creates into is the loudest
+  "this is a web form" signal an application gives off, and it pushes the records
+  somebody came to read under the fold. `InlineCreateForm` now renders a button
+  fixed to the corner and puts the form in a sheet one tap away, closing itself
+  once the record is filed. Escape and the backdrop both close it. Nothing changes
+  above 64rem, and a form the signed-in role may not use still offers nothing at
+  all.
+
+  One form, moved, rather than two in the document behind a media query: two copies
+  of the same field names and labels is a worse form for anyone using a screen
+  reader and a confusing one to test.
+
+  The wrapper that held the form collapses to `display: contents` when the form
+  became a sheet, because a fixed button occupies no space and the view around it
+  would otherwise be several rem of blank page. `contents` rather than `none` on
+  purpose: `display: none` on an ancestor hides a fixed descendant, so hiding the
+  wrapper would have taken the button with it.
+
+- 59e910e: The sign-in page says which application it is on a phone, not only on a desktop.
+
+  `AuthFrame` hid its pitch half outright below 64rem, so somebody opening a shared
+  link in a group chat got a sign-in form on a white page: the starter, with none
+  of the application on it. That is the screen most people an application is shared
+  with actually see first.
+
+  The same band now runs above the form at the height a phone can spare, carrying
+  the cover, the application's name in the kit's display face, and one line of the
+  pitch. The points list stays behind: three bullets above a form is a page you
+  have to scroll before you can sign in.
+
+### Patch Changes
+
+- cdec0bd: The starter's own tests survive being scaffolded into an application.
+
+  This suite runs again inside every application built from the starter, which is
+  what makes it a correctness oracle rather than a formality. Two of the tests
+  added with the shells and the example rows asserted things that are true here and
+  false the moment a scaffold personalises: that the nav carries a link called
+  "About", which is a demo page a scaffold removes, and that the examples module is
+  empty, which is the first thing a scaffold fills in.
+
+  Both now test what the code does rather than what this template currently holds:
+  the nav test asserts every link it finds has somewhere to go and that Home is
+  among them, and the examples test supplies its own rows. A suite that fails in
+  every generated application is not an oracle, it is a false alarm, and it would
+  have sent every build through a repair pass it did not need.
+
 ## 0.10.0
 
 ### Minor Changes
