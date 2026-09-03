@@ -120,14 +120,17 @@ export default function Screen({
     views.push(
       <section key="body" className="view reveal page-gutter view-pad">
         <div className="content-column feed-column">
-          {aside && <div className="mb-10">{aside}</div>}
+          {aside && <div className="aside-inline mb-10">{aside}</div>}
           {children}
         </div>
       </section>,
     );
   } else {
     const asideView = aside ? (
-      <section key="aside" className="view reveal page-gutter view-pad">
+      <section
+        key="aside"
+        className="view aside-view reveal page-gutter view-pad"
+      >
         <div className="content-column">
           <div className="aside-column">{aside}</div>
         </div>
