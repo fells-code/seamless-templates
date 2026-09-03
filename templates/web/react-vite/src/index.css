@@ -308,6 +308,11 @@
   --app-shell-flow: row;
   --app-shell-width: 16rem;
   --app-shell-offset: 0px;
+  /* Where a screen's header sits: `contents` leaves it above the content, `grid`
+     puts it in a column beside it. */
+  --app-screen-flow: contents;
+  --app-screen-columns: none;
+  --app-band-position: static;
   --app-gutter: clamp(1.25rem, 4vw, 3rem);
   --app-content-width: none;
   --app-content-align: 0 auto;
@@ -865,7 +870,8 @@ body {
     gap: var(--app-grid-gap);
     align-items: stretch;
   }
-  .stat-lead-rest {
+  .stat-lead-rest,
+  .stat-row {
     display: grid;
     gap: 1.5rem 2rem;
     align-content: center;
@@ -1247,6 +1253,39 @@ body {
   }
   .band-section {
     min-height: var(--app-band-min-height);
+  }
+
+  /* Where a screen's header sits relative to its content.
+     `contents` is the default and means this element is not in the layout at
+     all, so a screen renders exactly as it did before there was a wrapper. A kit
+     that resolves it to `grid` gets the header in one column and every view in
+     the other, and the header sticks while they scroll past it. */
+  .screen-flow {
+    display: var(--app-screen-flow);
+    grid-template-columns: var(--app-screen-columns);
+  }
+  .screen-flow > .band-section,
+  .screen-flow > .hero-section {
+    position: var(--app-band-position);
+    top: 0;
+    align-self: start;
+  }
+  /* Every view shares the second track. Without this each one claims a row of
+     its own beside a header that is only as tall as its own content, and the
+     grid reads as a column of half-width blocks. */
+  .screen-flow > .view:not(.band-section):not(.hero-section) {
+    grid-column: 2;
+  }
+  /* One column on a phone whatever the kit asked for. A 22rem title column
+     beside a table is two unusable columns at 375. */
+  @media (width < 64rem) {
+    .screen-flow {
+      display: block;
+    }
+    .screen-flow > .band-section,
+    .screen-flow > .hero-section {
+      position: static;
+    }
   }
 
   /* The poster landing takes the whole window whatever the kit would otherwise

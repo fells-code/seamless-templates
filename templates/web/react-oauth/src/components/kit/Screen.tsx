@@ -162,10 +162,24 @@ export default function Screen({
     );
   }
 
+  /*
+   * The wrapper exists so a kit can put the header beside the content instead of
+   * above it, and it costs nothing when no kit asks.
+   *
+   * `screen-flow` resolves to `display: contents` by default, which takes the
+   * element out of the layout entirely: the header and the views lay out against
+   * `<main>` exactly as they did when this returned a bare fragment. A kit that
+   * wants a side band resolves it to a grid instead, and the same markup becomes
+   * two columns with the header sticky in the narrow one.
+   *
+   * A token rather than a variant, for the reason the whole layer is tokens: the
+   * alternative is a second Screen, and then a third when somebody wants the
+   * band on the right.
+   */
   return (
-    <>
+    <div className="screen-flow">
       {header}
       {views}
-    </>
+    </div>
   );
 }

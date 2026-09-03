@@ -55,6 +55,13 @@ describe("Screen landings", () => {
     expect(container.querySelector(".contents-list")).not.toBeNull();
   });
 
+  it("wraps a screen so a kit can put the header beside the content", () => {
+    // The wrapper resolves to `display: contents` unless a kit asks otherwise,
+    // so it is free; without it a side band would need a second Screen.
+    const { container } = renderLanding("overview");
+    expect(container.querySelector(".screen-flow")).not.toBeNull();
+  });
+
   it("is the overview when nothing asked for a landing", () => {
     const { container } = render(
       <Screen archetype="dashboard" title="Home">
