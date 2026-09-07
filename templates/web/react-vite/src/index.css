@@ -370,7 +370,6 @@
   --seamless-border: var(--app-line);
   --seamless-text: var(--app-ink);
   --seamless-text-muted: var(--app-ink-muted);
-  --seamless-disabled: var(--app-ink-muted);
 }
 
 @media (prefers-color-scheme: dark) {
