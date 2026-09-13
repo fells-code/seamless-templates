@@ -1,0 +1,11 @@
+{
+  "id": "expo",
+  "targetDir": "mobile",
+  "env": {
+    "fromExample": ".env.example",
+    "set": {
+      "EXPO_PUBLIC_API_URL": "{{apiUrl}}"
+    }
+  },
+  "requires": { "cliMin": "0.16.0" }
+}

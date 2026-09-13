@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Seamless Auth Starter",
+    "slug": "seamless-auth-starter",
+    "version": "0.1.0",
+    "scheme": "seamlessauth",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "bundleIdentifier": "com.example.seamlessauth",
+      "supportsTablet": true,
+      "associatedDomains": [
+        "webcredentials:example.com",
+        "applinks:example.com"
+      ]
+    },
+    "android": {
+      "package": "com.example.seamlessauth",
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff"
+      },
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "example.com",
+              "pathPrefix": "/verify-magiclink"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    },
+    "plugins": ["expo-router", "expo-secure-store", "expo-web-browser"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

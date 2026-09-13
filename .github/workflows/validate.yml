@@ -66,5 +66,8 @@ jobs:
       - name: Test
         run: npm run test --if-present
 
+      # For the mobile template this is `expo export`: the Metro bundle for iOS
+      # and Android, with no native toolchain. It catches a broken import or a
+      # type the bundler rejects, and nothing about signing or native modules.
       - name: Build
         run: npm run build --if-present

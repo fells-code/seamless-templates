@@ -23,7 +23,7 @@ const repoRoot = path.resolve(
 );
 const matrixMode = process.argv.includes("--matrix");
 
-const KINDS = new Set(["web", "api"]);
+const KINDS = new Set(["web", "api", "mobile"]);
 const STATUSES = new Set(["stable", "beta", "coming-soon"]);
 const ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 

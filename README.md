@@ -25,8 +25,10 @@ seamless-templates/
 │  │     ├─ template.json     # how the CLI fetches and configures this template
 │  │     ├─ .env.example      # the template's environment contract
 │  │     └─ ...               # the actual starter project
-│  └─ api/
-│     └─ <framework>/         # one directory per API starter
+│  ├─ api/
+│  │  └─ <framework>/         # one directory per API starter
+│  └─ mobile/
+│     └─ expo/                # the Expo (React Native) starter
 ├─ shared/
 │  └─ react-app/              # source of truth for what both React starters share
 └─ scripts/
@@ -34,7 +36,7 @@ seamless-templates/
    └─ sync-shared.mjs
 ```
 
-Each template is a complete, runnable project. The CLI downloads this repository at a pinned tag, copies the selected template directories into the new project (`web/`, `api/`), and fills their `.env` files from each template's declared contract.
+Each template is a complete, runnable project. The CLI downloads this repository at a pinned tag, copies the selected template directories into the new project (`web/`, `api/`, and optionally `mobile/`), and fills their `.env` files from each template's declared contract.
 
 Because the CLI copies one template directory and nothing else, a template cannot reference anything outside itself. Anything two templates share therefore lives in `shared/`, and each template carries a committed copy of it. See [shared/react-app/README.md](shared/react-app/README.md).
 
@@ -50,7 +52,7 @@ Because the CLI copies one template directory and nothing else, a template canno
   "templates": [
     {
       "id": "react-vite", // unique, kebab-case
-      "kind": "web", // "web" or "api"
+      "kind": "web", // "web", "api", or "mobile"
       "framework": "react",
       "label": "React (Vite)", // shown in the CLI prompt
       "alias": "basic", // optional: enables `seamless init --basic`
@@ -97,13 +99,15 @@ The CLI computes the shared values and resolves the `{{...}}` placeholders in `e
 
 ### Placeholder vocabulary
 
-| Placeholder         | Resolves to                                                |
-| ------------------- | ---------------------------------------------------------- |
-| `{{authServerUrl}}` | URL of the Seamless Auth server                            |
-| `{{apiUrl}}`        | URL of the project's API service                           |
-| `{{apiToken}}`      | Service token shared between the API and the auth server   |
-| `{{jwksKid}}`       | JWKS key id the auth server signs with                     |
-| `{{secret:N}}`      | A freshly generated N-byte hex secret, unique per scaffold |
+| Placeholder             | Resolves to                                                |
+| ----------------------- | ---------------------------------------------------------- |
+| `{{authServerUrl}}`     | URL of the Seamless Auth server                            |
+| `{{apiUrl}}`            | URL of the project's API service                           |
+| `{{apiToken}}`          | Service token shared between the API and the auth server   |
+| `{{jwksKid}}`           | JWKS key id the auth server signs with                     |
+| `{{serveAdminConsole}}` | Whether the API serves the admin console at `/console`     |
+| `{{databaseUrl}}`       | Connection string for the project's database               |
+| `{{secret:N}}`          | A freshly generated N-byte hex secret, unique per scaffold |
 
 ---
 
@@ -116,7 +120,7 @@ The CLI computes the shared values and resolves the `{{...}}` placeholders in `e
 5. If it is a React web starter, add it to `targets` in `shared/react-app/sync.json` and run `npm run sync:shared`.
 6. Run `npm run validate` and open a pull request.
 
-CI validates the registry and every manifest, then installs each template and runs its typecheck, lint, format check, tests, and build to confirm it works before it ships.
+CI validates the registry and every manifest, then installs each template and runs its typecheck, lint, format check, tests, and build to confirm it works before it ships. The mobile template's `build` is `expo export`, which bundles the JavaScript for iOS and Android without Xcode or the Android SDK; it proves the bundle, not a signed native binary.
 
 ### Checks every template ships
 
@@ -130,7 +134,11 @@ A scaffolded project is expected to be verifiable on the first `npm install`, so
 | `test`         | Vitest, no database or network needed                                    |
 | `check`        | All of the above in one command                                          |
 
-Tests sit next to the code they cover as `*.test.ts` / `*.test.tsx`. They are meant to be a starting point a user extends, not exhaustive coverage: they cover the configuration and startup logic that decides whether a fresh scaffold runs at all.
+Tests sit next to the code they cover as `*.test.ts` / `*.test.tsx`. They are meant to be a starting point a user extends, not exhaustive coverage: they cover the configuration and startup logic that decides whether a fresh scaffold runs at all. The mobile template tests its pure modules this way; its screens are React Native and are exercised on a simulator rather than in Vitest.
+
+### Mobile templates
+
+A `kind: "mobile"` template is placed at `mobile/` next to `web/` and `api/`, and is optional in `seamless init`. It differs from the web starters in one way that is onboarding cost rather than code: native passkeys need the relying party to be a domain the adopter controls, with `apple-app-site-association` and `assetlinks.json` hosted over HTTPS, because native WebAuthn has no `localhost` exemption. Email codes and magic links work against the local stack immediately; passkeys do not until that domain exists. The Expo starter's README and `tools/associations/` cover the setup.
 
 ---
 
