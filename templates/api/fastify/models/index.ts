@@ -2,7 +2,11 @@ import { readdirSync } from "fs";
 import path from "path";
 import { Sequelize } from "sequelize";
 import { fileURLToPath } from "url";
-import { buildDatabaseUrl, buildSslOptions } from "../src/lib/databaseUrl.js";
+import {
+  buildDatabaseUrl,
+  buildSslOptions,
+  withoutSslMode,
+} from "../src/lib/databaseUrl.js";
 import getLogger from "../src/lib/logger.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,7 +19,7 @@ const enableDbLogging = !isProduction && process.env.DB_LOGGING === "true";
 const databaseUrl = buildDatabaseUrl();
 const ssl = buildSslOptions(databaseUrl);
 
-const sequelize = new Sequelize(databaseUrl, {
+const sequelize = new Sequelize(withoutSslMode(databaseUrl), {
   logging: enableDbLogging ? (msg) => logger.debug(msg) : false,
   ...(ssl ? { dialectOptions: { ssl } } : {}),
 });
