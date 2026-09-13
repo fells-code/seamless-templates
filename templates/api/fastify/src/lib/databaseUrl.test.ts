@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { buildDatabaseUrl, buildSslOptions } from "./databaseUrl.js";
+import {
+  buildDatabaseUrl,
+  buildSslOptions,
+  withoutSslMode,
+} from "./databaseUrl.js";
 
 const DB_VARS = [
   "DATABASE_URL",
@@ -104,5 +108,28 @@ describe("buildSslOptions", () => {
       buildSslOptions("postgres://u:p@host:5432/db?sslmode=disable"),
     ).toBeUndefined();
     expect(buildSslOptions("not a url")).toBeUndefined();
+  });
+});
+
+describe("withoutSslMode", () => {
+  it("takes sslmode out and leaves the credentials and other parameters as they were", () => {
+    expect(
+      withoutSslMode(
+        "postgres://user:p%40ss@host:5432/db?sslmode=require&application_name=api",
+      ),
+    ).toBe("postgres://user:p%40ss@host:5432/db?application_name=api");
+  });
+
+  it("leaves no trailing query behind when sslmode was the only parameter", () => {
+    expect(withoutSslMode("postgres://u:p@host:5432/db?sslmode=require")).toBe(
+      "postgres://u:p@host:5432/db",
+    );
+  });
+
+  it("returns a url without sslmode, and an unparsable one, untouched", () => {
+    expect(withoutSslMode("postgres://u:p@host:5432/db")).toBe(
+      "postgres://u:p@host:5432/db",
+    );
+    expect(withoutSslMode("not a url")).toBe("not a url");
   });
 });

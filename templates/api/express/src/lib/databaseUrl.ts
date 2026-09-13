@@ -33,9 +33,10 @@ export interface SslOptions {
 
 /**
  * A managed Seamless database accepts external connections over TLS only, and
- * says so with `sslmode=require` in the connection string. Sequelize does not
- * act on `sslmode`, so it has to be translated into the driver option here or
- * the connection is attempted in the clear and refused.
+ * says so with `sslmode=require` in the connection string. It is translated
+ * into the driver option here rather than left to Sequelize, whose own reading
+ * of it turns verification on and discards these options (see
+ * `withoutSslMode`).
  *
  * Certificate verification stays on. Set `DB_SSL_REJECT_UNAUTHORIZED=false`
  * only if your database presents a certificate that does not chain to a public
@@ -58,4 +59,29 @@ export function buildSslOptions(databaseUrl: string): SslOptions | undefined {
     require: true,
     rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== "false",
   };
+}
+
+/**
+ * The connection string to construct Sequelize with. Sequelize reads the
+ * query of a connection string for itself and lets pg-connection-string's
+ * reading of `sslmode` replace the `ssl` it was given in `dialectOptions`, so
+ * the options above would be thrown away and the certificate verified
+ * whatever `DB_SSL_REJECT_UNAUTHORIZED` says. `sslmode` is translated by
+ * then, so it comes out of the URL here. Migrations are not affected:
+ * sequelize-cli parses the string itself and never hands it to Sequelize.
+ */
+export function withoutSslMode(databaseUrl: string): string {
+  let url: URL;
+  try {
+    url = new URL(databaseUrl);
+  } catch {
+    return databaseUrl;
+  }
+
+  if (!url.searchParams.has("sslmode")) {
+    return databaseUrl;
+  }
+
+  url.searchParams.delete("sslmode");
+  return url.toString();
 }
