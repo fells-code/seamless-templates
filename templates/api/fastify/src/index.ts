@@ -148,11 +148,16 @@ await app.register(async (api) => {
     // request 401s with no cookie in sight.
     await secured.register(cookie);
 
+    // authServerUrl and audience let the guard accept the auth API's access
+    // token as a bearer credential too, which is how the mobile starter signs
+    // its requests. Browser sessions keep using the cookie.
     secured.addHook(
       "preHandler",
       requireAuth({
         cookieSecret: seamlessAuthOptions.cookieSecret,
         cookieName: seamlessAuthOptions.accessCookieName,
+        authServerUrl: seamlessAuthOptions.authServerUrl,
+        audience: seamlessAuthOptions.audience,
       }),
     );
     secured.addHook("preHandler", requireUser(seamlessAuthOptions));

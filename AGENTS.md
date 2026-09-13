@@ -59,7 +59,8 @@ guidance may extend them but must not contradict them.
 
 - [registry.json](registry.json): the catalog the CLI reads to build its prompts. One entry per
   template (`id`, `kind`, `framework`, `label`, `status`, `path`).
-- `templates/<kind>/<framework>/`: one directory per template. Each is a complete, runnable project
+- `templates/<kind>/<framework>/`: one directory per template, where `kind` is `web`, `api`, or
+  `mobile` (the Expo starter under `templates/mobile/expo`). Each is a complete, runnable project
   and carries:
   - `template.json`: the manifest the CLI uses to place the template (`targetDir`) and configure its
     environment (`env.fromExample`, `env.set` with `{{placeholder}}` values the CLI resolves).
@@ -128,6 +129,10 @@ validation step skips directory checks for those entries.
   `format:check`, `test`, `test:watch`, `test:coverage`, and a `check` that runs the gate in one
   command. Tests are Vitest, colocated as `*.test.ts` / `*.test.tsx`, and must pass without a
   database, an auth server, or network access. A new template adopts the same set.
+- The mobile template's `build` is `expo export` for iOS and Android, which bundles the JavaScript
+  without Xcode or the Android SDK, so the templates CI matrix can run it. It proves the bundle, not
+  a native binary; its screens are exercised on a simulator, and only its pure modules are under
+  Vitest. It is not a `shared/react-app` sync target: React Native cannot use the web kit.
 
 ## Before You Finish A Change
 
