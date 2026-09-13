@@ -138,10 +138,15 @@ app.use(cookieParser());
 
 app.use("/auth", createSeamlessAuthServer(seamlessAuthOptions));
 
+// authServerUrl and audience let the guard accept the auth API's access token
+// as a bearer credential too, which is how the mobile starter signs its requests.
+// Browser sessions keep using the cookie.
 app.use(
   requireAuth({
     cookieSecret: seamlessAuthOptions.cookieSecret ?? "",
     cookieName: seamlessAuthOptions.accessCookieName,
+    authServerUrl: seamlessAuthOptions.authServerUrl,
+    audience: seamlessAuthOptions.audience,
   }),
 );
 
