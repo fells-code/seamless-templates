@@ -34,6 +34,30 @@ const METHOD_LABELS: Partial<Record<LoginMethod, string>> = {
 
 const MAGIC_LINK_POLL_MS = 3000;
 
+// The auth server limits how fast codes can be sent and tried. Saying the code
+// was wrong when it was never checked sends people round in circles.
+function explain(error: { status?: number } | null, fallback: string) {
+  return error?.status === 429
+    ? "Too many attempts. Wait a few minutes, then try again."
+    : fallback;
+}
+
+// The auth server sends six letters by email and six digits by text message.
+const CODE_FORMAT = {
+  email: {
+    noun: "six-letter code",
+    clean: (value: string) => value.replace(/[^a-z]/gi, "").toUpperCase(),
+    pattern: "[A-Za-z]{6}",
+    inputMode: "text",
+  },
+  phone: {
+    noun: "six-digit code",
+    clean: (value: string) => value.replace(/\D/g, ""),
+    pattern: "[0-9]{6}",
+    inputMode: "numeric",
+  },
+} as const;
+
 /**
  * Sign-in and account creation, built on the SDK's public primitives rather
  * than its bundled screens, which route with react-router.
@@ -81,7 +105,9 @@ export default function SignIn({ next }: { next: string }) {
       if (mode === "register") {
         const { error } = await client.register({ email: identifier });
         if (error) {
-          setError("That account could not be created. Try again.");
+          setError(
+            explain(error, "That account could not be created. Try again."),
+          );
           return;
         }
         setStep({ kind: "code", flow: "register", channel: "email" });
@@ -90,7 +116,12 @@ export default function SignIn({ next }: { next: string }) {
 
       const { data, error } = await login(identifier, passkeySupported);
       if (error) {
-        setError("Sign-in could not start. Check the address and try again.");
+        setError(
+          explain(
+            error,
+            "Sign-in could not start. Check the address and try again.",
+          ),
+        );
         return;
       }
 
@@ -116,7 +147,12 @@ export default function SignIn({ next }: { next: string }) {
       if (method === "passkey") {
         const { error } = await handlePasskeyLogin();
         if (error) {
-          setError("The passkey did not complete. Choose another way in.");
+          setError(
+            explain(
+              error,
+              "The passkey did not complete. Choose another way in.",
+            ),
+          );
           return;
         }
         await finish();
@@ -126,7 +162,7 @@ export default function SignIn({ next }: { next: string }) {
       if (method === "magic_link") {
         const { error } = await client.requestMagicLink();
         if (error) {
-          setError("The sign-in link could not be sent.");
+          setError(explain(error, "The sign-in link could not be sent."));
           return;
         }
         setStep({ kind: "magic-sent" });
@@ -139,7 +175,7 @@ export default function SignIn({ next }: { next: string }) {
           ? await client.requestLoginPhoneOtp()
           : await client.requestLoginEmailOtp();
       if (error) {
-        setError("The code could not be sent.");
+        setError(explain(error, "The code could not be sent."));
         return;
       }
       setStep({ kind: "code", flow: "login", channel });
@@ -158,7 +194,9 @@ export default function SignIn({ next }: { next: string }) {
             : await client.verifyLoginEmailOtp(code);
 
       if (error) {
-        setError("That code did not match. Check it and try again.");
+        setError(
+          explain(error, "That code did not match. Check it and try again."),
+        );
         return;
       }
 
@@ -177,7 +215,9 @@ export default function SignIn({ next }: { next: string }) {
         describeDevice(navigator.userAgent),
       );
       if (error) {
-        setError("The passkey was not saved. You can add one later.");
+        setError(
+          explain(error, "The passkey was not saved. You can add one later."),
+        );
         return;
       }
       await finish();
@@ -301,7 +341,7 @@ export default function SignIn({ next }: { next: string }) {
       {step.kind === "code" && (
         <form onSubmit={verify} className="mt-8 space-y-6">
           <p className="text-sm text-ink-muted">
-            Enter the six-digit code we sent to{" "}
+            Enter the {CODE_FORMAT[step.channel].noun} we sent to{" "}
             {step.channel === "phone" ? "your phone" : "your email"}.
           </p>
           <div>
@@ -310,14 +350,15 @@ export default function SignIn({ next }: { next: string }) {
             </label>
             <input
               id="code"
-              inputMode="numeric"
+              inputMode={CODE_FORMAT[step.channel].inputMode}
               autoComplete="one-time-code"
-              pattern="[0-9]{6}"
+              autoCapitalize="characters"
+              pattern={CODE_FORMAT[step.channel].pattern}
               maxLength={6}
               required
               value={code}
               onChange={(event) =>
-                setCode(event.target.value.replace(/\D/g, ""))
+                setCode(CODE_FORMAT[step.channel].clean(event.target.value))
               }
               className="control numeric tracking-widest"
             />

@@ -47,7 +47,7 @@ async function submitIdentifier(value = "ada@example.com") {
   });
 }
 
-async function submitCode(value = "123456") {
+async function submitCode(value = "QBVHAY") {
   fireEvent.change(screen.getByLabelText("Code"), { target: { value } });
   await act(async () => {
     fireEvent.submit(screen.getByLabelText("Code").closest("form")!);
@@ -117,7 +117,7 @@ describe("SignIn", () => {
     });
     await submitCode();
 
-    expect(client.verifyLoginEmailOtp).toHaveBeenCalledWith("123456");
+    expect(client.verifyLoginEmailOtp).toHaveBeenCalledWith("QBVHAY");
     expect(router.replace).toHaveBeenCalledWith("/session");
   });
 
@@ -132,10 +132,61 @@ describe("SignIn", () => {
     await act(async () => {
       fireEvent.click(screen.getByText("Email me a code"));
     });
-    await submitCode("000000");
+    await submitCode("ZZZZZZ");
 
     expect(screen.getByRole("alert")).toHaveTextContent(/did not match/);
     expect(router.replace).not.toHaveBeenCalled();
+  });
+
+  // Email codes are letters and phone codes are digits. A field that kept only
+  // digits made every emailed code impossible to enter.
+  it("keeps an emailed code's letters, uppercased, and a texted code's digits", async () => {
+    passkeySupported = false;
+    auth.login.mockResolvedValue(
+      ok({ loginMethods: ["email_otp", "phone_otp"] }),
+    );
+    client.requestLoginEmailOtp.mockResolvedValue(ok({}));
+    client.requestLoginPhoneOtp.mockResolvedValue(ok({}));
+    client.verifyLoginEmailOtp.mockResolvedValue(ok({}));
+    render(<SignIn next="/session" />);
+
+    await submitIdentifier();
+    await act(async () => {
+      fireEvent.click(screen.getByText("Email me a code"));
+    });
+    fireEvent.change(screen.getByLabelText("Code"), {
+      target: { value: "qb-vh 4ay" },
+    });
+    expect(screen.getByLabelText("Code")).toHaveValue("QBVHAY");
+
+    fireEvent.click(screen.getByText("Use a different account"));
+    await submitIdentifier();
+    await act(async () => {
+      fireEvent.click(screen.getByText("Text me a code"));
+    });
+    fireEvent.change(screen.getByLabelText("Code"), {
+      target: { value: "12a 345-6" },
+    });
+    expect(screen.getByLabelText("Code")).toHaveValue("123456");
+  });
+
+  it("says to wait, not that the code was wrong, when the server rate limits", async () => {
+    passkeySupported = false;
+    auth.login.mockResolvedValue(ok({ loginMethods: ["email_otp"] }));
+    client.requestLoginEmailOtp.mockResolvedValue(ok({}));
+    client.verifyLoginEmailOtp.mockResolvedValue({
+      data: null,
+      error: Object.assign(new Error("Too many requests"), { status: 429 }),
+    });
+    render(<SignIn next="/session" />);
+
+    await submitIdentifier();
+    await act(async () => {
+      fireEvent.click(screen.getByText("Email me a code"));
+    });
+    await submitCode();
+
+    expect(screen.getByRole("alert")).toHaveTextContent(/Too many attempts/);
   });
 
   it("creates an account, verifies the email, and offers a passkey", async () => {
@@ -151,7 +202,7 @@ describe("SignIn", () => {
     });
 
     await submitCode();
-    expect(client.verifyEmailOtp).toHaveBeenCalledWith("123456");
+    expect(client.verifyEmailOtp).toHaveBeenCalledWith("QBVHAY");
     expect(router.replace).not.toHaveBeenCalled();
 
     await act(async () => {
