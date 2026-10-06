@@ -69,6 +69,18 @@ describe("OAuthCallback", () => {
     ).toBeInTheDocument();
   });
 
+  it("tells a member of an organization that retired the provider to sign in another way", async () => {
+    finishOAuthLogin.mockResolvedValue({
+      error: { code: "oauth_provider_retired" },
+    });
+
+    renderCallback("?code=abc&state=xyz");
+
+    expect(
+      await screen.findByText(/no longer signs in with this provider/),
+    ).toBeInTheDocument();
+  });
+
   it("keeps the generic message for an error code it does not recognize", async () => {
     finishOAuthLogin.mockResolvedValue({
       error: { code: "oauth_from_a_newer_api" },
