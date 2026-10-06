@@ -57,6 +57,18 @@ describe("OAuthCallback", () => {
     expect(sessionStorage.getItem(OAUTH_PROVIDER_STORAGE_KEY)).toBeNull();
   });
 
+  it("sends the user to add a passkey when the server asks for it", async () => {
+    finishOAuthLogin.mockResolvedValue({
+      data: { message: "Success", nextStep: "enroll_passkey" },
+    });
+
+    renderCallback("?code=abc&state=xyz");
+
+    await vi.waitFor(() =>
+      expect(navigate).toHaveBeenCalledWith("/enroll-passkey"),
+    );
+  });
+
   it("explains a provider that shared no email address", async () => {
     finishOAuthLogin.mockResolvedValue({
       error: { code: "oauth_missing_email" },
