@@ -81,10 +81,16 @@ The tests use Vitest and need no auth server or network.
 
 ## Deploying
 
-`npm run build` produces a standalone server (`output: "standalone"`), and the
-`Dockerfile` packages it on port 80 with a `/health` route. Set the environment
-variables above at runtime, and run the image with the Node.js runtime, which
-the cookie signing requires.
+The `Dockerfile` has two targets, both serving on port 80 with a `/health`
+route:
+
+| Command                           | Target              | Runs                                                                    |
+| --------------------------------- | ------------------- | ----------------------------------------------------------------------- |
+| `docker build .`                  | `dev` (the default) | `next dev`, for the local stack: source bind-mounted, codes in the logs |
+| `docker build --target runtime .` | `runtime`           | the standalone production server (`output: "standalone"`)               |
+
+Deploy the `runtime` target. Set the environment variables above at runtime;
+the image runs on the Node.js runtime, which the cookie signing requires.
 
 ## License
 
