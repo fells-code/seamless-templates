@@ -6,7 +6,8 @@ import {
   Routes,
 } from "react-router-dom";
 
-import { AuthProvider, AuthRoutes, useAuth } from "@seamless-auth/react";
+import { AuthProvider, useAuth } from "@seamless-auth/react";
+import { AuthRoutes } from "@seamless-auth/react/routes";
 
 import "./App.css";
 import BetaAccess from "./pages/BetaAccess";

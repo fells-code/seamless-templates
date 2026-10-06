@@ -5,8 +5,9 @@ import { getOAuthErrorCode, useAuth } from "@seamless-auth/react";
 import { PrimaryButton } from "../components/kit";
 import { OAUTH_PROVIDER_STORAGE_KEY } from "./Login";
 
-// The three failures the auth server reports with a machine-readable code are
-// all conditions at the provider, so retrying cannot fix them. Anything else,
+// Retrying cannot fix any failure the auth server reports with a
+// machine-readable code: each is a condition at the provider, or the
+// organization has moved off it. Anything else,
 // including a code from a newer API that `getOAuthErrorCode` does not
 // recognize, keeps the generic message.
 const OAUTH_ERROR_MESSAGES: Record<string, string> = {
@@ -16,6 +17,10 @@ const OAUTH_ERROR_MESSAGES: Record<string, string> = {
     "That provider has not verified your email address. Verify it with the provider, then sign in again.",
   oauth_missing_subject:
     "That provider did not identify the account. Sign in with a different provider.",
+  oauth_invalid_id_token:
+    "That provider's sign-in response could not be verified. Sign in with a different provider.",
+  oauth_provider_retired:
+    "Your organization no longer signs in with this provider. Sign in with your passkey or another method.",
 };
 
 // The provider redirects here with `code` and `state`. We hand both, plus the
