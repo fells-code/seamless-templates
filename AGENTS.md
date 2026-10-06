@@ -59,8 +59,9 @@ guidance may extend them but must not contradict them.
 
 - [registry.json](registry.json): the catalog the CLI reads to build its prompts. One entry per
   template (`id`, `kind`, `framework`, `label`, `status`, `path`).
-- `templates/<kind>/<framework>/`: one directory per template, where `kind` is `web`, `api`, or
-  `mobile` (the Expo starter under `templates/mobile/expo`). Each is a complete, runnable project
+- `templates/<kind>/<framework>/`: one directory per template, where `kind` is `web`, `api`,
+  `mobile` (the Expo starter under `templates/mobile/expo`), or `fullstack` (the Next.js starter
+  under `templates/fullstack/nextjs`, which serves `/auth` itself and needs no `api` template). Each is a complete, runnable project
   and carries:
   - `template.json`: the manifest the CLI uses to place the template (`targetDir`) and configure its
     environment (`env.fromExample`, `env.set` with `{{placeholder}}` values the CLI resolves).
@@ -90,6 +91,20 @@ how the CLI consumes them; a change to either schema is a coordinated change wit
 
 A `coming-soon` status advertises a template in the CLI without requiring its content yet, so the
 validation step skips directory checks for those entries.
+
+## The Next.js starter
+
+- It is `kind: "fullstack"`, which `seamless-cli` does not offer yet (fells-code/seamless-cli#219).
+  Older CLIs ignore the kind and `seamless verify` skips it, which is why it is not `web`: as a web
+  template the CLI would scaffold an unused api beside it and a compose service it does not fit.
+- It syncs only `index.css` and `fonts` from `shared/react-app` (the `only` list in `sync.json`).
+  The kit's `ActionCard` imports react-router, so the kit cannot be imported from a Next.js app.
+- Server code reads its configuration per request (`src/lib/config.ts`), never at module scope:
+  `next build` imports the route modules with no `.env`, and the root layout is
+  `force-dynamic` so a build without one does not prerender the configuration error.
+- `getSeamlessSession` must never be replaced by a server-side call to `/auth/users/me` with the
+  browser's cookies forwarded. That refreshes on the server, rotating the refresh token in a
+  response the browser never receives, and the browser's next refresh revokes the session.
 
 ## CI
 

@@ -27,8 +27,10 @@ seamless-templates/
 │  │     └─ ...               # the actual starter project
 │  ├─ api/
 │  │  └─ <framework>/         # one directory per API starter
-│  └─ mobile/
-│     └─ expo/                # the Expo (React Native) starter
+│  ├─ mobile/
+│  │  └─ expo/                # the Expo (React Native) starter
+│  └─ fullstack/
+│     └─ nextjs/              # the Next.js starter, which serves /auth itself
 ├─ shared/
 │  └─ react-app/              # source of truth for what both React starters share
 └─ scripts/
@@ -52,7 +54,7 @@ Because the CLI copies one template directory and nothing else, a template canno
   "templates": [
     {
       "id": "react-vite", // unique, kebab-case
-      "kind": "web", // "web", "api", or "mobile"
+      "kind": "web", // "web", "api", "mobile", or "fullstack"
       "framework": "react",
       "label": "React (Vite)", // shown in the CLI prompt
       "alias": "basic", // optional: enables `seamless init --basic`
@@ -139,6 +141,20 @@ Tests sit next to the code they cover as `*.test.ts` / `*.test.tsx`. They are me
 ### Mobile templates
 
 A `kind: "mobile"` template is placed at `mobile/` next to `web/` and `api/`, and is optional in `seamless init`. It differs from the web starters in one way that is onboarding cost rather than code: native passkeys need the relying party to be a domain the adopter controls, with `apple-app-site-association` and `assetlinks.json` hosted over HTTPS, because native WebAuthn has no `localhost` exemption. Email codes and magic links work against the local stack immediately; passkeys do not until that domain exists. The Expo starter's README and `tools/associations/` cover the setup.
+
+### Full-stack templates
+
+A `kind: "fullstack"` template is one project that is both the web application and its backend.
+The Next.js starter serves the Seamless Auth `/auth` routes itself through `@seamless-auth/nextjs`,
+reads the session in server components, and protects pages in `proxy.ts`, so it needs no `api`
+template beside it. It is placed at `web/` and serves on port 5173, like the web starters.
+
+`seamless-cli` does not offer this kind yet (fells-code/seamless-cli#219): older CLIs never show
+it, and `seamless verify` skips it. Its manifest requires the CLI version that will. Until then,
+use it by copying `templates/fullstack/nextjs` and following its README.
+
+It takes the design tokens and fonts from `shared/react-app` but not the UI kit, which routes with
+react-router. `shared/react-app/sync.json` lists it as a target with an `only` list for that reason.
 
 ---
 

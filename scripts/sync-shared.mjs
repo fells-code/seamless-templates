@@ -50,8 +50,27 @@ function plan() {
   const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
   const pairs = [];
 
-  for (const target of manifest.targets) {
+  for (const entry of manifest.targets) {
+    // A target is a template path, or { path, only } for a template that can
+    // use only part of the source: the Next.js starter takes the tokens and
+    // fonts but not the kit, which routes with react-router.
+    const target = typeof entry === "string" ? entry : entry.path;
+    const only = typeof entry === "string" ? null : entry.only;
+
+    if (only) {
+      const known = new Set(manifest.files.map(({ from }) => from));
+      for (const name of only) {
+        if (!known.has(name)) {
+          throw new Error(
+            `shared/react-app/sync.json: ${target} lists "${name}" in only, which is not a mapped file.`,
+          );
+        }
+      }
+    }
+
     for (const { from, to } of manifest.files) {
+      if (only && !only.includes(from)) continue;
+
       const absFrom = path.join(sharedRoot, from);
       if (!fs.existsSync(absFrom)) {
         throw new Error(
