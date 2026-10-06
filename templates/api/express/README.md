@@ -23,7 +23,7 @@ current user from the session, and protects an example route by role.
   problem at once.
 - Sequelize + Postgres with migrations that run automatically on boot.
 - Docker Compose for a local Postgres plus the API.
-- ESLint (flat config), Prettier, and a Node 24 / ESM TypeScript setup.
+- ESLint (flat config), Prettier, and an ESM TypeScript setup for Node 22 or newer.
 - Vitest with unit tests covering the database and environment resolution, and a single
   `npm run check` gate that runs typecheck, lint, format, and tests together.
 
