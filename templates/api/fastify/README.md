@@ -255,4 +255,4 @@ npm run db:create     # create the database if missing
 
 ## License
 
-AGPL-3.0-only
+Apache-2.0

@@ -4,7 +4,7 @@
   "version": "0.2.1",
   "description": "OAuth-first Seamless Auth starter (React + Vite)",
   "type": "module",
-  "license": "AGPL-3.0-only",
+  "license": "Apache-2.0",
   "engines": {
     "node": ">=20.0.0 <25.0.0",
     "npm": ">=9.0.0 <13.0.0"

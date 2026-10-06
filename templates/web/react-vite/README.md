@@ -155,4 +155,4 @@ docker run --rm -p 8080:80 -e API_URL=http://localhost:3000/ seamless-auth-react
 
 ## License
 
-AGPL-3.0-only
+Apache-2.0
