@@ -43,6 +43,14 @@
       "alias": "mobile",
       "status": "beta",
       "path": "templates/mobile/expo"
+    },
+    {
+      "id": "nextjs",
+      "kind": "fullstack",
+      "framework": "nextjs",
+      "label": "Next.js (App Router) - full-stack example",
+      "status": "beta",
+      "path": "templates/fullstack/nextjs"
     }
   ]
 }
