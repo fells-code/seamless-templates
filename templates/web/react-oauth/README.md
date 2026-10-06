@@ -12,6 +12,7 @@ npx seamless-cli init --oauth my-app
 
 - A focused login screen that lists the auth server's configured OAuth providers and starts the redirect (`useAuth().startOAuthLogin`).
 - An `/oauth/callback` route that completes the login (`useAuth().finishOAuthLogin`) and drops the user into the app.
+- An `/enroll-passkey` route the callback sends a user to when the auth server answers with `nextStep: 'enroll_passkey'`, which it does for a provider with `promptPasskeyEnrollment` set (a legacy identity provider the organization is moving off) and a user with no passkey yet.
 - A protected home route that shows the authenticated identity from the session.
 - A protected `/session` route that reads the issued claims, roles, organization context, step-up freshness, and registered passkeys out of `useAuth()`.
 
@@ -128,4 +129,5 @@ npm run test:coverage # vitest with a v8 coverage report
 
 - `src/pages/Login.tsx` - lists providers and starts the OAuth redirect.
 - `src/pages/OAuthCallback.tsx` - finishes the login on redirect back.
+- `src/pages/EnrollPasskey.tsx` - adds a passkey after a sign-in through a provider being retired.
 - `src/App.tsx` - routing and the protected route guard.

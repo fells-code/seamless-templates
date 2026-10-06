@@ -46,7 +46,7 @@ export default function OAuthCallback() {
       return;
     }
 
-    finishOAuthLogin({ providerId, code, state }).then(({ error }) => {
+    finishOAuthLogin({ providerId, code, state }).then(({ data, error }) => {
       if (error) {
         const errorCode = getOAuthErrorCode(error);
 
@@ -58,7 +58,9 @@ export default function OAuthCallback() {
       }
 
       sessionStorage.removeItem(OAUTH_PROVIDER_STORAGE_KEY);
-      navigate("/");
+      // The server asks for this after a sign-in through a provider the
+      // organization is moving off, when the user has no passkey yet.
+      navigate(data?.nextStep === "enroll_passkey" ? "/enroll-passkey" : "/");
     });
   }, [finishOAuthLogin, navigate, searchParams]);
 
