@@ -12,6 +12,7 @@ import "./App.css";
 import ConfigurationError from "./components/ConfigurationError";
 import MainLayout from "./layouts/Layout";
 import About from "./pages/About";
+import EnrollPasskey from "./pages/EnrollPasskey";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import OAuthCallback from "./pages/OAuthCallback";
@@ -52,6 +53,14 @@ function ApplicationRoutes() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/oauth/callback" element={<OAuthCallback />} />
+      <Route
+        path="/enroll-passkey"
+        element={
+          <RequireAuth>
+            <EnrollPasskey />
+          </RequireAuth>
+        }
+      />
 
       <Route path="/" element={<MainLayout />}>
         <Route
