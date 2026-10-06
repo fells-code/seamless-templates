@@ -1,5 +1,22 @@
 # seamless-templates
 
+## 0.16.0
+
+### Minor Changes
+
+- b5a7a03: Add a Next.js App Router starter, `templates/fullstack/nextjs`, under a new registry kind, `fullstack`. It serves the Seamless Auth `/auth` routes itself through `@seamless-auth/nextjs`, resolves the session in the root layout so the first paint shows who is signed in, and protects pages in `proxy.ts`. Sign-in and account creation are built on the SDK's hooks: passkeys, one-time codes, and magic links. `seamless-cli` does not offer the `fullstack` kind yet, so older CLIs ignore it and `seamless verify` skips it.
+
+  `shared/react-app/sync.json` targets can now take an `only` list, so a template can sync part of the shared source. The Next.js starter takes the design tokens and fonts, not the UI kit.
+
+- 2e104ff: The OAuth starter follows `nextStep: 'enroll_passkey'` from the auth server into a new `/enroll-passkey` screen. The server sends it after a sign-in through a provider with `promptPasskeyEnrollment` set, a legacy identity provider the organization is moving off, when the user has no passkey yet. The screen registers one with `useAuthClient().registerPasskey`, or lets the user continue without one; the server asks again at the next sign-in.
+- 03a34ef: Relicense from AGPL-3.0-only to the Apache License, Version 2.0 (fells-code/seamless-auth-api#335). The `LICENSE` file, the `license` field and the license header in source files now say Apache-2.0, and the AGPL summary in `LICENSE.md` is removed.
+
+### Patch Changes
+
+- e4ef11b: Give the Next.js starter's `Dockerfile` a `dev` target, last and therefore the default, matching the Express starter. `docker build .` and `docker compose up --build` now run `next dev` on port 80, so the starter's development messaging prints one-time codes and magic links to the container's logs, which is the only way to read them on the local stack. The standalone production server moves to `docker build --target runtime .`.
+- dc84459: The Express API starter now locks `proxy-addr` 2.0.8, for GHSA-jqcg-44mw-7w3h (critical, client IP spoofing through an IPv4-mapped IPv6 address behind a trusted proxy). Both API starters also take the non-breaking fixes for the brace-expansion, qs and moment advisories.
+- 1518a0b: Move the React starters onto `@seamless-auth/react` 0.14.0. `react-vite` imports `AuthRoutes` from `@seamless-auth/react/routes`, where 0.14.0 moved it. The OAuth starter explains the two new OAuth failure codes: `oauth_provider_retired`, for a user whose organization no longer signs in with that provider, and `oauth_invalid_id_token`.
+
 ## 0.15.0
 
 ### Minor Changes
