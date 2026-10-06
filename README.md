@@ -1,6 +1,6 @@
 # Seamless Templates
 
-[![License: AGPL-3.0-only](https://img.shields.io/badge/License-AGPL3-yellow.svg)](LICENSE)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
 
 The frontend and API starter templates for [Seamless Auth](https://seamlessauth.com), an open source, passwordless authentication system.
 
@@ -171,6 +171,6 @@ npm run changeset
 
 ## License
 
-AGPL-3.0-only © 2026 Fells Code LLC
+Apache-2.0 © 2026 Fells Code LLC
 
-See [`LICENSE`](LICENSE) for the full text and [`LICENSE.md`](LICENSE.md) for a summary.
+See [`LICENSE`](LICENSE) for the full text.

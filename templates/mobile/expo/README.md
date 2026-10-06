@@ -126,4 +126,4 @@ native binary. Use `npx expo run:ios` / `npx expo run:android` or EAS for that.
 
 ## License
 
-AGPL-3.0-only. See [LICENSE](LICENSE).
+Apache-2.0. See [LICENSE](LICENSE).

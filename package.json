@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/fells-code/seamless-templates.git"
   },
-  "license": "AGPL-3.0-only",
+  "license": "Apache-2.0",
   "author": "Fells Code, LLC",
   "type": "module",
   "engines": {

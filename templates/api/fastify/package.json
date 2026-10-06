@@ -4,7 +4,7 @@
   "type": "module",
   "main": "dist/index.js",
   "author": "Fells Code LLC",
-  "license": "AGPL-3.0-only",
+  "license": "Apache-2.0",
   "scripts": {
     "dev": "NODE_ENV=development node scripts/runMigrations.js && tsx watch src/index.ts",
     "build": "tsc -p tsconfig.build.json",
