@@ -24,8 +24,8 @@
   },
   "author": "Fells Code LLC",
   "dependencies": {
-    "@seamless-auth/nextjs": "^0.1.0",
-    "@seamless-auth/react": "^0.14.0",
+    "@seamless-auth/nextjs": "^0.2.0",
+    "@seamless-auth/react": "^0.15.0",
     "next": "^16.3.8",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
