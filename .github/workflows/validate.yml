@@ -23,15 +23,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # Every template is checked on each supported Node version (engines >=22):
+      # the oldest supported LTS, the development default from .nvmrc, and the
+      # newest release.
       - name: Compute build matrix
         id: matrix
-        run: echo "matrix=$(node scripts/validate-templates.mjs --matrix)" >> "$GITHUB_OUTPUT"
+        run: |
+          set -euo pipefail
+          templates="$(node scripts/validate-templates.mjs --matrix)"
+          matrix="$(jq -c '[.[] as $t | ("22", "24", "latest") as $n | $t + {node: $n}]' <<< "${templates}")"
+          echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
 
   # Every step is --if-present so a template that has not adopted one of these yet
   # is skipped rather than failed. A template that does declare the script has to
   # pass it: this is the same gate `npm run check` gives a user locally.
   template-checks:
-    name: Check ${{ matrix.id }}
+    name: Check ${{ matrix.id }} (Node ${{ matrix.node }})
     needs: validate
     if: needs.validate.outputs.matrix != '[]'
     runs-on: ubuntu-latest
@@ -49,7 +56,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: ".nvmrc"
+          node-version: ${{ matrix.node }}
 
       - name: Install
         run: npm install
