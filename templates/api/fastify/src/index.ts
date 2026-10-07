@@ -14,7 +14,11 @@ import { initializeModels } from "../models/index.js";
 
 import beta from "./routes/beta.js";
 import { requireUser } from "./hooks/requireUser.js";
-import { assertEnvironment } from "./lib/env.js";
+import {
+  assertEnvironment,
+  authServerAudience,
+  authServerIssuer,
+} from "./lib/env.js";
 import getLogger, { rootLogger } from "./lib/logger.js";
 
 dotenv.config();
@@ -101,9 +105,10 @@ const devMessaging: SeamlessAuthMessagingOptions | undefined =
 
 const seamlessAuthOptions: SeamlessAuthServerOptions = {
   authServerUrl: process.env.AUTH_SERVER_URL!,
+  authServerIssuer: authServerIssuer(),
   cookieSecret: process.env.COOKIE_SIGNING_KEY!,
   serviceSecret: process.env.API_SERVICE_TOKEN!,
-  audience: process.env.AUTH_SERVER_URL!,
+  audience: authServerAudience(),
   jwksKid: process.env.JWKS_KID!,
   cookieDomain,
   ...cookieNames,
@@ -157,6 +162,7 @@ await app.register(async (api) => {
         cookieSecret: seamlessAuthOptions.cookieSecret,
         cookieName: seamlessAuthOptions.accessCookieName,
         authServerUrl: seamlessAuthOptions.authServerUrl,
+        authServerIssuer: seamlessAuthOptions.authServerIssuer,
         audience: seamlessAuthOptions.audience,
       }),
     );

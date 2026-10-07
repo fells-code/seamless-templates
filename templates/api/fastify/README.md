@@ -61,6 +61,7 @@ cp .env.example .env
 | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `NODE_ENV`                                                | `development` enables the dev messaging handlers that log OTP and magic-link tokens locally; set to `production` before deploying                     |
 | `AUTH_SERVER_URL`                                         | URL of your Seamless Auth server                                                                                                                      |
+| `AUTH_SERVER_ISSUER`                                      | Optional. The issuer the auth server signs with, when it differs from `AUTH_SERVER_URL` (see Running locally)                                         |
 | `SERVE_ADMIN_CONSOLE`                                     | `true` to serve the admin dashboard from this API at `/console`; `false` when it is hosted elsewhere                                                  |
 | `UI_ORIGINS`                                              | Comma-separated web origins allowed by CORS                                                                                                           |
 | `COOKIE_DOMAIN`                                           | Optional cookie domain for production, for example `.example.com`                                                                                     |
@@ -99,6 +100,7 @@ localhost:
 | `.env` key           | Filled from                                      |
 | -------------------- | ------------------------------------------------ |
 | `AUTH_SERVER_URL`    | `{{authServerUrl}}` (your managed instance URL)  |
+| `AUTH_SERVER_ISSUER` | `{{authServerIssuer}}` (the same instance URL)   |
 | `API_SERVICE_TOKEN`  | `{{apiToken}}` (portal-issued service token)     |
 | `JWKS_KID`           | `{{jwksKid}}`                                    |
 | `COOKIE_SIGNING_KEY` | `{{secret:32}}` (freshly generated per scaffold) |
@@ -118,6 +120,11 @@ npm run dev
 ```
 
 The API runs at `http://localhost:3000`.
+
+If you run the API on the host against the Docker stack `seamless init --local` brings up, set
+`AUTH_SERVER_ISSUER=http://auth:5312` in `.env` (the CLI writes it for you). The auth server signs
+as its compose service name while this API reaches it at `http://localhost:5312`, and without the
+issuer every sign-in fails with `Invalid signed response from Auth Server`.
 
 You need a reachable Postgres. Use the Docker Compose stack below, or point `DB_*` at an existing
 Postgres instance.
