@@ -10,5 +10,8 @@
       "COOKIE_SIGNING_KEY": "{{secret:32}}"
     }
   },
+  "verify": {
+    "project": "nextjs"
+  },
   "requires": { "cliMin": "0.18.0" }
 }
