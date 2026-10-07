@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { captureMessaging } from "./capture";
 import { readAuthConfig, requireAuthConfig } from "./config";
 
 const COMPLETE = {
@@ -61,6 +62,23 @@ describe("readAuthConfig", () => {
     if (!dev.ok || !prod.ok) throw new Error("expected a valid config");
     expect(dev.config.handler.messaging).toBeDefined();
     expect(prod.config.handler.messaging).toBeUndefined();
+  });
+
+  it("captures codes instead of sending them only when SEAMLESS_VERIFY_CAPTURE is true", () => {
+    const capture = readAuthConfig({
+      ...COMPLETE,
+      NODE_ENV: "production",
+      SEAMLESS_VERIFY_CAPTURE: "true",
+    });
+    const other = readAuthConfig({
+      ...COMPLETE,
+      NODE_ENV: "production",
+      SEAMLESS_VERIFY_CAPTURE: "1",
+    });
+
+    if (!capture.ok || !other.ok) throw new Error("expected a valid config");
+    expect(capture.config.handler.messaging).toBe(captureMessaging);
+    expect(other.config.handler.messaging).toBeUndefined();
   });
 });
 

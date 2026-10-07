@@ -4,6 +4,8 @@ import type {
   SeamlessSessionOptions,
 } from "@seamless-auth/nextjs";
 
+import { captureEnabled, captureMessaging } from "./capture";
+
 /*
  * Everything the server side of this application reads from the environment,
  * checked in one place. A missing value used to surface as a 500 on the first
@@ -111,7 +113,11 @@ export function readAuthConfig(env: Env = process.env): AuthConfigResult {
         jwksKid,
         cookieDomain: env.COOKIE_DOMAIN?.trim() || undefined,
         ...cookieNames,
-        messaging: env.NODE_ENV === "development" ? devMessaging : undefined,
+        messaging: captureEnabled(env)
+          ? captureMessaging
+          : env.NODE_ENV === "development"
+            ? devMessaging
+            : undefined,
       },
       session: {
         authServerUrl,

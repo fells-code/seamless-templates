@@ -33,6 +33,12 @@ before deploying.
 | `COOKIE_DOMAIN`      | Optional cookie domain for production                            |
 | `AUTH_COOKIE_PREFIX` | Optional cookie name prefix, to run two applications on one host |
 
+`SEAMLESS_VERIFY_CAPTURE` is for the Seamless conformance suite
+(`seamless verify`) only. Set to `true`, it holds one-time codes and magic
+links in memory instead of sending them and serves them from
+`/api/verify-capture/<recipient>` (`src/lib/capture.ts`). Anyone who can reach
+that route can sign in as anyone, so never set it outside that suite.
+
 A missing or invalid value renders a page listing every problem, instead of
 failing on the first request.
 
