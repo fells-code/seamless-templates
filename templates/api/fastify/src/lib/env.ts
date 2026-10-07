@@ -85,6 +85,26 @@ function databaseProblem(): string | null {
   return null;
 }
 
+/*
+ * The issuer the auth server signs with, when it differs from AUTH_SERVER_URL.
+ * A host-run API against the `seamless init` Docker stack reaches the server at
+ * http://localhost:5312 while it signs as http://auth:5312. Unset (or blank)
+ * leaves the adapter checking against AUTH_SERVER_URL.
+ */
+export function authServerIssuer(
+  env: Record<string, string | undefined> = process.env,
+): string | undefined {
+  return env.AUTH_SERVER_ISSUER?.trim() || undefined;
+}
+
+// The auth server signs its issuer into `aud` as well as `iss`, so a distinct
+// issuer is also the audience the adapter has to expect.
+export function authServerAudience(
+  env: Record<string, string | undefined> = process.env,
+): string {
+  return authServerIssuer(env) ?? env.AUTH_SERVER_URL!;
+}
+
 export function assertEnvironment(): void {
   const problems = REQUIRED.filter(({ name }) =>
     isBlank(process.env[name]),

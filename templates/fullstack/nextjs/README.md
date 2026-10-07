@@ -22,16 +22,23 @@ output instead of being sent, so sign-in works with no mail or SMS provider.
 Replace the `messaging` handlers in `src/lib/config.ts` with real transports
 before deploying.
 
+Running this app on the host against the Docker stack `seamless init --local`
+brings up needs `AUTH_SERVER_ISSUER=http://auth:5312` in `.env` (the CLI writes
+it for you). The auth server signs as its compose service name while this app
+reaches it at `http://localhost:5312`, and without the issuer every sign-in
+fails with `Invalid signed response from Auth Server`.
+
 ## Environment
 
-| Variable             | Purpose                                                          |
-| -------------------- | ---------------------------------------------------------------- |
-| `AUTH_SERVER_URL`    | Your Seamless Auth instance                                      |
-| `API_SERVICE_TOKEN`  | The secret shared with Seamless Auth, 32 characters minimum      |
-| `JWKS_KID`           | The key id the auth server signs tokens with                     |
-| `COOKIE_SIGNING_KEY` | Signs the session cookies, 32 characters minimum                 |
-| `COOKIE_DOMAIN`      | Optional cookie domain for production                            |
-| `AUTH_COOKIE_PREFIX` | Optional cookie name prefix, to run two applications on one host |
+| Variable             | Purpose                                                                                              |
+| -------------------- | ---------------------------------------------------------------------------------------------------- |
+| `AUTH_SERVER_URL`    | Your Seamless Auth instance                                                                          |
+| `AUTH_SERVER_ISSUER` | Optional. The issuer the auth server signs with, when it differs from `AUTH_SERVER_URL` (see Run it) |
+| `API_SERVICE_TOKEN`  | The secret shared with Seamless Auth, 32 characters minimum                                          |
+| `JWKS_KID`           | The key id the auth server signs tokens with                                                         |
+| `COOKIE_SIGNING_KEY` | Signs the session cookies, 32 characters minimum                                                     |
+| `COOKIE_DOMAIN`      | Optional cookie domain for production                                                                |
+| `AUTH_COOKIE_PREFIX` | Optional cookie name prefix, to run two applications on one host                                     |
 
 `SEAMLESS_VERIFY_CAPTURE` is for the Seamless conformance suite
 (`seamless verify`) only. Set to `true`, it holds one-time codes and magic

@@ -44,6 +44,34 @@ describe("readAuthConfig", () => {
     );
   });
 
+  it("leaves the issuer to the adapter when AUTH_SERVER_ISSUER is unset or blank", () => {
+    for (const env of [
+      COMPLETE,
+      { ...COMPLETE, AUTH_SERVER_ISSUER: "" },
+      { ...COMPLETE, AUTH_SERVER_ISSUER: "  " },
+    ]) {
+      const result = readAuthConfig(env);
+
+      if (!result.ok) throw new Error("expected a valid config");
+      expect(result.config.handler.authServerIssuer).toBeUndefined();
+      expect(result.config.handler.audience).toBe("http://localhost:5312");
+    }
+  });
+
+  it("expects AUTH_SERVER_ISSUER as issuer and audience, keeping the URL for requests", () => {
+    const result = readAuthConfig({
+      ...COMPLETE,
+      AUTH_SERVER_ISSUER: " http://auth:5312 ",
+    });
+
+    if (!result.ok) throw new Error("expected a valid config");
+    expect(result.config.handler).toMatchObject({
+      authServerUrl: "http://localhost:5312",
+      authServerIssuer: "http://auth:5312",
+      audience: "http://auth:5312",
+    });
+  });
+
   it("names the cookies from AUTH_COOKIE_PREFIX", () => {
     const result = readAuthConfig({ ...COMPLETE, AUTH_COOKIE_PREFIX: "app-" });
 

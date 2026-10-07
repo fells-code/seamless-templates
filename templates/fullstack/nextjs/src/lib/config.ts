@@ -101,13 +101,20 @@ export function readAuthConfig(env: Env = process.env): AuthConfigResult {
   const cookieSecret = signingKey;
   const serviceSecret = env.API_SERVICE_TOKEN!.trim();
   const jwksKid = env.JWKS_KID!.trim();
+  // Only when the auth server signs as something other than the URL this app
+  // reaches it at: a host-run app against the `seamless init` Docker stack calls
+  // http://localhost:5312 while the server signs as http://auth:5312. Blank is
+  // unset, which leaves the adapter checking against AUTH_SERVER_URL. The server
+  // signs its issuer as both `iss` and `aud`, so it is the audience too.
+  const authServerIssuer = env.AUTH_SERVER_ISSUER?.trim() || undefined;
 
   return {
     ok: true,
     config: {
       handler: {
         authServerUrl,
-        audience: authServerUrl,
+        authServerIssuer,
+        audience: authServerIssuer ?? authServerUrl,
         cookieSecret,
         serviceSecret,
         jwksKid,

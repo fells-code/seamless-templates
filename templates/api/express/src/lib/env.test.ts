@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { assertEnvironment } from "./env.js";
+import {
+  assertEnvironment,
+  authServerAudience,
+  authServerIssuer,
+} from "./env.js";
 
 // The real logger writes a file transport outside production, which a unit test
 // has no reason to create.
@@ -114,5 +118,42 @@ describe("assertEnvironment", () => {
     process.env.JWKS_KID = "   ";
 
     expect(() => assertEnvironment()).toThrow(/JWKS_KID is not set/);
+  });
+});
+
+describe("authServerIssuer", () => {
+  it("is unset when AUTH_SERVER_ISSUER is absent, so the adapter uses the URL", () => {
+    expect(authServerIssuer({})).toBeUndefined();
+  });
+
+  it("treats an empty or blank value as unset", () => {
+    expect(authServerIssuer({ AUTH_SERVER_ISSUER: "" })).toBeUndefined();
+    expect(authServerIssuer({ AUTH_SERVER_ISSUER: "   " })).toBeUndefined();
+  });
+
+  it("returns the configured issuer, trimmed", () => {
+    expect(authServerIssuer({ AUTH_SERVER_ISSUER: " http://auth:5312 " })).toBe(
+      "http://auth:5312",
+    );
+  });
+});
+
+describe("authServerAudience", () => {
+  const url = "http://localhost:5312";
+
+  it("is AUTH_SERVER_URL when no distinct issuer is set", () => {
+    expect(authServerAudience({ AUTH_SERVER_URL: url })).toBe(url);
+    expect(
+      authServerAudience({ AUTH_SERVER_URL: url, AUTH_SERVER_ISSUER: " " }),
+    ).toBe(url);
+  });
+
+  it("is the issuer when AUTH_SERVER_ISSUER is set", () => {
+    expect(
+      authServerAudience({
+        AUTH_SERVER_URL: url,
+        AUTH_SERVER_ISSUER: "http://auth:5312",
+      }),
+    ).toBe("http://auth:5312");
   });
 });
