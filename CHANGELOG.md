@@ -1,5 +1,31 @@
 # seamless-templates
 
+## 0.17.0
+
+### Minor Changes
+
+- 936fb87: The Express, Fastify, and Next.js starters can now sign in when run on the host against the `seamless init --local` Docker stack (fells-code/seamless-cli#224). The auth server there signs as `http://auth:5312` while a host-run app reaches it at `http://localhost:5312`, so every sign-in failed with `Invalid signed response from Auth Server`.
+
+  - Each starter reads an optional `AUTH_SERVER_ISSUER` (blank is unset) and passes it to the adapter as `authServerIssuer`: the Express and Fastify auth routes, `requireAuth`, and `getSeamlessUser`, and the Next.js `createSeamlessAuthHandler`. The auth server signs its issuer into `aud` as well, so it is also passed as `audience`. Unset, both stay `AUTH_SERVER_URL` as before.
+  - `template.json` sets `AUTH_SERVER_ISSUER` from the new `{{authServerIssuer}}` placeholder, so these starters now require seamless-cli 0.19.0 or newer.
+  - The starters depend on `@seamless-auth/express` `^0.19.1`, `@seamless-auth/fastify` `^0.10.1`, and `@seamless-auth/nextjs` `^0.3.1`, which have `authServerIssuer` and also check a silently refreshed token against it.
+  - `.env.example` and the READMEs explain when to set it.
+
+- 6e210b6: The Next.js starter serves the Seamless admin dashboard at `/console`, the way the Express and Fastify starters do.
+
+  - `src/app/console/[[...path]]/route.ts` mounts `createSeamlessConsoleProxy` from `@seamless-auth/nextjs` and exports its `GET` and `HEAD`. The dashboard loads from the same origin as `/auth`, so it calls the admin routes with the app's own session cookies.
+  - `SERVE_ADMIN_CONSOLE` turns it on. Anything but `true` leaves `/console` answering 404 with no request upstream. `template.json` sets it from `{{serveAdminConsole}}`, which every supported CLI already resolves, so `requires.cliMin` is unchanged. A CLI that scaffolds this starter with no console writes `false`.
+  - The starter depends on `@seamless-auth/nextjs` `^0.3.1`, the first release with the console proxy.
+  - `.env.example` and the README document the switch and the two auth server settings it relies on (`SERVE_ADMIN_DASHBOARD=true`, and the app's origin in `ORIGINS`).
+
+- c52a89e: The Next.js starter can be driven by `seamless verify`. With `SEAMLESS_VERIFY_CAPTURE=true`, which only the conformance stack sets, its messaging holds one-time codes and magic links instead of sending them and serves them from `/api/verify-capture/<recipient>`, the same seam the conformance suite's Express adapter offers. The flag is off by default and the route answers 404 without it. Its `template.json` names the `nextjs` conformance project (fells-code/seamless-cli#222).
+
+### Patch Changes
+
+- 3053fed: Support Node 22 and newer. The repo and the React, React OAuth, Expo, and Next.js starters now declare `engines.node` as `>=22` instead of an upper bound below Node 25, and the release validation checks every template on Node 22, 24, and the latest release (fells-code/seamless-auth-api#339).
+- 93f8852: Use `@seamless-auth/react` 0.15.1 in the React, React OAuth, and Next.js starters. It fixes the bundled magic-link screen, which sent the single-use link twice (under React Strict Mode in development, and on a remount while the session loads in production) and showed "Failed to verify token" for a link that worked (fells-code/seamless-auth-react#161).
+- 5741ab5: Use the latest Seamless Auth client SDKs in the starters: `@seamless-auth/react` 0.15.2 in the React (Vite), React OAuth, and Next.js starters, and `@seamless-auth/react-native` 0.2.2 in the Expo starter (was 0.1.0). Both bring `@seamless-auth/client` 0.3.2 and `@seamless-auth/types` 0.28.0, so every starter shares one types version with the server adapters. The SDK APIs are unchanged, so no starter code changes.
+
 ## 0.16.0
 
 ### Minor Changes
