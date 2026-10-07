@@ -149,3 +149,11 @@ export function requireAuthConfig(env: Env = process.env): AuthConfig {
 
   return result.config;
 }
+
+/**
+ * Whether this application serves the admin dashboard at /console. Only the
+ * exact string "true" turns it on, as in the Express and Fastify starters.
+ */
+export function serveAdminConsole(env: Env = process.env): boolean {
+  return env.SERVE_ADMIN_CONSOLE?.trim() === "true";
+}

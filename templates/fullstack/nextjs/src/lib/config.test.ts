@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { captureMessaging } from "./capture";
-import { readAuthConfig, requireAuthConfig } from "./config";
+import { readAuthConfig, requireAuthConfig, serveAdminConsole } from "./config";
 
 const COMPLETE = {
   AUTH_SERVER_URL: "http://localhost:5312",
@@ -113,5 +113,16 @@ describe("readAuthConfig", () => {
 describe("requireAuthConfig", () => {
   it("throws with every problem listed", () => {
     expect(() => requireAuthConfig({})).toThrow(/AUTH_SERVER_URL/);
+  });
+});
+
+describe("serveAdminConsole", () => {
+  it("is on only for the exact string true", () => {
+    expect(serveAdminConsole({ SERVE_ADMIN_CONSOLE: "true" })).toBe(true);
+    expect(serveAdminConsole({ SERVE_ADMIN_CONSOLE: " true " })).toBe(true);
+
+    for (const value of [undefined, "", "false", "TRUE", "1", "yes"]) {
+      expect(serveAdminConsole({ SERVE_ADMIN_CONSOLE: value })).toBe(false);
+    }
   });
 });

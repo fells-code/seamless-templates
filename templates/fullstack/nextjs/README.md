@@ -40,6 +40,10 @@ fails with `Invalid signed response from Auth Server`.
 | `COOKIE_DOMAIN`      | Optional cookie domain for production                                                                |
 | `AUTH_COOKIE_PREFIX` | Optional cookie name prefix, to run two applications on one host                                     |
 
+`SERVE_ADMIN_CONSOLE` set to `true` serves the Seamless admin dashboard at
+`/console`; set it to `false` when the console is hosted elsewhere (see Admin
+console).
+
 `SEAMLESS_VERIFY_CAPTURE` is for the Seamless conformance suite
 (`seamless verify`) only. Set to `true`, it holds one-time codes and magic
 links in memory instead of sending them and serves them from
@@ -51,14 +55,15 @@ failing on the first request.
 
 ## How it fits together
 
-| File                                  | What it does                                                                                                                      |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `src/app/auth/[...seamless]/route.ts` | Serves the `/auth` routes the browser SDK calls, through `@seamless-auth/nextjs`. It owns the session cookies.                    |
-| `src/app/layout.tsx`                  | Resolves the session on the server and hands it to `AuthProvider` as `initialSession`, so the first paint shows who is signed in. |
-| `src/proxy.ts`                        | Redirects signed-out visitors from `/session` and `/beta` to the sign-in page, before the page renders.                           |
-| `src/app/api/beta-users/route.ts`     | An application route that requires the `betaUser` role, checked on the server.                                                    |
-| `src/components/SignIn.tsx`           | Sign-in and account creation: passkeys, one-time codes, and magic links.                                                          |
-| `src/app/verify-magiclink/page.tsx`   | Where emailed magic links land. The auth server builds the link to this path.                                                     |
+| File                                   | What it does                                                                                                                      |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `src/app/auth/[...seamless]/route.ts`  | Serves the `/auth` routes the browser SDK calls, through `@seamless-auth/nextjs`. It owns the session cookies.                    |
+| `src/app/layout.tsx`                   | Resolves the session on the server and hands it to `AuthProvider` as `initialSession`, so the first paint shows who is signed in. |
+| `src/proxy.ts`                         | Redirects signed-out visitors from `/session` and `/beta` to the sign-in page, before the page renders.                           |
+| `src/app/api/beta-users/route.ts`      | An application route that requires the `betaUser` role, checked on the server.                                                    |
+| `src/components/SignIn.tsx`            | Sign-in and account creation: passkeys, one-time codes, and magic links.                                                          |
+| `src/app/verify-magiclink/page.tsx`    | Where emailed magic links land. The auth server builds the link to this path.                                                     |
+| `src/app/console/[[...path]]/route.ts` | Serves the Seamless admin dashboard at `/console` when `SERVE_ADMIN_CONSOLE=true` (see Admin console).                            |
 
 The browser talks only to this application's own origin. `AuthProvider` is
 given an empty `apiHost`, so every auth request goes to `/auth` on the same
@@ -79,8 +84,33 @@ origin and the session cookies stay first-party.
 ### Roles
 
 The Beta page calls `/api/beta-users`, which answers 403 unless the session has
-the `betaUser` role. Grant it from the Seamless admin console, then sign in
+the `betaUser` role. Grant it from the Seamless admin console (see Admin
+console), then sign in
 again so the new role is in your session.
+
+## Admin console
+
+With `SERVE_ADMIN_CONSOLE=true` (the default, and what
+`seamless init --admin=api` writes), `src/app/console/[[...path]]/route.ts` serves the Seamless
+admin dashboard at http://localhost:5173/console. `createSeamlessConsoleProxy`
+fetches it from the auth server's `/console` and forwards only the method and
+the path, never the browser's cookies. The dashboard then calls the admin
+routes under `/auth` on this same origin, so it shares the session cookies and
+needs no CORS. It loads for a signed-out visitor too: the dashboard signs in
+through `/auth`, and the admin routes behind it require the admin role.
+
+The auth server needs two settings for it:
+
+- `SERVE_ADMIN_DASHBOARD=true`, so it serves the dashboard build this route
+  proxies. Without it `/console` answers the auth server's 404.
+- This application's origin in `ORIGINS`. Passkey ceremonies started in the
+  console carry it, and WebAuthn verification checks it. The local stack
+  already allows http://localhost:5173.
+
+With `SERVE_ADMIN_CONSOLE=false`, `/console` answers 404 and nothing is
+requested upstream. A dashboard on another origin cannot use this
+application's `/auth`, which sends no CORS headers, so the console is either
+served here or by the managed Seamless portal.
 
 ## Scripts
 
