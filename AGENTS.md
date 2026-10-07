@@ -94,9 +94,12 @@ validation step skips directory checks for those entries.
 
 ## The Next.js starter
 
-- It is `kind: "fullstack"`, which `seamless-cli` does not offer yet (fells-code/seamless-cli#219).
-  Older CLIs ignore the kind and `seamless verify` skips it, which is why it is not `web`: as a web
-  template the CLI would scaffold an unused api beside it and a compose service it does not fit.
+- It is `kind: "fullstack"`, which `seamless-cli` 0.18.0 and later scaffold as a beta template
+  (`seamless init my-app --nextjs`, placed in the web slot with no api template and `--admin=none`).
+  Its manifest pins `requires.cliMin` to 0.18.0. Older CLIs ignore the kind, which is why it is not
+  `web`: as a web template the CLI would scaffold an unused api beside it and a compose service it
+  does not fit. `seamless verify` in CLI 0.18.0 skips it (fells-code/seamless-cli#222); coverage is
+  on `seamless-cli` main but unreleased.
 - It syncs only `index.css` and `fonts` from `shared/react-app` (the `only` list in `sync.json`).
   The kit's `ActionCard` imports react-router, so the kit cannot be imported from a Next.js app.
 - Server code reads its configuration per request (`src/lib/config.ts`), never at module scope:

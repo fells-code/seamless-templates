@@ -166,9 +166,13 @@ The Next.js starter serves the Seamless Auth `/auth` routes itself through `@sea
 reads the session in server components, and protects pages in `proxy.ts`, so it needs no `api`
 template beside it. It is placed at `web/` and serves on port 5173, like the web starters.
 
-`seamless-cli` does not offer this kind yet (fells-code/seamless-cli#219): older CLIs never show
-it, and `seamless verify` skips it. Its manifest requires the CLI version that will. Until then,
-use it by copying `templates/fullstack/nextjs` and following its README.
+`seamless-cli` 0.18.0 and later offer it as a beta template: `seamless init my-app --nextjs` (or
+`--web=nextjs`) scaffolds it into `web/`, and `seamless check` treats the web app as the backend.
+Its manifest requires that version (`requires.cliMin`), and older CLIs never show the kind. A
+full-stack template cannot be combined with an api template, and it cannot host the admin console
+yet, so only `--admin=none` applies. `seamless verify` in CLI 0.18.0 skips full-stack templates
+(fells-code/seamless-cli#222); coverage for the Next.js starter is on `seamless-cli` main but not in
+a release yet.
 
 It takes the design tokens and fonts from `shared/react-app` but not the UI kit, which routes with
 react-router. `shared/react-app/sync.json` lists it as a target with an `only` list for that reason.
