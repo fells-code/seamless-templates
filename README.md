@@ -6,6 +6,23 @@ The frontend and API starter templates for [Seamless Auth](https://seamlessauth.
 
 This repository is the single source of truth for the starters that [`seamless-cli`](https://github.com/fells-code/seamless-cli) scaffolds. The CLI reads [`registry.json`](registry.json), presents the available templates during `seamless init`, and copies the chosen ones into a new project already wired to the auth server.
 
+## Start here
+
+New to Seamless Auth? The [self-hosted quickstart](https://docs.seamlessauth.com/start/quickstart/) runs the full stack locally with Docker. If Seamless hosts your auth instance, follow the [managed quickstart](https://docs.seamlessauth.com/start/managed-quickstart/) instead.
+
+This repo holds the starters the CLI scaffolds, so it is not one node in the diagram below: the web, mobile, and API templates become the browser app, the native app, and your backend (the Next.js starter is both browser app and backend).
+
+```mermaid
+flowchart LR
+  browser["Browser<br/>@seamless-auth/react"] -- "signed httpOnly cookies" --> backend
+  native["Native app<br/>@seamless-auth/react-native"] -- "bearer tokens" --> backend
+  backend["Your backend<br/>@seamless-auth/express, fastify, or nextjs<br/>mounted at /auth"] -- "bearer token + service token" --> api
+  api["seamless-auth-api<br/>owns the session"] --> db[("Postgres")]
+  backend -. "verifies tokens with JWKS" .-> api
+```
+
+[How the pieces connect](https://docs.seamlessauth.com/start/overview/#how-the-pieces-connect) explains each hop. [Compatibility matrix](https://docs.seamlessauth.com/build/ecosystem/#compatibility-matrix) lists which package versions work together.
+
 You usually do not clone this repository directly. Run the CLI instead:
 
 ```bash
