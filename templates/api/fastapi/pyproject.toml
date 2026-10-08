@@ -1,0 +1,38 @@
+[project]
+name = "seamless-api"
+version = "0.1.0"
+description = "Seamless Auth FastAPI starter API"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+dependencies = [
+    # The Seamless Auth adapter: /auth, the session guard, and the admin console.
+    "seamless-auth[fastapi]>=0.2,<0.3",
+    "uvicorn[standard]>=0.32",
+    # Postgres, with a small pool for the request threads.
+    "psycopg[binary]>=3.2",
+    "psycopg-pool>=3.2",
+    "python-dotenv>=1.0",
+]
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.15", "mypy>=1.18"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.mypy]
+strict = true
+python_version = "3.11"
+files = ["app"]

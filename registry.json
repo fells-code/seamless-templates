@@ -52,6 +52,14 @@
       "path": "templates/api/axum"
     },
     {
+      "id": "fastapi",
+      "kind": "api",
+      "framework": "fastapi",
+      "label": "Python (FastAPI)",
+      "status": "beta",
+      "path": "templates/api/fastapi"
+    },
+    {
       "id": "expo",
       "kind": "mobile",
       "framework": "expo",
