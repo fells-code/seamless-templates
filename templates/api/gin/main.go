@@ -36,7 +36,8 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	if !cfg.Development {
+	// Gin's debug mode prints every route on boot. Set GIN_MODE=debug to see it.
+	if os.Getenv("GIN_MODE") == "" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 

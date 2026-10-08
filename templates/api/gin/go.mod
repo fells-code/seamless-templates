@@ -3,7 +3,7 @@ module seamless-api
 go 1.26
 
 require (
-	github.com/fells-code/seamless-auth-go v0.1.1-0.20261008190206-e5a583837d97
+	github.com/fells-code/seamless-auth-go v0.2.0
 	github.com/gin-gonic/gin v1.12.0
 	github.com/jackc/pgx/v5 v5.11.0
 	github.com/joho/godotenv v1.5.1
