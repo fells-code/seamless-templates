@@ -147,6 +147,12 @@ validation step skips directory checks for those entries.
   `format:check`, `test`, `test:watch`, `test:coverage`, and a `check` that runs the gate in one
   command. Tests are Vitest, colocated as `*.test.ts` / `*.test.tsx`, and must pass without a
   database, an auth server, or network access. A new template adopts the same set.
+- The Gin, Axum and FastAPI api templates are not npm projects. They carry their toolchain's own
+  gate (see README, "API templates in other languages") instead of the npm scripts, and the
+  `native-template-checks` job finds them by `go.mod`, `Cargo.toml` or `pyproject.toml`. They
+  mirror the Express starter's routes, environment contract and behaviour; change them together.
+  Their Docker dev target must build outside `/app`, because the CLI's compose file bind-mounts the
+  source over it.
 - The mobile template's `build` is `expo export` for iOS and Android, which bundles the JavaScript
   without Xcode or the Android SDK, so the templates CI matrix can run it. It proves the bundle, not
   a native binary; its screens are exercised on a simulator, and only its pure modules are under

@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
+      native: ${{ steps.native.outputs.native }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -33,6 +34,18 @@ jobs:
           templates="$(node scripts/validate-templates.mjs --matrix)"
           matrix="$(jq -c '[.[] as $t | ("22", "24", "latest") as $n | $t + {node: $n}]' <<< "${templates}")"
           echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
+
+      # Templates that are not npm projects, found by their toolchain's manifest.
+      - name: Compute native template matrix
+        id: native
+        run: |
+          set -euo pipefail
+          native="$(find templates -mindepth 3 -maxdepth 3 \( -name go.mod -o -name Cargo.toml -o -name pyproject.toml \) \
+            | sort \
+            | jq -R -s -c '[split("\n")[] | select(length > 0)
+                | {path: (split("/")[:-1] | join("/")),
+                   lang: (if endswith("go.mod") then "go" elif endswith("Cargo.toml") then "rust" else "python" end)}]')"
+          echo "native=${native}" >> "$GITHUB_OUTPUT"
 
   # Every step is --if-present so a template that has not adopted one of these yet
   # is skipped rather than failed. A template that does declare the script has to
@@ -78,3 +91,63 @@ jobs:
       # type the bundler rejects, and nothing about signing or native modules.
       - name: Build
         run: npm run build --if-present
+
+  # The Go, Rust and Python api templates: each toolchain's own gate, the same one
+  # its README gives a user, then the production image the Dockerfile builds.
+  native-template-checks:
+    name: Check ${{ matrix.path }}
+    needs: validate
+    if: needs.validate.outputs.native != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.validate.outputs.native) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.path }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        if: matrix.lang == 'go'
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ${{ matrix.path }}/go.mod
+
+      - name: Go checks
+        if: matrix.lang == 'go'
+        run: |
+          test -z "$(gofmt -l .)" || (gofmt -l . && exit 1)
+          go vet ./...
+          go test ./...
+
+      - name: Setup Rust
+        if: matrix.lang == 'rust'
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Rust checks
+        if: matrix.lang == 'rust'
+        run: |
+          cargo fmt --check
+          cargo clippy --locked --all-targets -- -D warnings
+          cargo test --locked
+
+      - name: Setup uv
+        if: matrix.lang == 'python'
+        uses: astral-sh/setup-uv@v10.2.0
+
+      - name: Python checks
+        if: matrix.lang == 'python'
+        run: |
+          uv sync --locked
+          uv run ruff check .
+          uv run ruff format --check .
+          uv run mypy
+          uv run pytest
+
+      - name: Production image
+        run: docker build --target runtime .
