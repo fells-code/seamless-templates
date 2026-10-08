@@ -1,0 +1,14 @@
+# Rebuilds and restarts the API on change, for `docker compose up` and `air`.
+# The build output goes outside the project, which the dev container bind-mounts.
+root = "."
+tmp_dir = "/tmp/air"
+
+[build]
+cmd = "go build -o /tmp/air/api ."
+entrypoint = ["/tmp/air/api"]
+include_ext = ["go", "sql"]
+exclude_dir = ["tmp", "bin"]
+delay = 500
+
+[log]
+time = false
