@@ -155,6 +155,18 @@ A scaffolded project is expected to be verifiable on the first `npm install`, so
 
 Tests sit next to the code they cover as `*.test.ts` / `*.test.tsx`. They are meant to be a starting point a user extends, not exhaustive coverage: they cover the configuration and startup logic that decides whether a fresh scaffold runs at all. The mobile template tests its pure modules this way; its screens are React Native and are exercised on a simulator rather than in Vitest.
 
+### API templates in other languages
+
+The Gin (`api/gin`), Axum (`api/axum`) and FastAPI (`api/fastapi`) starters are not npm projects, so they ship their own toolchain's checks instead of the scripts above, and CI finds them by their `go.mod`, `Cargo.toml` or `pyproject.toml`:
+
+| Template      | Checks                                                                                |
+| ------------- | ------------------------------------------------------------------------------------- |
+| `api/gin`     | `gofmt -l .`, `go vet ./...`, `go test ./...`                                         |
+| `api/axum`    | `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`        |
+| `api/fastapi` | `uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy`, `uv run pytest` |
+
+Each also builds its production image (`docker build --target runtime .`) in CI. They mirror the Express starter route for route and variable for variable, so every web and mobile template works with any of them, and their Docker dev target keeps its build output outside `/app`, which the generated compose file bind-mounts over.
+
 ### Mobile templates
 
 A `kind: "mobile"` template is placed at `mobile/` next to `web/` and `api/`, and is optional in `seamless init`. It differs from the web starters in one way that is onboarding cost rather than code: native passkeys need the relying party to be a domain the adopter controls, with `apple-app-site-association` and `assetlinks.json` hosted over HTTPS, because native WebAuthn has no `localhost` exemption. Email codes and magic links work against the local stack immediately; passkeys do not until that domain exists. The Expo starter's README and `tools/associations/` cover the setup.

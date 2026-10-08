@@ -36,6 +36,30 @@
       "path": "templates/api/fastify"
     },
     {
+      "id": "gin",
+      "kind": "api",
+      "framework": "gin",
+      "label": "Go (Gin)",
+      "status": "beta",
+      "path": "templates/api/gin"
+    },
+    {
+      "id": "axum",
+      "kind": "api",
+      "framework": "axum",
+      "label": "Rust (Axum)",
+      "status": "beta",
+      "path": "templates/api/axum"
+    },
+    {
+      "id": "fastapi",
+      "kind": "api",
+      "framework": "fastapi",
+      "label": "Python (FastAPI)",
+      "status": "beta",
+      "path": "templates/api/fastapi"
+    },
+    {
       "id": "expo",
       "kind": "mobile",
       "framework": "expo",
