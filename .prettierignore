@@ -6,3 +6,8 @@ package-lock.json
 # A git worktree under .claude is a full checkout of this repo. Formatting or
 # checking it from here would report another branch's files as this one's.
 .claude
+
+# Build output and environments of the Rust and Python api templates, when they
+# are built or run in place.
+target
+.venv

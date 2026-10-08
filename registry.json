@@ -44,6 +44,14 @@
       "path": "templates/api/gin"
     },
     {
+      "id": "axum",
+      "kind": "api",
+      "framework": "axum",
+      "label": "Rust (Axum)",
+      "status": "beta",
+      "path": "templates/api/axum"
+    },
+    {
       "id": "expo",
       "kind": "mobile",
       "framework": "expo",

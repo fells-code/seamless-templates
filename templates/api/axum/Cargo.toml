@@ -1,0 +1,30 @@
+[package]
+name = "seamless-api"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.94"
+publish = false
+license = "Apache-2.0"
+
+[dependencies]
+# The Seamless Auth adapter: /auth, the session guard, and the admin console.
+seamless-auth = "0.2"
+axum = "0.8"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "signal"] }
+# Postgres, with migrations embedded in the binary and run on boot.
+sqlx = { version = "0.9", default-features = false, features = ["postgres", "runtime-tokio", "tls-rustls-aws-lc-rs", "migrate", "macros", "chrono"] }
+chrono = { version = "0.4", default-features = false, features = ["serde", "clock"] }
+# CORS for the web origins.
+tower-http = { version = "0.7", features = ["cors"] }
+# The signed-in user's profile from the auth server.
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+dotenvy = "0.15"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+url = "2"
+
+[dev-dependencies]
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"
