@@ -66,6 +66,10 @@ guidance may extend them but must not contradict them.
   - `template.json`: the manifest the CLI uses to place the template (`targetDir`) and configure its
     environment (`env.fromExample`, `env.set` with `{{placeholder}}` values the CLI resolves).
   - `.env.example`: the committed environment contract.
+  - `AGENTS.md`, plus a `CLAUDE.md` that imports it: guidance for coding agents working in the
+    generated project (topology, where auth lives, the rules against hand-rolled JWT, session,
+    cookie or password code, and the real commands). Every path, export, env var and command
+    it names must exist in that template, so update it with any change that moves one.
 - `shared/react-app/`: the source of truth for what both React starters share (the design tokens in
   `index.css`, the app shell layout, the UI kit under `components/kit`, and the fetch seam under
   `lib/` that the kit calls). The CLI copies exactly
@@ -105,6 +109,9 @@ validation step skips directory checks for those entries.
 - Server code reads its configuration per request (`src/lib/config.ts`), never at module scope:
   `next build` imports the route modules with no `.env`, and the root layout is
   `force-dynamic` so a build without one does not prerender the configuration error.
+- `next dev` (Next.js 16.3+) upserts a managed agent-rules block into the starter's `AGENTS.md`
+  when it detects a coding agent. Discard that change here rather than committing it; in a
+  scaffolded project it is welcome.
 - `getSeamlessSession` must never be replaced by a server-side call to `/auth/users/me` with the
   browser's cookies forwarded. That refreshes on the server, rotating the refresh token in a
   response the browser never receives, and the browser's next refresh revokes the session.

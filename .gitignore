@@ -54,12 +54,3 @@ Thumbs.db
 # npm pack artifacts
 # ----------------------------
 *.tgz
-
-# ----------------------------
-# Generated agent rules
-# ----------------------------
-# `next dev` (Next.js 16.3+) writes these into the Next.js starter. Scoped to
-# this repo's copy: the template's own .gitignore ships to every scaffold, where
-# a project may well want to commit its own.
-templates/fullstack/nextjs/AGENTS.md
-templates/fullstack/nextjs/CLAUDE.md
