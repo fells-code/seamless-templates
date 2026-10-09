@@ -1,5 +1,12 @@
 # seamless-templates
 
+## 0.18.0
+
+### Minor Changes
+
+- a4e50c1: Every starter now ships an `AGENTS.md`, plus a `CLAUDE.md` that imports it, so a coding agent working in a scaffolded project knows how auth is wired there: which processes run and how they reach the auth server, the files, middleware and SDK calls that own auth, how to protect a new route and read the current user, the environment variables, and the real check commands. It tells the agent to keep using the Seamless SDK and server adapter instead of writing its own JWT, session cookie, password or login code. `npm run validate` now requires both files in every template.
+- a1af261: Add Go (Gin), Rust (Axum) and Python (FastAPI) api templates, on the seamless-auth-go, seamless-auth (crates.io) and seamless-auth (PyPI) adapters. Each mirrors the Express starter: the auth routes at `/auth`, the admin console at `/console`, CORS, the session guard, a local users table, a role-gated example route, a boot-time environment check, migrations run on boot, and a reloading Docker dev target. They are `beta` and listed after Express and Fastify, so the default api pick is unchanged.
+
 ## 0.17.0
 
 ### Minor Changes
