@@ -75,7 +75,9 @@ guidance may extend them but must not contradict them.
   `lib/` that the kit calls). The CLI copies exactly
   one template directory into a new project, so a template cannot reference anything outside itself.
   Each template therefore carries a committed copy, written by `npm run sync:shared`. Edit the file
-  under `shared/react-app/`, never a template's copy.
+  under `shared/react-app/`, never a template's copy. The Next.js, Angular, Vue and SvelteKit
+  starters take only `index.css` and `fonts` (an `only` list in `sync.json`); SvelteKit's fonts land
+  in `static/fonts` through the target's `to` map.
 - [scripts/validate-templates.mjs](scripts/validate-templates.mjs): structural validation of the
   registry and manifests, plus the shared-source drift check. The `--matrix` flag emits the buildable
   template list for CI.
@@ -95,6 +97,22 @@ how the CLI consumes them; a change to either schema is a coordinated change wit
 
 A `coming-soon` status advertises a template in the CLI without requiring its content yet, so the
 validation step skips directory checks for those entries.
+
+## The Angular, Vue and SvelteKit starters
+
+- They mirror the React starter's flows and keep the accessible names the conformance suite drives
+  ("Open account menu", "Logout", "You are signed in"), so `seamless verify` runs the React browser
+  specs against them. `verify.project` in each `template.json` picks the harness's compose service.
+- Their Dockerfiles have an empty `sdk` stage that `seamless verify` replaces with a build context
+  of local SDK tarballs. Every other build, the CLI's compose file included, uses the lockfile. The
+  last stage is the nginx runtime, because the CLI builds the default target.
+- The Angular CLI does not read `.env`, so `npm run dev` and `npm run build` write `API_URL` into
+  `public/config.js` first (`scripts/write-config.mjs`). Its dev server is pinned to port 5173 in
+  `angular.json`, with prebundling off so it does not restart under the first request.
+- The SvelteKit starter is a single-page app (`adapter-static` with an `index.html` fallback, `ssr`
+  off), not the full-stack SvelteKit template, which would serve `/auth` itself. Its prettier config
+  loads `prettier-plugin-svelte`, which only its own install has, so the root `.prettierignore` skips
+  it and its own `format:check` covers it.
 
 ## The Next.js starter
 

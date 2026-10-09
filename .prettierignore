@@ -11,3 +11,10 @@ package-lock.json
 # are built or run in place.
 target
 .venv
+
+# The SvelteKit starter formats with prettier-plugin-svelte, which its own config
+# loads from its own node_modules. Its `npm run format:check` covers it.
+templates/web/svelte
+
+# The Angular CLI cache.
+.angular
