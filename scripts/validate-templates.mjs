@@ -158,6 +158,14 @@ function validate() {
       }
     }
 
+    // Every scaffold ships guidance that keeps a coding agent on the Seamless SDK
+    // and adapter instead of hand-rolled JWT, session or password code.
+    for (const file of ["AGENTS.md", "CLAUDE.md"]) {
+      if (!fs.existsSync(path.join(templateDir, file))) {
+        fail(`${where}: missing ${file} in ${entry.path}.`);
+      }
+    }
+
     if (fs.existsSync(path.join(templateDir, "package.json"))) {
       buildable.push({ id: entry.id, path: entry.path });
     }

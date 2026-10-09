@@ -41,6 +41,8 @@ seamless-templates/
 │  │  └─ <framework>/         # one directory per web starter
 │  │     ├─ template.json     # how the CLI fetches and configures this template
 │  │     ├─ .env.example      # the template's environment contract
+│  │     ├─ AGENTS.md         # guidance for coding agents in the generated project
+│  │     ├─ CLAUDE.md         # imports AGENTS.md for Claude Code
 │  │     └─ ...               # the actual starter project
 │  ├─ api/
 │  │  └─ <framework>/         # one directory per API starter
@@ -135,9 +137,10 @@ The CLI computes the shared values and resolves the `{{...}}` placeholders in `e
 1. Create `templates/<kind>/<framework>/` with a complete, runnable starter.
 2. Add a committed `.env.example` describing its environment contract.
 3. Add a `template.json` manifest (see above).
-4. Add an entry to `registry.json`.
-5. If it is a React web starter, add it to `targets` in `shared/react-app/sync.json` and run `npm run sync:shared`.
-6. Run `npm run validate` and open a pull request.
+4. Add an `AGENTS.md` describing how auth works in that starter (topology, the files and SDK calls it uses, the rules, the real commands) and a `CLAUDE.md` containing `See @AGENTS.md`.
+5. Add an entry to `registry.json`.
+6. If it is a React web starter, add it to `targets` in `shared/react-app/sync.json` and run `npm run sync:shared`.
+7. Run `npm run validate` and open a pull request.
 
 CI validates the registry and every manifest, then installs each template and runs its typecheck, lint, format check, tests, and build to confirm it works before it ships. The mobile template's `build` is `expo export`, which bundles the JavaScript for iOS and Android without Xcode or the Android SDK; it proves the bundle, not a signed native binary.
 
@@ -198,7 +201,7 @@ npm install
 npm run validate
 ```
 
-`npm run validate` checks that `registry.json` is well-formed, that every referenced template has a valid `template.json` and `.env.example`, and that no template copy of a shared source has drifted from `shared/`.
+`npm run validate` checks that `registry.json` is well-formed, that every referenced template has a valid `template.json`, `.env.example`, `AGENTS.md` and `CLAUDE.md`, and that no template copy of a shared source has drifted from `shared/`.
 
 To change something both React starters use (the design tokens, the app shell layout, the UI kit, or the fetch seam under `lib/`), edit the file under `shared/react-app/` and run:
 
