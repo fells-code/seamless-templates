@@ -51,11 +51,14 @@ function plan() {
   const pairs = [];
 
   for (const entry of manifest.targets) {
-    // A target is a template path, or { path, only } for a template that can
-    // use only part of the source: the Next.js starter takes the tokens and
-    // fonts but not the kit, which routes with react-router.
+    // A target is a template path, or { path, only, to } for a template that can
+    // use only part of the source: the Next.js, Angular, Vue and SvelteKit
+    // starters take the tokens and fonts but not the kit, which is React. `to`
+    // moves a mapped file for one target, as SvelteKit serves static files from
+    // static/ rather than public/.
     const target = typeof entry === "string" ? entry : entry.path;
     const only = typeof entry === "string" ? null : entry.only;
+    const moved = typeof entry === "string" ? {} : (entry.to ?? {});
 
     if (only) {
       const known = new Set(manifest.files.map(({ from }) => from));
@@ -68,8 +71,9 @@ function plan() {
       }
     }
 
-    for (const { from, to } of manifest.files) {
+    for (const { from, to: defaultTo } of manifest.files) {
       if (only && !only.includes(from)) continue;
+      const to = moved[from] ?? defaultTo;
 
       const absFrom = path.join(sharedRoot, from);
       if (!fs.existsSync(absFrom)) {

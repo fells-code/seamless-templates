@@ -20,6 +20,30 @@
       "path": "templates/web/react-oauth"
     },
     {
+      "id": "angular",
+      "kind": "web",
+      "framework": "angular",
+      "label": "Angular",
+      "status": "beta",
+      "path": "templates/web/angular"
+    },
+    {
+      "id": "vue",
+      "kind": "web",
+      "framework": "vue",
+      "label": "Vue (Vite)",
+      "status": "beta",
+      "path": "templates/web/vue"
+    },
+    {
+      "id": "svelte",
+      "kind": "web",
+      "framework": "svelte",
+      "label": "SvelteKit (single-page app)",
+      "status": "beta",
+      "path": "templates/web/svelte"
+    },
+    {
       "id": "express",
       "kind": "api",
       "framework": "express",

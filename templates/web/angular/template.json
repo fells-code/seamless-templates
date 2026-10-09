@@ -1,0 +1,12 @@
+{
+  "id": "angular",
+  "targetDir": "web",
+  "env": {
+    "fromExample": ".env.example",
+    "set": {
+      "API_URL": "{{apiUrl}}"
+    }
+  },
+  "requires": { "cliMin": "0.3.0" },
+  "verify": { "project": "angular" }
+}
