@@ -1,0 +1,11 @@
+node_modules
+dist
+coverage
+*.tsbuildinfo
+*.log
+.DS_Store
+.env*
+!.env.example
+.angular
+# Written from .env by `npm run dev` and `npm run build`; see scripts/write-config.mjs.
+public/config.js

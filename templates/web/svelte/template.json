@@ -1,0 +1,12 @@
+{
+  "id": "svelte",
+  "targetDir": "web",
+  "env": {
+    "fromExample": ".env.example",
+    "set": {
+      "VITE_API_URL": "{{apiUrl}}"
+    }
+  },
+  "requires": { "cliMin": "0.3.0" },
+  "verify": { "project": "svelte" }
+}

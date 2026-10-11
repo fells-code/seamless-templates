@@ -5,6 +5,21 @@
     {
       "path": "templates/fullstack/nextjs",
       "only": ["index.css", "fonts"]
+    },
+    {
+      "path": "templates/web/angular",
+      "only": ["index.css", "fonts"]
+    },
+    {
+      "path": "templates/web/vue",
+      "only": ["index.css", "fonts"]
+    },
+    {
+      "path": "templates/web/svelte",
+      "only": ["index.css", "fonts"],
+      "to": {
+        "fonts": "static/fonts"
+      }
     }
   ],
   "files": [

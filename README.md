@@ -51,7 +51,7 @@ seamless-templates/
 │  └─ fullstack/
 │     └─ nextjs/              # the Next.js starter, which serves /auth itself
 ├─ shared/
-│  └─ react-app/              # source of truth for what both React starters share
+│  └─ react-app/              # what the React starters share, and the tokens and fonts every web starter shares
 └─ scripts/
    ├─ validate-templates.mjs
    └─ sync-shared.mjs
@@ -139,7 +139,7 @@ The CLI computes the shared values and resolves the `{{...}}` placeholders in `e
 3. Add a `template.json` manifest (see above).
 4. Add an `AGENTS.md` describing how auth works in that starter (topology, the files and SDK calls it uses, the rules, the real commands) and a `CLAUDE.md` containing `See @AGENTS.md`.
 5. Add an entry to `registry.json`.
-6. If it is a React web starter, add it to `targets` in `shared/react-app/sync.json` and run `npm run sync:shared`.
+6. If it is a React web starter, add it to `targets` in `shared/react-app/sync.json` and run `npm run sync:shared`. A web starter in another framework takes the design tokens and fonts the same way, with an `only` list (and a `to` map when it serves static files from somewhere other than `public/`).
 7. Run `npm run validate` and open a pull request.
 
 CI validates the registry and every manifest, then installs each template and runs its typecheck, lint, format check, tests, and build to confirm it works before it ships. The mobile template's `build` is `expo export`, which bundles the JavaScript for iOS and Android without Xcode or the Android SDK; it proves the bundle, not a signed native binary.

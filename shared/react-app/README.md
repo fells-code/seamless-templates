@@ -5,7 +5,8 @@ the design tokens, the app shell layout, the UI kit, and the fetch seam the kit
 calls.
 
 Both `templates/web/react-vite` and `templates/web/react-oauth` carry a committed
-copy of everything here. Edit the file in this directory, then run:
+copy of everything here. The Next.js, Angular, Vue and SvelteKit starters carry
+only the design tokens (`index.css`) and the fonts. Edit the file in this directory, then run:
 
 ```bash
 npm run sync:shared

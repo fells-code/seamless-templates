@@ -1,0 +1,1413 @@
+@import "tailwindcss";
+
+/* The typefaces, served from this application's own origin.
+ *
+ * This used to be a system font stack and nothing else, on the grounds that an
+ * application scaffolded from here may ship anywhere, with no font host to
+ * depend on. That reasoning is about third-party hosts rather than about
+ * bundling. These sit in public/fonts, get fingerprinted by the build and served
+ * alongside the application, so the type is the starter's own and no request
+ * leaves the origin.
+ *
+ * Five families, each variable and subset to Latin and Latin Extended. A browser
+ * downloads only the ones it actually renders a glyph in, so a theme that sets
+ * everything in the mono costs one file rather than five.
+ *
+ * font-display: swap throughout, so a slow file costs the brand and never the
+ * words. Every family keeps a system stack behind it in the tokens below.
+ */
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/geist-latin-ext.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/geist-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/fonts/geist-mono-latin-ext.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/fonts/geist-mono-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Archivo";
+  src: url("/fonts/archivo-latin-ext.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Archivo";
+  src: url("/fonts/archivo-latin.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Newsreader";
+  src: url("/fonts/newsreader-latin-ext.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Newsreader";
+  src: url("/fonts/newsreader-latin.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Nunito";
+  src: url("/fonts/nunito-latin-ext.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Nunito";
+  src: url("/fonts/nunito-latin.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-style: normal;
+  font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+/* The starter's design tokens.
+ *
+ * Every colour, radius, shadow, duration, type size and page dimension in this
+ * template comes from a token declared here, and the components under
+ * src/components/kit read nothing else. Retheme the whole application by editing
+ * this block; no component carries a literal colour, width or column count.
+ *
+ * The names are a contract, and the vocabulary below is the other half of it.
+ * Anything that rethemes this starter redefines these same custom properties,
+ * and may define them several times over with one block per look, switched by a
+ * data-style attribute on the root element. The kit follows whichever block
+ * wins. Renaming a token here without renaming it there breaks that silently: a
+ * component reads a custom property nobody declared and simply gets nothing.
+ */
+
+:root {
+  --app-brand: #2169a8;
+  --app-brand-hover: #195182;
+  --app-brand-ink: #ffffff;
+  --app-accent: #38bdf8;
+  --app-accent-ink: #12100e;
+  --app-accent-soft: #d9f0fc;
+  /* Meaning, as opposed to brand.
+   *
+   * A figure that went up, a row that failed, a split that is still a guess:
+   * every kit needs to say those three things, and until these existed the
+   * components said them in literal Tailwind greens and reds. A fixed #16a34a is
+   * the one colour on the page that belongs to no palette, and it shows. These
+   * are derived in the brand's own hue like every other surface, so a warning in
+   * a warm kit is a warm warning. */
+  --app-positive: #16794a;
+  --app-positive-ink: #ffffff;
+  --app-positive-soft: #dcf0e5;
+  --app-negative: #b3261e;
+  --app-negative-ink: #ffffff;
+  --app-negative-soft: #fbe3e1;
+  --app-warn: #8a5a00;
+  --app-warn-ink: #ffffff;
+  --app-warn-soft: #fdefd4;
+  --app-band: #2169a8;
+  --app-band-ink: #ffffff;
+  --app-band-ink-muted: #c4cbd1;
+  --app-on-band: #ffffff;
+  --app-on-band-ink: #2169a8;
+  --app-surface: #f6f7f8;
+  --app-surface-raised: #ffffff;
+  --app-line: #dadee2;
+  --app-ink: #1a2228;
+  --app-ink-muted: #65717b;
+  --app-shell: #ffffff;
+  --app-shell-line: #dde1e4;
+  --app-shell-active: #edf0f2;
+  --app-shell-ink: #12100e;
+  --app-shell-ink-muted: #515d67;
+  /* Each bundled face keeps the system stack it most resembles behind it, so a
+     font file that never arrives costs the voice and never the words. */
+  --app-font-display:
+    Geist, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Liberation Sans", sans-serif;
+  --app-font-body:
+    Geist, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Liberation Sans", sans-serif;
+  --app-font-label:
+    Geist, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Liberation Sans", sans-serif;
+  /* Width and optical size, for the two families that carry an axis beyond
+     weight. Archivo runs 62% to 125%, so one download covers everything from
+     condensed capitals to expanded ones. */
+  --app-display-stretch: 100%;
+  --app-display-optical: auto;
+  /* The small type carries its own width, because a theme that sets labels in a
+     condensed face does not necessarily set its headlines in one. Without this a
+     condensed stack resolves to the family at normal width, which is the family
+     the theme was already using. */
+  --app-label-stretch: 100%;
+  --app-root-size: 100%;
+  --app-body-leading: 1.5;
+  --app-display-size: clamp(2.5rem, 5vw, 3.75rem);
+  --app-display-leading: 1.05;
+  --app-display-tracking: -0.02em;
+  --app-display-weight: 800;
+  --app-display-transform: none;
+  --app-title-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  --app-title-weight: var(--app-display-weight);
+  --app-figure-size: clamp(1.75rem, 2.8vw, 2.5rem);
+  --app-label-size: 0.6875rem;
+  --app-label-tracking: 0.12em;
+  --app-label-weight: 600;
+  --app-label-transform: uppercase;
+  /* Slashed zero. Right for a readout, wrong almost everywhere else, and until
+     this was a token it was on everywhere at once: a rounded, pastel habit
+     tracker rendered 5:00 with a line through both zeros. */
+  --app-numeric-zero: "zero" 0;
+  /* The one figure on a screen that outranks the rest.
+   *
+   * There was no way to say this. A screen's four numbers were four identical
+   * tiles, and StatRow made it worse by shrinking all of them once there were
+   * more than two, so the number the screen exists to show was the same size as
+   * the three supporting it. Rank is what separates a designed screen from a
+   * populated one, and it cannot come from colour tuning: it has to be a
+   * primitive a theme can shape. A theme that wants no such emphasis sets the
+   * fill to transparent and the size to the plain figure size, and gets its old
+   * row back. */
+  --app-lead-fill: var(--app-accent);
+  --app-lead-ink: var(--app-accent-ink);
+  --app-lead-caption: color-mix(
+    in srgb,
+    var(--app-accent-ink) 68%,
+    transparent
+  );
+  --app-lead-border-width: 0;
+  --app-lead-border-color: transparent;
+  --app-lead-shadow: var(--app-shadow-lifted);
+  --app-lead-radius: var(--app-radius-card);
+  --app-lead-pad: 1.5rem;
+  --app-lead-size: calc(var(--app-figure-size) * 1.55);
+  /* How the band splits between the hero figure and the figures supporting it.
+     A grid-template-columns value, so a kit that wants the lead to dominate says
+     `2fr 1fr` and one that wants it to sit among equals says `1fr 3fr`. */
+  --app-lead-split: minmax(15rem, 1fr) minmax(0, 2fr);
+
+  /* A short chip: a status, a category, a grade. The competition for attention
+     on a row is won by shape as much as by colour, so the case and the tracking
+     are the kit's. */
+  --app-badge-pad: 0.125rem 0.5rem;
+  --app-badge-radius: var(--app-radius-control);
+  --app-badge-border-width: 0;
+  --app-badge-weight: var(--app-label-weight);
+  --app-badge-tracking: var(--app-label-tracking);
+  --app-badge-transform: var(--app-label-transform);
+
+  /* How the sidebar marks where you are. `dot` is a circle beside the label,
+     `bar` a rule down the leading edge; both are the same two tokens at
+     different proportions, which is why this is a size rather than a name. */
+  --app-nav-pad: 0.5rem 0.75rem;
+  --app-nav-radius: var(--app-radius-control);
+  --app-nav-active-bg: var(--app-shell-active);
+  --app-nav-marker-width: 0.375rem;
+  --app-nav-marker-height: 0.375rem;
+  --app-nav-marker-radius: 999px;
+
+  /* Table rows. Whether a row is separated by a rule, a stripe or nothing is the
+     single loudest thing about how a table reads. */
+  --app-row-line-width: 1px;
+  --app-row-line-color: var(--app-line);
+  --app-row-stripe: transparent;
+  --app-row-hover: var(--app-surface);
+  --app-table-head-bg: transparent;
+
+  --app-radius-card: 0.75rem;
+  --app-radius-control: 0.375rem;
+  --app-shadow-raised: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --app-shadow-lifted: 0 4px 12px -2px rgb(0 0 0 / 0.1);
+  --app-panel-bg: var(--app-surface-raised);
+  --app-panel-border-width: 1px;
+  --app-panel-border-color: var(--app-line);
+  --app-panel-shadow: var(--app-shadow-raised);
+  --app-panel-pad: 1.25rem;
+  --app-rule-width: 1px;
+  --app-rule-color: var(--app-line);
+  --app-motion-duration: 150ms;
+  --app-motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --app-motion-distance: 6px;
+  --app-motion-stagger: 40ms;
+  --app-count-duration: 650ms;
+  --app-reveal-distance: 10px;
+  --app-row-pad-y: 0.75rem;
+  --app-cell-pad-x: 1rem;
+  --app-control-border-width: 1px;
+  --app-control-border-color: var(--app-line);
+  --app-control-bg: var(--app-surface);
+  --app-control-pad: 0.5rem 0.75rem;
+  --app-button-pad: 0.625rem 1.25rem;
+  --app-button-weight: 600;
+  --app-button-transform: none;
+  --app-button-tracking: 0;
+  --app-shell-flow: row;
+  --app-shell-width: 16rem;
+  --app-shell-offset: 0px;
+  /* Where a screen's header sits: `contents` leaves it above the content, `grid`
+     puts it in a column beside it. */
+  --app-screen-flow: contents;
+  --app-screen-columns: none;
+  --app-band-position: static;
+  --app-gutter: clamp(1.25rem, 4vw, 3rem);
+  --app-content-width: none;
+  --app-content-align: 0 auto;
+  --app-feed-width: 42rem;
+  --app-aside-width: 48rem;
+  --app-view-pad: 3rem;
+  --app-grid-min: 22rem;
+  --app-grid-gap: 1rem;
+  --app-rail-columns: minmax(0, 1fr) 20rem;
+  --app-rail-main: 1;
+  --app-rail-aside: 2;
+  --app-hero-min-height: auto;
+  --app-band-min-height: auto;
+  --app-band-fill: var(--app-band);
+  /* What sits behind a band: a picture of the subject, or a pattern of it.
+     `none` until something sets it, and every layer of `Cover` is inert when it
+     is. */
+  --app-cover: none;
+  --app-cover-size: cover;
+  --app-cover-position: center;
+  --app-cover-repeat: no-repeat;
+  --app-cover-opacity: 1;
+  --app-cover-tint: none;
+  --app-cover-tint-opacity: 0.85;
+  --app-cover-scrim: none;
+  --app-band-image: none;
+  --app-band-shape: none;
+  --app-band-edge: 0 solid transparent;
+  --app-band-pad: 4rem;
+  --app-band-width: none;
+  --app-band-align: 0 auto;
+  --app-band-text: start;
+  --app-band-head-flow: row;
+  --app-band-head-items: flex-end;
+  --app-view-min-height: auto;
+  --app-view-snap: none;
+  --app-view-align: none;
+  --app-vista-glow: none;
+  --app-vista-rings: none;
+  --app-vista-sweep: none;
+  --app-vista-grid: none;
+  --app-vista-glow-opacity: 0;
+  --app-vista-rings-opacity: 0;
+  --app-vista-sweep-opacity: 0;
+  --app-vista-grid-opacity: 0;
+  --app-vista-blur: 0px;
+  --app-vista-speed: 0s;
+  --seamless-accent: var(--app-brand);
+  --seamless-accent-hover: var(--app-brand-hover);
+  --seamless-accent-contrast: var(--app-brand-ink);
+  --seamless-accent-soft: var(--app-accent);
+  --seamless-surface: var(--app-surface);
+  --seamless-surface-raised: var(--app-surface-raised);
+  --seamless-surface-hover: var(--app-line);
+  --seamless-border: var(--app-line);
+  --seamless-text: var(--app-ink);
+  --seamless-text-muted: var(--app-ink-muted);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --app-brand: #4997db;
+    --app-brand-hover: #74b0e4;
+    --app-brand-ink: #12100e;
+    --app-accent: #38bdf8;
+    --app-accent-ink: #12100e;
+    --app-accent-soft: #123243;
+    --app-positive: #4ec98d;
+    --app-positive-ink: #08150f;
+    --app-positive-soft: #14291f;
+    --app-negative: #f2837a;
+    --app-negative-ink: #1a0d0c;
+    --app-negative-soft: #33191a;
+    --app-warn: #e0a53c;
+    --app-warn-ink: #1a1206;
+    --app-warn-soft: #33270f;
+    --app-band: #287fcb;
+    --app-band-ink: #ffffff;
+    --app-band-ink-muted: #dce0e3;
+    --app-on-band: #ffffff;
+    --app-on-band-ink: #287fcb;
+    --app-surface: #0e1216;
+    --app-surface-raised: #181f25;
+    --app-line: #2f3941;
+    --app-ink: #f1f2f3;
+    --app-ink-muted: #99a1a8;
+    --app-shell: #11171c;
+    --app-shell-line: #2b343b;
+    --app-shell-active: #202932;
+    --app-shell-ink: #ffffff;
+    --app-shell-ink-muted: #a9b3bc;
+  }
+}
+
+/* The shell. Which chrome the application wears is `data-shell` on <html>, the
+   way the look is `data-style`. The Navbar reads the same attribute to choose
+   its markup; these are the two things the layout has to know about it. Absent
+   means the sidebar, so a document that has never been told renders as it did
+   before shells existed. Written after any look block, because a look may set
+   the sidebar width and a shell that is not a sidebar has to win. */
+[data-shell="topbar"],
+[data-shell="tabs"],
+[data-shell="cover"] {
+  --app-shell-flow: column;
+}
+[data-shell="rail"] {
+  --app-shell-width: 4.5rem;
+}
+[data-shell="cover"] {
+  --app-shell-offset: 4.75rem;
+}
+
+@theme inline {
+  /* So `font-sans` and `font-mono` in a page resolve to the faces the kit chose,
+     rather than to whatever the framework would default to. */
+  --font-sans: var(--app-font-body);
+  --font-mono: var(--app-font-label);
+  --color-brand: var(--app-brand);
+  --color-brand-hover: var(--app-brand-hover);
+  --color-brand-ink: var(--app-brand-ink);
+  --color-accent: var(--app-accent);
+  --color-accent-ink: var(--app-accent-ink);
+  --color-accent-soft: var(--app-accent-soft);
+  --color-positive: var(--app-positive);
+  --color-positive-ink: var(--app-positive-ink);
+  --color-positive-soft: var(--app-positive-soft);
+  --color-negative: var(--app-negative);
+  --color-negative-ink: var(--app-negative-ink);
+  --color-negative-soft: var(--app-negative-soft);
+  --color-warn: var(--app-warn);
+  --color-warn-ink: var(--app-warn-ink);
+  --color-warn-soft: var(--app-warn-soft);
+  --color-band: var(--app-band);
+  --color-band-ink: var(--app-band-ink);
+  --color-band-ink-muted: var(--app-band-ink-muted);
+  --color-on-band: var(--app-on-band);
+  --color-on-band-ink: var(--app-on-band-ink);
+  --color-surface: var(--app-surface);
+  --color-surface-raised: var(--app-surface-raised);
+  --color-line: var(--app-line);
+  --color-ink: var(--app-ink);
+  --color-ink-muted: var(--app-ink-muted);
+  --color-shell: var(--app-shell);
+  --color-shell-line: var(--app-shell-line);
+  --color-shell-active: var(--app-shell-active);
+  --color-shell-ink: var(--app-shell-ink);
+  --color-shell-ink-muted: var(--app-shell-ink-muted);
+  --radius-card: var(--app-radius-card);
+  --radius-control: var(--app-radius-control);
+  --shadow-raised: var(--app-shadow-raised);
+  --shadow-lifted: var(--app-shadow-lifted);
+  --tracking-display: var(--app-display-tracking);
+  --font-weight-display: var(--app-display-weight);
+}
+
+/* ---------------------------------------------------------------- motion --- */
+
+@keyframes app-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--app-motion-distance));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes app-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(var(--app-reveal-distance));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes app-skeleton-pulse {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 0.9;
+  }
+}
+
+@keyframes app-vista-breathe {
+  from {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.12) translate3d(0, -3%, 0);
+  }
+}
+
+@keyframes app-vista-turn {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Scroll-driven, so the backdrop moves as you travel between views rather than
+   on a clock of its own. This is the transition from one view to the next. */
+@keyframes app-vista-pan {
+  from {
+    transform: translate3d(0, 6%, 0) scale(1.04);
+  }
+  to {
+    transform: translate3d(0, -10%, 0) scale(1.18);
+  }
+}
+
+@keyframes app-vista-counter-pan {
+  from {
+    transform: translate3d(0, -4%, 0);
+  }
+  to {
+    transform: translate3d(0, 7%, 0);
+  }
+}
+
+@layer components {
+  /* Entrance. Put it on anything that should arrive rather than appear. */
+  .rise-in {
+    animation: app-rise-in var(--app-motion-duration) var(--app-motion-ease)
+      both;
+  }
+
+  /* Put on a container; its direct children arrive in sequence. */
+  .stagger > * {
+    animation: app-rise-in var(--app-motion-duration) var(--app-motion-ease)
+      both;
+  }
+  .stagger > *:nth-child(1) {
+    animation-delay: calc(var(--app-motion-stagger) * 0);
+  }
+  .stagger > *:nth-child(2) {
+    animation-delay: calc(var(--app-motion-stagger) * 1);
+  }
+  .stagger > *:nth-child(3) {
+    animation-delay: calc(var(--app-motion-stagger) * 2);
+  }
+  .stagger > *:nth-child(4) {
+    animation-delay: calc(var(--app-motion-stagger) * 3);
+  }
+  .stagger > *:nth-child(5) {
+    animation-delay: calc(var(--app-motion-stagger) * 4);
+  }
+  .stagger > *:nth-child(6) {
+    animation-delay: calc(var(--app-motion-stagger) * 5);
+  }
+  .stagger > *:nth-child(7) {
+    animation-delay: calc(var(--app-motion-stagger) * 6);
+  }
+  .stagger > *:nth-child(8) {
+    animation-delay: calc(var(--app-motion-stagger) * 7);
+  }
+  .stagger > *:nth-child(9) {
+    animation-delay: calc(var(--app-motion-stagger) * 8);
+  }
+  .stagger > *:nth-child(10) {
+    animation-delay: calc(var(--app-motion-stagger) * 9);
+  }
+  .stagger > *:nth-child(11) {
+    animation-delay: calc(var(--app-motion-stagger) * 10);
+  }
+  .stagger > *:nth-child(12) {
+    animation-delay: calc(var(--app-motion-stagger) * 11);
+  }
+
+  /* Hover elevation. Flat styles simply resolve to a smaller shadow. */
+  .lift {
+    transition:
+      transform var(--app-motion-duration) var(--app-motion-ease),
+      box-shadow var(--app-motion-duration) var(--app-motion-ease);
+  }
+  .lift:hover {
+    transform: translateY(calc(var(--app-motion-distance) * -0.35));
+    box-shadow: var(--app-shadow-lifted);
+  }
+
+  /* A section arriving as you scroll to it rather than on page load. Where the
+     browser has no view timeline it stays as it is, which is the correct
+     degradation: visible. */
+  .reveal {
+    opacity: 1;
+  }
+
+  /* Placeholder for content that has not arrived. Sized by the caller. */
+  .skeleton {
+    background: var(--app-line);
+    border-radius: var(--app-radius-control);
+    animation: app-skeleton-pulse 1.1s var(--app-motion-ease) infinite alternate;
+  }
+
+  /* The backdrop.
+   *
+   * Four layers of light and geometry, fixed behind everything, built entirely
+   * from the two colours in the spec.
+   *
+   * This replaced a per-application SVG scene. A drawing had to be generated,
+   * came out differently on every run, and was consistently the least convincing
+   * thing on the page; gradients and geometry come out the same every time, cost
+   * no generation tokens at all, and belong to the style rather than to the
+   * subject. A style that wants no backdrop sets every layer to none.
+   *
+   * It also carries the page background, so nothing above it has to be opaque. */
+  .vista {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background-color: var(--app-surface);
+  }
+  /* The overhang is what the pan animation moves into, so it stays modest: at
+     -30% a gradient positioned at "110%" of the layer sat a third of a viewport
+     below the window and never appeared at all. Positions in the layers below
+     are written against this box, not against the screen. */
+  .vista-layer {
+    position: absolute;
+    inset: -15%;
+    display: block;
+    background-repeat: no-repeat;
+    transform-origin: 50% 60%;
+  }
+  .vista-glow {
+    background-image: var(--app-vista-glow);
+    opacity: var(--app-vista-glow-opacity);
+    filter: blur(var(--app-vista-blur));
+    animation: app-vista-breathe var(--app-vista-speed) ease-in-out infinite
+      alternate;
+  }
+  .vista-rings {
+    background-image: var(--app-vista-rings);
+    opacity: var(--app-vista-rings-opacity);
+  }
+  .vista-sweep {
+    background-image: var(--app-vista-sweep);
+    opacity: var(--app-vista-sweep-opacity);
+    filter: blur(calc(var(--app-vista-blur) * 1.5));
+    animation: app-vista-turn calc(var(--app-vista-speed) * 6) linear infinite;
+  }
+  .vista-grid {
+    background-image: var(--app-vista-grid);
+    opacity: var(--app-vista-grid-opacity);
+  }
+
+  /* Content has to sit above a fixed backdrop. */
+  .above-vista {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* One region of a screen. The style decides whether that means a block of a
+     scrolling page or a view you arrive at and the page settles on. */
+  .view {
+    min-height: var(--app-view-min-height);
+    scroll-snap-align: var(--app-view-align);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Ranged over cover, not entry. A view as tall as the window never finishes
+       entering, so an entry range left it stranded part-way through the animation
+       with its content invisible: opacity 0 on a section sitting square in the
+       middle of the screen. Cover runs from first intersection to last whatever
+       the element's height, so it always completes. */
+    .reveal {
+      animation: app-reveal linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 22%;
+    }
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Two layers moving against each other across the page's whole scroll, so
+       arriving at the next view changes what is behind it. */
+    .vista-glow {
+      animation: app-vista-pan linear both;
+      animation-timeline: scroll(root);
+    }
+    .vista-rings {
+      animation: app-vista-counter-pan linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+
+/* One guard covers every animation above. */
+@media (prefers-reduced-motion: reduce) {
+  .rise-in,
+  .stagger > *,
+  .skeleton,
+  .vista-glow,
+  .vista-sweep,
+  .vista-rings {
+    animation: none;
+  }
+  .lift {
+    transition: none;
+  }
+  .lift:hover {
+    transform: none;
+  }
+}
+
+/* ---------------------------------------- type, density and layout --- */
+
+html {
+  /* The one lever that moves type, spacing and control size together, because
+     every length below is in rem. "This kit has more air" is this number. */
+  font-size: var(--app-root-size);
+  scroll-snap-type: var(--app-view-snap);
+}
+
+body {
+  font-family: var(--app-font-body);
+  line-height: var(--app-body-leading);
+}
+
+@layer components {
+  /* The largest thing on a landing page. One per screen, at most.
+     At the top of this scale the words are the picture, so the face, the case
+     and the tracking are all a kit's to decide, not a page's. */
+  .display {
+    font-family: var(--app-font-display);
+    font-size: var(--app-display-size);
+    line-height: var(--app-display-leading);
+    letter-spacing: var(--app-display-tracking);
+    font-weight: var(--app-display-weight);
+    font-stretch: var(--app-display-stretch);
+    font-optical-sizing: var(--app-display-optical);
+    text-transform: var(--app-display-transform);
+    text-wrap: balance;
+  }
+
+  /* The name of the screen you are on. Its weight is separate from the display's
+     so a kit can set a heavy headline over light screen titles, or the reverse. */
+  .title {
+    font-family: var(--app-font-display);
+    font-size: var(--app-title-size);
+    line-height: 1.15;
+    letter-spacing: var(--app-display-tracking);
+    font-weight: var(--app-title-weight);
+    font-stretch: var(--app-display-stretch);
+    font-optical-sizing: var(--app-display-optical);
+    text-transform: var(--app-display-transform);
+    text-wrap: balance;
+  }
+
+  /* A single number worth looking at: a balance, a total, a streak. */
+  .figure {
+    font-family: var(--app-font-display);
+    font-size: var(--app-figure-size);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-weight: var(--app-display-weight);
+    font-stretch: var(--app-display-stretch);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The small end of the scale. Column heads, stat captions, section eyebrows.
+     Capitals for most kits, but not all: a kit whose voice is warm rather than
+     instrumental sets its own case here. */
+  .label {
+    font-family: var(--app-font-label);
+    font-size: var(--app-label-size);
+    line-height: 1.2;
+    letter-spacing: var(--app-label-tracking);
+    font-weight: var(--app-label-weight);
+    font-stretch: var(--app-label-stretch);
+    text-transform: var(--app-label-transform);
+  }
+
+  /* Three or four figures across a band do not each get the full display size.
+     Without this the stat row silently truncates the very numbers it exists to
+     show, which is worse than showing them a size smaller. */
+  .figure-dense {
+    font-size: calc(var(--app-figure-size) * 0.7);
+  }
+
+  /* Figures line up in a column only if their digits are the same width. */
+  .numeric {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: var(--app-numeric-zero);
+  }
+
+  /* Table density is a theme decision: a readout wants tight rows, a showy
+     theme wants loose ones. */
+  .data-cell {
+    padding-block: var(--app-row-pad-y);
+    padding-inline: var(--app-cell-pad-x);
+  }
+
+  /* Whether rows are ruled, striped or separated by nothing at all. A kit that
+     wants banded stock sets the stripe and drops the rule to 0. */
+  .data-head {
+    background: var(--app-table-head-bg);
+    border-bottom-style: solid;
+    border-bottom-width: var(--app-rule-width);
+    border-bottom-color: var(--app-rule-color);
+  }
+  .data-row {
+    border-bottom-style: solid;
+    border-bottom-width: var(--app-row-line-width);
+    border-bottom-color: var(--app-row-line-color);
+  }
+  .data-row:nth-child(even) {
+    background: var(--app-row-stripe);
+  }
+  .data-row:last-child {
+    border-bottom-width: 0;
+  }
+  .data-row:hover {
+    background: var(--app-row-hover);
+  }
+
+  /* ---- rank ------------------------------------------------------------ */
+
+  /* The hero figure, as a panel rather than a tile.
+   *
+   * Everything else on a screen can be an equal-weight rectangle as long as one
+   * thing is not, and this is the one thing: a filled panel, the theme's loudest
+   * colour, a figure half again the size of every other figure on the page. Its
+   * fill is the accent by default rather than the brand, because the brand is
+   * already spent on the band behind it and a panel of band colour on a band of
+   * band colour is not emphasis. */
+  .metric-lead {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.75rem;
+    background: var(--app-lead-fill);
+    color: var(--app-lead-ink);
+    border-style: solid;
+    border-width: var(--app-lead-border-width);
+    border-color: var(--app-lead-border-color);
+    border-radius: var(--app-lead-radius);
+    padding: var(--app-lead-pad);
+    box-shadow: var(--app-lead-shadow);
+  }
+  /* A kit that wants no filled panel still wants the size jump, so the figure
+     and the fill are separate classes. */
+  .figure-lead {
+    font-size: var(--app-lead-size);
+  }
+  .lead-caption {
+    color: var(--app-lead-caption);
+  }
+  /* The band's own layout: the hero panel, and the rest of the figures sharing
+     what is left. Two areas rather than one row of equal tracks, because a lead
+     spanning some tracks of a shared grid leaves the supporting figures ragged
+     at every count except the one it was tuned for. */
+  .stat-lead {
+    display: grid;
+    gap: var(--app-grid-gap);
+    align-items: stretch;
+  }
+  .stat-lead-rest,
+  .stat-row {
+    display: grid;
+    gap: 1.5rem 2rem;
+    align-content: center;
+    grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr));
+  }
+  @media (min-width: 64rem) {
+    .stat-lead {
+      grid-template-columns: var(--app-lead-split);
+      gap: calc(var(--app-grid-gap) * 2);
+    }
+  }
+
+  /* A short chip: a status, a category, a grade. Tone is set by the caller
+     through two custom properties rather than by a modifier class per tone, so
+     a kit retones every badge in the application by moving the colour roles. */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    background: var(--badge-bg, var(--app-surface));
+    color: var(--badge-ink, var(--app-ink-muted));
+    border-style: solid;
+    border-width: var(--app-badge-border-width);
+    border-color: var(--badge-ink, var(--app-line));
+    border-radius: var(--app-badge-radius);
+    padding: var(--app-badge-pad);
+    font-family: var(--app-font-label);
+    font-size: var(--app-label-size);
+    font-stretch: var(--app-label-stretch);
+    font-weight: var(--app-badge-weight);
+    letter-spacing: var(--app-badge-tracking);
+    text-transform: var(--app-badge-transform);
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  /* One item in the sidebar, and the mark that says you are on it. Emphasis in
+     the shell uses the accent, never the brand: a kit is free to tint its
+     sidebar with the brand hue, and where it does, a brand-coloured mark on a
+     brand-coloured panel is not there. */
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    border-radius: var(--app-nav-radius);
+    padding: var(--app-nav-pad);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--app-shell-ink-muted);
+  }
+  .nav-item:hover {
+    background: var(--app-nav-active-bg);
+    color: var(--app-shell-ink);
+  }
+  .nav-item-active {
+    background: var(--app-nav-active-bg);
+    color: var(--app-shell-ink);
+    font-weight: 600;
+  }
+  .nav-marker {
+    flex: none;
+    width: var(--app-nav-marker-width);
+    height: var(--app-nav-marker-height);
+    border-radius: var(--app-nav-marker-radius);
+    background: var(--app-shell-line);
+  }
+  .nav-item-active .nav-marker {
+    background: var(--app-accent);
+  }
+
+  /* The same links in the other shells. A tab is the marker turned into a rule
+     under the label; a pill sits on the band rather than on the shell, so it is
+     drawn in the band's ink; a rail item is one glyph, with the label kept for
+     screen readers. */
+  .nav-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: -1px;
+    padding: 0.75rem 0.125rem;
+    border-bottom: 2px solid transparent;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--app-shell-ink-muted);
+  }
+  .nav-tab:hover {
+    color: var(--app-shell-ink);
+  }
+  .nav-tab-active {
+    border-bottom-color: var(--app-accent);
+    color: var(--app-shell-ink);
+    font-weight: 600;
+  }
+  .nav-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    padding: 0.375rem 0.875rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--app-band-ink-muted);
+  }
+  .nav-pill:hover {
+    color: var(--app-band-ink);
+  }
+  .nav-pill-active {
+    background: var(--app-on-band);
+    color: var(--app-on-band-ink);
+    font-weight: 600;
+  }
+  .nav-rail-item {
+    justify-content: center;
+    padding: 0.5rem;
+  }
+  /* A screen's icon, where a screen has one. Same footprint as the marker it
+     replaces, so a nav of icons and a nav without them line their labels up in
+     the same place. */
+  .nav-icon {
+    flex: none;
+  }
+  .nav-glyph {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-family: var(--app-font-display);
+    font-size: 0.875rem;
+    line-height: 1;
+  }
+
+  /* ---- surfaces ------------------------------------------------------- */
+
+  /* What a framed thing looks like: cards, tables, forms, panels.
+   *
+   * One class rather than the same Tailwind string in six components, because
+   * this is the single largest lever on whether a kit reads as flat, framed,
+   * ruled or floating, and it should be one decision rather than six. The border
+   * is a width and a colour rather than a shorthand so that a kit can rule one
+   * edge instead of framing four, a card with `2px 0 0` is a column of
+   * newsprint, and one with `0 0 1px` is a line in a catalogue. */
+  .panel {
+    background: var(--app-panel-bg);
+    border-style: solid;
+    border-width: var(--app-panel-border-width);
+    border-color: var(--app-panel-border-color);
+    border-radius: var(--app-radius-card);
+    box-shadow: var(--app-panel-shadow);
+  }
+  .panel-pad {
+    padding: var(--app-panel-pad);
+  }
+
+  /* An empty screen carries the frame but not the fill, so the backdrop shows
+     through it. It is what everyone sees first in a new application. */
+  .panel-empty {
+    border-style: solid;
+    border-width: var(--app-panel-border-width);
+    border-color: var(--app-panel-border-color);
+    border-radius: var(--app-radius-card);
+  }
+
+  /* A section rule. A hairline by default, and a theme is free to make it heavy,
+     or double it into a masthead rule. */
+  .rule {
+    border-bottom-style: solid;
+    border-bottom-width: var(--app-rule-width);
+    border-bottom-color: var(--app-rule-color);
+  }
+
+  /* One form control. Boxed, underlined or unframed, by the same two tokens the
+     panel uses, and the focus ring is stated here so an unframed control still
+     shows where the caret is. */
+  .control {
+    width: 100%;
+    border-style: solid;
+    border-width: var(--app-control-border-width);
+    border-color: var(--app-control-border-color);
+    border-radius: var(--app-radius-control);
+    background: var(--app-control-bg);
+    padding: var(--app-control-pad);
+    font-size: 0.875rem;
+    color: var(--app-ink);
+  }
+  .control:focus {
+    outline: 2px solid var(--app-brand);
+    outline-offset: 1px;
+    border-color: var(--app-brand);
+  }
+  .control:disabled {
+    opacity: 0.6;
+  }
+
+  /* One button. Shape and radius come from the control tokens; the case and the
+     tracking are their own, because a kit that sets its buttons in tracked
+     capitals is making a different claim from one that does not. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--app-radius-control);
+    padding: var(--app-button-pad);
+    font-size: 0.875rem;
+    font-weight: var(--app-button-weight);
+    text-transform: var(--app-button-transform);
+    letter-spacing: var(--app-button-tracking);
+  }
+
+  /* ---- page geometry --------------------------------------------------- */
+
+  /* Sidebar side. A kit that wants its chrome on the right says so here rather
+     than in the shell component. */
+  .app-shell-flow {
+    flex-direction: var(--app-shell-flow);
+  }
+
+  /* The sidebar's width, so the shell never hardcodes one. */
+  .shell-column {
+    flex: 0 0 var(--app-shell-width);
+    width: var(--app-shell-width);
+  }
+
+  /* A bar across the top, for the shells that have one. It takes the page gutter
+     so the brand lines up with the title under it. */
+  .shell-bar {
+    width: 100%;
+    padding-inline: var(--app-gutter);
+  }
+
+  /* Under a cover shell the header band starts beneath the chrome rather than
+     behind it. Zero in every other shell. */
+  .shell-offset {
+    padding-top: var(--app-shell-offset);
+  }
+
+  /* Horizontal page padding, for every region of every screen. */
+  .page-gutter {
+    padding-inline: var(--app-gutter);
+  }
+
+  /* Vertical rhythm between regions. */
+  .view-pad {
+    padding-block: var(--app-view-pad);
+  }
+  .band-pad {
+    padding-block: var(--app-band-pad);
+  }
+
+  /* Where the content sits on the page, and how wide it is allowed to get.
+     `content-align` is a margin-inline value: `0 auto` is flush left inside the
+     cap, `auto` is centred. Both do nothing until a width is set, which is what
+     makes full-bleed the default rather than a special case. */
+  .content-column {
+    max-width: var(--app-content-width);
+    margin-inline: var(--app-content-align);
+  }
+  /* A running column of text wants a measure whatever the page width is, and a
+     create panel on its own view wants not to span the whole of it. */
+  .feed-column {
+    max-width: min(var(--app-feed-width), 100%);
+  }
+  .aside-column {
+    max-width: min(var(--app-aside-width), 100%);
+  }
+  .band-column {
+    max-width: var(--app-band-width);
+    margin-inline: var(--app-band-align);
+    text-align: var(--app-band-text);
+  }
+  /* The header row. A style that spreads its title and its actions to opposite
+     ends of the width is making a different claim from one that stacks them up
+     the middle, and both are arrangements of the same two elements, so the
+     direction and the cross-axis are the style's, not the component's. */
+  .band-head {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: var(--app-band-head-flow);
+    align-items: var(--app-band-head-items);
+    justify-content: space-between;
+  }
+
+  /* Cards. The theme sets the narrowest a column may be and the browser decides
+     how many fit, so an airy theme lands on two columns and a dense one on four,
+     neither of them naming a breakpoint. `min()` keeps the last column from
+     overflowing a phone. */
+  .auto-grid {
+    display: grid;
+    gap: var(--app-grid-gap);
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(var(--app-grid-min), 100%), 1fr)
+    );
+  }
+  /* The same gap, stacked. A list of rows is a grid of one column that never
+     wants to become two. */
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--app-grid-gap);
+  }
+
+  /* The same idea for a small, fixed set: the three tiles on a landing screen,
+     not a collection.
+     auto-fit rather than auto-fill: it collapses the tracks nothing landed
+     in, so three tiles share the width instead of huddling at the left of a row
+     sized for seven of them. That is wrong for a collection, where it would
+     stretch a single record across the whole page, and right here, where the
+     number of things is known and small. */
+  .auto-row {
+    display: grid;
+    gap: var(--app-grid-gap);
+    /* A shade under the collection minimum, because a landing tile carries a
+       title and a line where a record card carries a badge, a figure, a meta
+       line and a body. At the full minimum the third of three tiles wrapped on
+       the wider styles, which is the one arrangement a row of three should not
+       produce; the styles with the most generous gutters were worst hit, because
+       the gutter comes off the width the tiles have to share.
+
+       Going lower costs nothing here, auto-fit collapses the tracks nothing
+       lands in, so a row of three is three tracks whether five would have fitted
+       or four. All this number decides is the width at which the row gives up
+       and wraps. */
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(min(calc(var(--app-grid-min) * 0.72), 100%), 1fr)
+    );
+  }
+
+  /* A caller that wants tighter or looser than the kit's default scales it,
+     rather than naming a column count the kit cannot argue with. */
+  .auto-grid-1 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .auto-grid-3 {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(min(calc(var(--app-grid-min) * 0.74), 100%), 1fr)
+    );
+  }
+
+  /* The create rail beside a long table.
+     One column until there is genuinely room for two: at a narrower split a
+     sidebar, five columns of figures and a form all fit on paper and none of
+     them is usable, and the column that gets squeezed is the one carrying the
+     figures. Which side the rail lands on, and whether it appears at all, is the
+     kit's. */
+  .rail-grid {
+    display: grid;
+    gap: calc(var(--app-grid-gap) * 2);
+    align-items: start;
+  }
+  .rail-main {
+    order: 2;
+    min-width: 0;
+  }
+  .rail-aside {
+    order: 1;
+  }
+  @media (min-width: 80rem) {
+    .rail-grid {
+      grid-template-columns: var(--app-rail-columns);
+    }
+    .rail-main {
+      order: var(--app-rail-main);
+    }
+    .rail-aside {
+      order: var(--app-rail-aside);
+      position: sticky;
+      top: 1.5rem;
+    }
+  }
+
+  /* ---- the header band -------------------------------------------------- */
+
+  /* How much of the viewport a header claims.
+     A landing surface can take all of it; a working screen's header takes enough
+     to be an event without pushing the content it introduces below the fold.
+     Both resolve to auto in the kits that would rather show you the content. */
+  .hero-section,
+  .band-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .hero-section {
+    min-height: var(--app-hero-min-height);
+  }
+  .band-section {
+    min-height: var(--app-band-min-height);
+  }
+
+  /* A create form on a phone is a fixed button and a sheet, so it mounts but
+     occupies no space. Whatever was holding it would otherwise be several rem of
+     blank page above the records somebody came to read.
+
+     `contents` rather than `none`, and the difference matters: `display: none`
+     on an ancestor hides a fixed descendant too, so hiding the wrapper would
+     take the button with it. `contents` drops the wrapper's own box and leaves
+     what is inside it exactly where it was. */
+  .sheet-mount,
+  .aside-view:has(.sheet-mount),
+  .aside-inline:has(.sheet-mount),
+  .rail-aside:has(.sheet-mount) {
+    display: contents;
+  }
+
+  /* Where a screen's header sits relative to its content.
+     `contents` is the default and means this element is not in the layout at
+     all, so a screen renders exactly as it did before there was a wrapper. A kit
+     that resolves it to `grid` gets the header in one column and every view in
+     the other, and the header sticks while they scroll past it. */
+  .screen-flow {
+    display: var(--app-screen-flow);
+    grid-template-columns: var(--app-screen-columns);
+  }
+  .screen-flow > .band-section,
+  .screen-flow > .hero-section {
+    position: var(--app-band-position);
+    top: 0;
+    align-self: start;
+  }
+  /* Every view shares the second track. Without this each one claims a row of
+     its own beside a header that is only as tall as its own content, and the
+     grid reads as a column of half-width blocks. */
+  .screen-flow > .view:not(.band-section):not(.hero-section) {
+    grid-column: 2;
+  }
+  /* One column on a phone whatever the kit asked for. A 22rem title column
+     beside a table is two unusable columns at 375. */
+  @media (width < 64rem) {
+    .screen-flow {
+      display: block;
+    }
+    .screen-flow > .band-section,
+    .screen-flow > .hero-section {
+      position: static;
+    }
+  }
+
+  /* The poster landing takes the whole window whatever the kit would otherwise
+     have spent on a header, because a poster that shares the fold with a table
+     is not a poster. It is the one place a landing overrides its kit: every
+     other height on the page is the kit's to decide. */
+  .poster-section {
+    min-height: 100svh;
+  }
+
+  /* A notebook landing has no band, and the figures it carries were written for
+     one. `<StatRow onBand>` is what every generated Home passes, because on
+     three of the four landings that is right; on the fourth it paints band ink
+     on the page surface, which on a light kit is a headline figure at about two
+     to one against its own background. Rather than making the page get the prop
+     right, the header that has no band resolves the band's ink to the page's, so
+     an `onBand` figure reads wherever it lands. The reverse case, a plain figure
+     inside a band, is what `band-fill` already handles. */
+  .band-on-page {
+    --app-band-ink: var(--app-ink);
+    --app-band-ink-muted: var(--app-ink-muted);
+    --app-on-band: var(--app-brand);
+    --app-on-band-ink: var(--app-brand-ink);
+  }
+
+  /* The contents landing prints its destinations as oversize ruled rows rather
+     than as a grid of cards, the way a magazine opens. The children are the same
+     cards; only the frame around them changes, so a page composes one landing
+     and gets whichever of the four it was handed. */
+  .contents-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .contents-list > * {
+    border-top: var(--app-row-line-width) solid var(--app-row-line-color);
+    padding-block: 2rem;
+  }
+  .contents-list > *:last-child {
+    border-bottom: var(--app-row-line-width) solid var(--app-row-line-color);
+  }
+
+  /* Whether the header is a panel of brand colour, a gradient, a shape with a
+     corner cut off, or a window onto the backdrop is the kit's call. Ink on it is
+     derived from whatever it resolved to, so the type stays readable when the
+     fill goes transparent. */
+  .band-fill {
+    background-color: var(--app-band-fill);
+    background-image: var(--app-band-image);
+  }
+
+  /* What sits behind a band. Every layer is off until `--app-cover` is set, so a
+     band with no cover renders exactly as it did before covers existed.
+
+     The source is under a tint and a scrim rather than on its own, because the
+     thing behind the type has to be allowed to be interesting and the type still
+     has to be readable. The scrim is what makes that a rule rather than a hope:
+     ink on a band is derived from the band's own fill, so a picture arriving
+     between the two would otherwise decide the contrast by luck. */
+  .cover {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .cover-layer {
+    position: absolute;
+    inset: 0;
+  }
+  .cover-source {
+    background-image: var(--app-cover);
+    background-size: var(--app-cover-size);
+    background-position: var(--app-cover-position);
+    background-repeat: var(--app-cover-repeat);
+    opacity: var(--app-cover-opacity);
+  }
+  /* The brand pair over the source, so a photograph belongs to this application
+     rather than to whoever took it. `color` rather than a flat wash: it takes
+     the hue and leaves the light and shade, which is what stops a tinted picture
+     reading as a picture with a coloured rectangle on it. */
+  .cover-tint {
+    background-image: var(--app-cover-tint);
+    mix-blend-mode: color;
+    opacity: var(--app-cover-tint-opacity);
+  }
+  .cover-scrim {
+    background-image: var(--app-cover-scrim);
+  }
+  .band-shape {
+    clip-path: var(--app-band-shape);
+    border-block-end: var(--app-band-edge);
+  }
+}
