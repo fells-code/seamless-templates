@@ -120,15 +120,15 @@ The CLI computes the shared values and resolves the `{{...}}` placeholders in `e
 
 ### Placeholder vocabulary
 
-| Placeholder             | Resolves to                                                |
-| ----------------------- | ---------------------------------------------------------- |
-| `{{authServerUrl}}`     | URL of the Seamless Auth server                            |
-| `{{apiUrl}}`            | URL of the project's API service                           |
-| `{{apiToken}}`          | Service token shared between the API and the auth server   |
-| `{{jwksKid}}`           | JWKS key id the auth server signs with                     |
-| `{{serveAdminConsole}}` | Whether the API serves the admin console at `/console`     |
-| `{{databaseUrl}}`       | Connection string for the project's database               |
-| `{{secret:N}}`          | A freshly generated N-byte hex secret, unique per scaffold |
+| Placeholder             | Resolves to                                                                                      |
+| ----------------------- | ------------------------------------------------------------------------------------------------ |
+| `{{authServerUrl}}`     | URL of the Seamless Auth server                                                                  |
+| `{{apiUrl}}`            | URL of the project's API service                                                                 |
+| `{{apiToken}}`          | Service token shared between the API and the auth server                                         |
+| `{{jwksKid}}`           | `kid` header for the adapter's service tokens (`JWKS_KID`), not the auth server's signing key id |
+| `{{serveAdminConsole}}` | Whether the API serves the admin console at `/console`                                           |
+| `{{databaseUrl}}`       | Connection string for the project's database                                                     |
+| `{{secret:N}}`          | A freshly generated N-byte hex secret, unique per scaffold                                       |
 
 ---
 

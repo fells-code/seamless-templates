@@ -21,7 +21,11 @@ REQUIRED = [
         "The secret shared with Seamless Auth. `seamless init` writes it for a local stack; "
         "managed applications issue it from the dashboard.",
     ),
-    ("JWKS_KID", "The key id the auth server signs tokens with, for example dev-main."),
+    (
+        "JWKS_KID",
+        "The kid header on the service tokens this adapter signs with API_SERVICE_TOKEN "
+        "(not the auth server's signing key id), for example dev-main.",
+    ),
 ]
 DISCRETE_DB_VARS = ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER"]
 # `seamless init` writes a managed DATABASE_URL with these literal placeholders in

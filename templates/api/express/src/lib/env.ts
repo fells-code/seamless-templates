@@ -30,7 +30,7 @@ const REQUIRED: RequiredVar[] = [
   },
   {
     name: "JWKS_KID",
-    hint: "The key id the auth server signs tokens with, for example dev-main.",
+    hint: "The kid header on the service tokens this adapter signs with API_SERVICE_TOKEN (not the auth server's signing key id), for example dev-main.",
   },
 ];
 

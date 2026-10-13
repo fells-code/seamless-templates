@@ -57,7 +57,7 @@ cp .env.example .env
 | `AUTH_COOKIE_PREFIX`                                      | Prefix for this application's auth cookie names, so several Seamless apps can run on one host without signing each other out. Defaults to `seamless-` |
 | `COOKIE_SIGNING_KEY`                                      | Secret used to sign API-generated cookies (32 characters or more)                                                                                     |
 | `API_SERVICE_TOKEN`                                       | Service token shared with Seamless Auth (32 characters or more)                                                                                       |
-| `JWKS_KID`                                                | JWKS key id the auth server signs with                                                                                                                |
+| `JWKS_KID`                                                | `kid` header on the service tokens the adapter signs with `API_SERVICE_TOKEN`; not the auth server's signing key id                                   |
 | `DATABASE_URL`                                            | Full Postgres connection string. Wins over the `DB_*` values when set                                                                                 |
 | `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Postgres connection, used when `DATABASE_URL` is empty                                                                                                |
 | `DB_SSL_REJECT_UNAUTHORIZED`                              | Set to `false` only for a certificate that does not chain to a public CA                                                                              |
