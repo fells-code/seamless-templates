@@ -9,7 +9,7 @@ def complete() -> dict[str, str]:
     return {
         "AUTH_SERVER_URL": "http://localhost:5312",
         "COOKIE_SIGNING_KEY": "cookie-secret-cookie-secret-cookie-secret",
-        "API_SERVICE_TOKEN": "service-secret-service-secret-service-secret",
+        "SEAMLESS_SERVICE_TOKEN": "service-secret-service-secret-service-secret",
         "JWKS_KID": "dev-main",
         "DB_HOST": "localhost",
         "DB_PORT": "5432",
@@ -40,7 +40,7 @@ def test_every_problem_is_reported_at_once() -> None:
         "5 environment problems",
         "AUTH_SERVER_URL",
         "COOKIE_SIGNING_KEY",
-        "API_SERVICE_TOKEN",
+        "SEAMLESS_SERVICE_TOKEN",
         "JWKS_KID",
         "Set DATABASE_URL, or all of",
     ]:

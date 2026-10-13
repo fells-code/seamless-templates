@@ -118,8 +118,8 @@ validation step skips directory checks for those entries.
 
 - It is `kind: "fullstack"`, which `seamless-cli` 0.18.0 and later scaffold as a beta template
   (`seamless init my-app --nextjs`, placed in the web slot with no api template and `--admin=none`).
-  Its manifest pins `requires.cliMin` to 0.18.0. Older CLIs ignore the kind, which is why it is not
-  `web`: as a web template the CLI would scaffold an unused api beside it and a compose service it
+  Its manifest pins `requires.cliMin` (0.24.0 since the service token variable became
+  `SEAMLESS_SERVICE_TOKEN`). Older CLIs ignore the kind, which is why it is not `web`: as a web template the CLI would scaffold an unused api beside it and a compose service it
   does not fit. `seamless verify` in CLI 0.18.0 skips it (fells-code/seamless-cli#222); coverage is
   on `seamless-cli` main but unreleased.
 - It syncs only `index.css` and `fonts` from `shared/react-app` (the `only` list in `sync.json`).

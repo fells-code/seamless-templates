@@ -11,7 +11,7 @@ keep using it, not to rebuild it.
   Postgres (5432), the Seamless Auth server (5312), this API (3000), the web app (5173) and,
   depending on the admin mode, an admin dashboard (5174).
 - The browser never talks to the auth server. It calls this API's `/auth/*` routes, served by
-  `auth_router(auth)`, which calls the auth server with `API_SERVICE_TOKEN` and sets the session
+  `auth_router(auth)`, which calls the auth server with `SEAMLESS_SERVICE_TOKEN` and sets the session
   cookies (`<AUTH_COOKIE_PREFIX>access`, `refresh`, `ephemeral`) on this API's origin.
 - The mobile starter calls the same routes with a bearer access token instead of cookies; the
   guard accepts both.
@@ -58,7 +58,7 @@ for the session (`id`, `email`, `phone`, `roles`) or `Depends(app_user)` for the
 ## Configuration
 
 All configuration is environment variables; see `.env.example`. `APP_ENV`, `LOG_LEVEL`, `PORT`,
-`AUTH_SERVER_URL`, `AUTH_SERVER_ISSUER`, `API_SERVICE_TOKEN`, `JWKS_KID`, `COOKIE_SIGNING_KEY`,
+`AUTH_SERVER_URL`, `AUTH_SERVER_ISSUER`, `SEAMLESS_SERVICE_TOKEN`, `JWKS_KID`, `COOKIE_SIGNING_KEY`,
 `COOKIE_DOMAIN`, `AUTH_COOKIE_PREFIX`, `UI_ORIGINS`, `SERVE_ADMIN_CONSOLE`, and the database as
 `DATABASE_URL` or `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, plus
 `DB_SSL_REJECT_UNAUTHORIZED`. Never commit `.env` or hardcode these values.

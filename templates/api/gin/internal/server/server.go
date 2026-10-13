@@ -29,7 +29,7 @@ func NewAdapter(cfg *config.Config) (*seamlessauth.Adapter, error) {
 		AuthServerIssuer:       cfg.AuthServerIssuer,
 		Audience:               cfg.Audience(),
 		CookieSecret:           cfg.CookieSigningKey,
-		ServiceSecret:          cfg.APIServiceToken,
+		ServiceSecret:          cfg.ServiceToken,
 		JWKSKid:                cfg.JWKSKid,
 		CookieDomain:           cfg.CookieDomain,
 		AccessCookieName:       cfg.CookiePrefix + "access",

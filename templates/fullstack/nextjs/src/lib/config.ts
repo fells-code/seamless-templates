@@ -36,12 +36,12 @@ const REQUIRED = [
     hint: "A secret of at least 32 characters. It signs the session cookies.",
   },
   {
-    name: "API_SERVICE_TOKEN",
+    name: "SEAMLESS_SERVICE_TOKEN",
     hint: "The secret shared with Seamless Auth. `seamless init` writes it for a local stack; managed applications issue it from the dashboard.",
   },
   {
     name: "JWKS_KID",
-    hint: "The kid header on the service tokens this adapter signs with API_SERVICE_TOKEN (not the auth server's signing key id), for example dev-main.",
+    hint: "The kid header on the service tokens this adapter signs with SEAMLESS_SERVICE_TOKEN (not the auth server's signing key id), for example dev-main.",
   },
 ] as const;
 
@@ -99,7 +99,7 @@ export function readAuthConfig(env: Env = process.env): AuthConfigResult {
 
   const authServerUrl = env.AUTH_SERVER_URL!.trim();
   const cookieSecret = signingKey;
-  const serviceSecret = env.API_SERVICE_TOKEN!.trim();
+  const serviceSecret = env.SEAMLESS_SERVICE_TOKEN!.trim();
   const jwksKid = env.JWKS_KID!.trim();
   // Only when the auth server signs as something other than the URL this app
   // reaches it at: a host-run app against the `seamless init` Docker stack calls

@@ -41,7 +41,7 @@ func router(t *testing.T, mutate func(*config.Config)) *gin.Engine {
 		Port:              "3000",
 		AuthServerURL:     api.URL,
 		CookieSigningKey:  "cookie-secret-cookie-secret-cookie-secret",
-		APIServiceToken:   "service-secret-service-secret-service-secret",
+		ServiceToken:      "service-secret-service-secret-service-secret",
 		JWKSKid:           "dev-main",
 		CookiePrefix:      "seamless-",
 		ServeAdminConsole: true,

@@ -15,7 +15,7 @@ vi.mock("./logger.js", () => ({
 const MANAGED_VARS = [
   "AUTH_SERVER_URL",
   "COOKIE_SIGNING_KEY",
-  "API_SERVICE_TOKEN",
+  "SEAMLESS_SERVICE_TOKEN",
   "JWKS_KID",
   "UI_ORIGINS",
   "DATABASE_URL",
@@ -29,7 +29,7 @@ const MANAGED_VARS = [
 function setValidEnvironment() {
   process.env.AUTH_SERVER_URL = "http://localhost:5312";
   process.env.COOKIE_SIGNING_KEY = "cookie-signing-key";
-  process.env.API_SERVICE_TOKEN = "service-token";
+  process.env.SEAMLESS_SERVICE_TOKEN = "service-token";
   process.env.JWKS_KID = "dev-main";
   process.env.UI_ORIGINS = "http://localhost:5173";
   process.env.DATABASE_URL = "postgres://app:secret@localhost:5432/app";
@@ -83,7 +83,7 @@ describe("assertEnvironment", () => {
       const message = (error as Error).message;
       expect(message).toContain("AUTH_SERVER_URL is not set");
       expect(message).toContain("COOKIE_SIGNING_KEY is not set");
-      expect(message).toContain("API_SERVICE_TOKEN is not set");
+      expect(message).toContain("SEAMLESS_SERVICE_TOKEN is not set");
       expect(message).toContain("JWKS_KID is not set");
       expect(message).toContain("Set DATABASE_URL");
     }

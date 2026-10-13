@@ -11,16 +11,16 @@ func env(values map[string]string) func(string) string {
 
 func complete() map[string]string {
 	return map[string]string{
-		"AUTH_SERVER_URL":    "http://localhost:5312",
-		"COOKIE_SIGNING_KEY": "cookie-secret-cookie-secret-cookie-secret",
-		"API_SERVICE_TOKEN":  "service-secret-service-secret-service-secret",
-		"JWKS_KID":           "dev-main",
-		"DB_HOST":            "localhost",
-		"DB_PORT":            "5432",
-		"DB_NAME":            "seamless_api",
-		"DB_USER":            "myuser",
-		"DB_PASSWORD":        "my pass@word",
-		"UI_ORIGINS":         "http://localhost:5173, http://localhost:5174",
+		"AUTH_SERVER_URL":        "http://localhost:5312",
+		"COOKIE_SIGNING_KEY":     "cookie-secret-cookie-secret-cookie-secret",
+		"SEAMLESS_SERVICE_TOKEN": "service-secret-service-secret-service-secret",
+		"JWKS_KID":               "dev-main",
+		"DB_HOST":                "localhost",
+		"DB_PORT":                "5432",
+		"DB_NAME":                "seamless_api",
+		"DB_USER":                "myuser",
+		"DB_PASSWORD":            "my pass@word",
+		"UI_ORIGINS":             "http://localhost:5173, http://localhost:5174",
 	}
 }
 
@@ -48,7 +48,7 @@ func TestEveryProblemIsReportedAtOnce(t *testing.T) {
 	if err == nil {
 		t.Fatal("loaded an empty environment")
 	}
-	for _, want := range []string{"5 environment problems", "AUTH_SERVER_URL", "COOKIE_SIGNING_KEY", "API_SERVICE_TOKEN", "JWKS_KID", "Set DATABASE_URL, or all of"} {
+	for _, want := range []string{"5 environment problems", "AUTH_SERVER_URL", "COOKIE_SIGNING_KEY", "SEAMLESS_SERVICE_TOKEN", "JWKS_KID", "Set DATABASE_URL, or all of"} {
 		if !strings.Contains(err.Error(), want) {
 			t.Fatalf("missing %q in %s", want, err)
 		}

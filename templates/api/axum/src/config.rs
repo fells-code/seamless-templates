@@ -10,7 +10,7 @@ pub struct Config {
     pub auth_server_url: String,
     pub auth_server_issuer: Option<String>,
     pub cookie_signing_key: String,
-    pub api_service_token: String,
+    pub service_token: String,
     pub jwks_kid: String,
     pub cookie_domain: Option<String>,
     pub cookie_prefix: String,
@@ -29,12 +29,12 @@ const REQUIRED: &[(&str, &str)] = &[
         "Any secret string. It signs the cookies this API issues.",
     ),
     (
-        "API_SERVICE_TOKEN",
+        "SEAMLESS_SERVICE_TOKEN",
         "The secret shared with Seamless Auth. `seamless init` writes it for a local stack; managed applications issue it from the dashboard.",
     ),
     (
         "JWKS_KID",
-        "The kid header on the service tokens this adapter signs with API_SERVICE_TOKEN (not the auth server's signing key id), for example dev-main.",
+        "The kid header on the service tokens this adapter signs with SEAMLESS_SERVICE_TOKEN (not the auth server's signing key id), for example dev-main.",
     ),
 ];
 
@@ -108,7 +108,7 @@ impl Config {
             auth_server_url: get("AUTH_SERVER_URL").unwrap_or_default(),
             auth_server_issuer: get("AUTH_SERVER_ISSUER"),
             cookie_signing_key: env("COOKIE_SIGNING_KEY").unwrap_or_default(),
-            api_service_token: env("API_SERVICE_TOKEN").unwrap_or_default(),
+            service_token: env("SEAMLESS_SERVICE_TOKEN").unwrap_or_default(),
             jwks_kid: get("JWKS_KID").unwrap_or_default(),
             cookie_domain: get("COOKIE_DOMAIN"),
             cookie_prefix: get("AUTH_COOKIE_PREFIX").unwrap_or_else(|| "seamless-".into()),
@@ -238,7 +238,7 @@ mod tests {
                 "cookie-secret-cookie-secret-cookie-secret",
             ),
             (
-                "API_SERVICE_TOKEN",
+                "SEAMLESS_SERVICE_TOKEN",
                 "service-secret-service-secret-service-secret",
             ),
             ("JWKS_KID", "dev-main"),
@@ -277,7 +277,7 @@ mod tests {
             "5 environment problems",
             "AUTH_SERVER_URL",
             "COOKIE_SIGNING_KEY",
-            "API_SERVICE_TOKEN",
+            "SEAMLESS_SERVICE_TOKEN",
             "JWKS_KID",
             "Set DATABASE_URL, or all of",
         ] {

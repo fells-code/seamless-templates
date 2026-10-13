@@ -17,7 +17,7 @@ type Config struct {
 	AuthServerURL     string
 	AuthServerIssuer  string
 	CookieSigningKey  string
-	APIServiceToken   string
+	ServiceToken      string
 	JWKSKid           string
 	CookieDomain      string
 	CookiePrefix      string
@@ -33,8 +33,8 @@ type requiredVar struct {
 var required = []requiredVar{
 	{"AUTH_SERVER_URL", "The Seamless Auth instance this API trusts, for example http://localhost:5312."},
 	{"COOKIE_SIGNING_KEY", "Any secret string. It signs the cookies this API issues."},
-	{"API_SERVICE_TOKEN", "The secret shared with Seamless Auth. `seamless init` writes it for a local stack; managed applications issue it from the dashboard."},
-	{"JWKS_KID", "The kid header on the service tokens this adapter signs with API_SERVICE_TOKEN (not the auth server's signing key id), for example dev-main."},
+	{"SEAMLESS_SERVICE_TOKEN", "The secret shared with Seamless Auth. `seamless init` writes it for a local stack; managed applications issue it from the dashboard."},
+	{"JWKS_KID", "The kid header on the service tokens this adapter signs with SEAMLESS_SERVICE_TOKEN (not the auth server's signing key id), for example dev-main."},
 }
 
 var discreteDBVars = []string{"DB_HOST", "DB_PORT", "DB_NAME", "DB_USER"}
@@ -92,7 +92,7 @@ func Load(getenv func(string) string) (*Config, error) {
 		AuthServerURL:     strings.TrimSpace(getenv("AUTH_SERVER_URL")),
 		AuthServerIssuer:  strings.TrimSpace(getenv("AUTH_SERVER_ISSUER")),
 		CookieSigningKey:  getenv("COOKIE_SIGNING_KEY"),
-		APIServiceToken:   getenv("API_SERVICE_TOKEN"),
+		ServiceToken:      getenv("SEAMLESS_SERVICE_TOKEN"),
 		JWKSKid:           strings.TrimSpace(getenv("JWKS_KID")),
 		CookieDomain:      strings.TrimSpace(getenv("COOKIE_DOMAIN")),
 		CookiePrefix:      prefix,

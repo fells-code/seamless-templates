@@ -9,7 +9,7 @@ describe("/console", () => {
   beforeEach(() => {
     vi.stubEnv("AUTH_SERVER_URL", "http://auth:5312");
     vi.stubEnv("COOKIE_SIGNING_KEY", "x".repeat(32));
-    vi.stubEnv("API_SERVICE_TOKEN", "service-token");
+    vi.stubEnv("SEAMLESS_SERVICE_TOKEN", "service-token");
     vi.stubEnv("JWKS_KID", "dev-main");
     vi.stubGlobal("fetch", upstream);
     upstream.mockResolvedValue(

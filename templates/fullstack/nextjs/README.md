@@ -30,15 +30,15 @@ fails with `Invalid signed response from Auth Server`.
 
 ## Environment
 
-| Variable             | Purpose                                                                                                             |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `AUTH_SERVER_URL`    | Your Seamless Auth instance                                                                                         |
-| `AUTH_SERVER_ISSUER` | Optional. The issuer the auth server signs with, when it differs from `AUTH_SERVER_URL` (see Run it)                |
-| `API_SERVICE_TOKEN`  | The secret shared with Seamless Auth, 32 characters minimum                                                         |
-| `JWKS_KID`           | `kid` header on the service tokens the adapter signs with `API_SERVICE_TOKEN`; not the auth server's signing key id |
-| `COOKIE_SIGNING_KEY` | Signs the session cookies, 32 characters minimum                                                                    |
-| `COOKIE_DOMAIN`      | Optional cookie domain for production                                                                               |
-| `AUTH_COOKIE_PREFIX` | Optional cookie name prefix, to run two applications on one host                                                    |
+| Variable                 | Purpose                                                                                                                  |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `AUTH_SERVER_URL`        | Your Seamless Auth instance                                                                                              |
+| `AUTH_SERVER_ISSUER`     | Optional. The issuer the auth server signs with, when it differs from `AUTH_SERVER_URL` (see Run it)                     |
+| `SEAMLESS_SERVICE_TOKEN` | The secret shared with Seamless Auth, 32 characters minimum                                                              |
+| `JWKS_KID`               | `kid` header on the service tokens the adapter signs with `SEAMLESS_SERVICE_TOKEN`; not the auth server's signing key id |
+| `COOKIE_SIGNING_KEY`     | Signs the session cookies, 32 characters minimum                                                                         |
+| `COOKIE_DOMAIN`          | Optional cookie domain for production                                                                                    |
+| `AUTH_COOKIE_PREFIX`     | Optional cookie name prefix, to run two applications on one host                                                         |
 
 `SERVE_ADMIN_CONSOLE` set to `true` serves the Seamless admin dashboard at
 `/console`; set it to `false` when the console is hosted elsewhere (see Admin
