@@ -17,5 +17,6 @@ function seamless(): SeamlessAuthRouteHandlers {
 
 export const GET = (request: Request) => seamless().GET(request);
 export const POST = (request: Request) => seamless().POST(request);
+export const PUT = (request: Request) => seamless().PUT(request);
 export const PATCH = (request: Request) => seamless().PATCH(request);
 export const DELETE = (request: Request) => seamless().DELETE(request);
