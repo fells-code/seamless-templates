@@ -1,5 +1,17 @@
 # seamless-templates
 
+## 0.20.0
+
+### Minor Changes
+
+- cd5d834: The Express, Fastify, Gin, Axum, FastAPI and Next.js starters read their service token from `SEAMLESS_SERVICE_TOKEN` instead of `API_SERVICE_TOKEN`, the name the managed portal already gives it. The `.env.example` files, startup env checks and hints, READMEs, AGENTS.md files and `template.json` env declarations use the new name. The local auth server still reads the same value as `API_SERVICE_TOKEN`; the `.env.example` comments say so.
+
+  These starters now require `seamless-cli` 0.24.0 (`requires.cliMin`), the first CLI that writes `SEAMLESS_SERVICE_TOKEN` into the generated compose file and into `api/.env` when it connects a managed application. Projects scaffolded from earlier starters keep reading `API_SERVICE_TOKEN` and need no change.
+
+### Patch Changes
+
+- d43d376: Describe `JWKS_KID` correctly in the Express, Fastify, Gin, Axum, FastAPI and Next.js starters. It is the `kid` header on the HS256 service tokens the adapter signs with `API_SERVICE_TOKEN`, not the key id the auth server signs user tokens with. The startup hints, READMEs, the Next.js `.env.example`, and the placeholder table in the repo README now say so.
+
 ## 0.19.1
 
 ### Patch Changes
