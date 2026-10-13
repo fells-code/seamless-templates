@@ -12,7 +12,7 @@ when extending this app is to keep using them, not to rebuild them.
   The root `docker-compose.yml` also runs the Seamless Auth server (5312) and Postgres (5432).
 - The browser talks only to this app's own origin. `AuthProvider` has an empty `apiHost`, so the
   SDK calls `/auth/*` here, where `createSeamlessAuthHandler` forwards to the auth server with
-  `API_SERVICE_TOKEN` and sets first-party httpOnly session cookies.
+  `SEAMLESS_SERVICE_TOKEN` and sets first-party httpOnly session cookies.
 - With `SERVE_ADMIN_CONSOLE=true`, the admin dashboard is served from this app at `/console`.
 
 ## Where auth lives
@@ -67,7 +67,7 @@ routes (see `src/components/BetaAccess.tsx`). Roles are managed in the Seamless 
 ## Configuration
 
 All configuration is environment variables; see `.env.example`: `AUTH_SERVER_URL`,
-`AUTH_SERVER_ISSUER`, `API_SERVICE_TOKEN`, `JWKS_KID`, `COOKIE_SIGNING_KEY`, `SERVE_ADMIN_CONSOLE`,
+`AUTH_SERVER_ISSUER`, `SEAMLESS_SERVICE_TOKEN`, `JWKS_KID`, `COOKIE_SIGNING_KEY`, `SERVE_ADMIN_CONSOLE`,
 `COOKIE_DOMAIN`, `AUTH_COOKIE_PREFIX`. `SEAMLESS_VERIFY_CAPTURE` exists only for the CLI's
 conformance suite; never set it on a deployment. Never commit `.env` or hardcode these values.
 

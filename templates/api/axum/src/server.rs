@@ -24,7 +24,7 @@ pub fn adapter(cfg: &Config) -> Result<Adapter, BuildError> {
     let mut builder = Adapter::builder(&cfg.auth_server_url)
         .audience(cfg.audience())
         .cookie_secret(&cfg.cookie_signing_key)
-        .service_secret(&cfg.api_service_token)
+        .service_secret(&cfg.service_token)
         .jwks_kid(&cfg.jwks_kid)
         .session_cookie_names(format!("{prefix}access"), format!("{prefix}refresh"))
         .flow_cookie_names(format!("{prefix}ephemeral"), format!("{prefix}ephemeral"));
@@ -301,7 +301,7 @@ mod tests {
             auth_server_url: upstream().await,
             auth_server_issuer: None,
             cookie_signing_key: "cookie-secret-cookie-secret-cookie-secret".into(),
-            api_service_token: "service-secret-service-secret-service-secret".into(),
+            service_token: "service-secret-service-secret-service-secret".into(),
             jwks_kid: "dev-main".into(),
             cookie_domain: None,
             cookie_prefix: "seamless-".into(),

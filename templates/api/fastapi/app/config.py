@@ -17,13 +17,13 @@ REQUIRED = [
     ),
     ("COOKIE_SIGNING_KEY", "Any secret string. It signs the cookies this API issues."),
     (
-        "API_SERVICE_TOKEN",
+        "SEAMLESS_SERVICE_TOKEN",
         "The secret shared with Seamless Auth. `seamless init` writes it for a local stack; "
         "managed applications issue it from the dashboard.",
     ),
     (
         "JWKS_KID",
-        "The kid header on the service tokens this adapter signs with API_SERVICE_TOKEN "
+        "The kid header on the service tokens this adapter signs with SEAMLESS_SERVICE_TOKEN "
         "(not the auth server's signing key id), for example dev-main.",
     ),
 ]
@@ -41,7 +41,7 @@ class ConfigError(Exception):
 class Config:
     auth_server_url: str
     cookie_signing_key: str = field(repr=False)
-    api_service_token: str = field(repr=False)
+    service_token: str = field(repr=False)
     jwks_kid: str
     database_url: str = field(repr=False)
     auth_server_issuer: str | None = None
@@ -99,7 +99,7 @@ def load(env: Mapping[str, str] | None = None) -> Config:
         auth_server_url=get("AUTH_SERVER_URL"),
         auth_server_issuer=get("AUTH_SERVER_ISSUER") or None,
         cookie_signing_key=values.get("COOKIE_SIGNING_KEY", ""),
-        api_service_token=values.get("API_SERVICE_TOKEN", ""),
+        service_token=values.get("SEAMLESS_SERVICE_TOKEN", ""),
         jwks_kid=get("JWKS_KID"),
         database_url=database_url,
         development=get("APP_ENV") == "development",

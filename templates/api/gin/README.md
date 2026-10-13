@@ -55,8 +55,8 @@ cp .env.example .env
 | `COOKIE_DOMAIN`                                           | Optional cookie domain for production, for example `.example.com`                                                                                     |
 | `AUTH_COOKIE_PREFIX`                                      | Prefix for this application's auth cookie names, so several Seamless apps can run on one host without signing each other out. Defaults to `seamless-` |
 | `COOKIE_SIGNING_KEY`                                      | Secret used to sign API-generated cookies (32 characters or more)                                                                                     |
-| `API_SERVICE_TOKEN`                                       | Service token shared with Seamless Auth (32 characters or more)                                                                                       |
-| `JWKS_KID`                                                | `kid` header on the service tokens the adapter signs with `API_SERVICE_TOKEN`; not the auth server's signing key id                                   |
+| `SEAMLESS_SERVICE_TOKEN`                                  | Service token shared with Seamless Auth (32 characters or more)                                                                                       |
+| `JWKS_KID`                                                | `kid` header on the service tokens the adapter signs with `SEAMLESS_SERVICE_TOKEN`; not the auth server's signing key id                              |
 | `DATABASE_URL`                                            | Full Postgres connection string. Wins over the `DB_*` values when set                                                                                 |
 | `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` | Postgres connection, used when `DATABASE_URL` is empty                                                                                                |
 | `DB_SSL_REJECT_UNAUTHORIZED`                              | Set to `false` only for a certificate that does not chain to a public CA                                                                              |
@@ -68,7 +68,7 @@ drops the verification.
 ### Managed path (CLI-filled)
 
 When you scaffold with `seamless init` against a managed instance, the CLI fills `AUTH_SERVER_URL`,
-`AUTH_SERVER_ISSUER`, `API_SERVICE_TOKEN`, `JWKS_KID` and a fresh `COOKIE_SIGNING_KEY` into `.env`,
+`AUTH_SERVER_ISSUER`, `SEAMLESS_SERVICE_TOKEN`, `JWKS_KID` and a fresh `COOKIE_SIGNING_KEY` into `.env`,
 and writes a `DATABASE_URL` whose `USER` and `PASSWORD` placeholders you copy from the dashboard.
 
 ## Running locally

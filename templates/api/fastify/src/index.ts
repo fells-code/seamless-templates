@@ -107,7 +107,7 @@ const seamlessAuthOptions: SeamlessAuthServerOptions = {
   authServerUrl: process.env.AUTH_SERVER_URL!,
   authServerIssuer: authServerIssuer(),
   cookieSecret: process.env.COOKIE_SIGNING_KEY!,
-  serviceSecret: process.env.API_SERVICE_TOKEN!,
+  serviceSecret: process.env.SEAMLESS_SERVICE_TOKEN!,
   audience: authServerAudience(),
   jwksKid: process.env.JWKS_KID!,
   cookieDomain,

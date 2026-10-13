@@ -107,7 +107,7 @@ const seamlessAuthOptions: SeamlessAuthServerOptions = {
   authServerUrl: process.env.AUTH_SERVER_URL!,
   authServerIssuer: authServerIssuer(),
   cookieSecret: process.env.COOKIE_SIGNING_KEY!,
-  serviceSecret: process.env.API_SERVICE_TOKEN!,
+  serviceSecret: process.env.SEAMLESS_SERVICE_TOKEN!,
   audience: authServerAudience(),
   jwksKid: process.env.JWKS_KID!,
   cookieDomain,
@@ -127,7 +127,7 @@ const seamlessAuthOptions: SeamlessAuthServerOptions = {
 //
 // Off when the console is hosted elsewhere (a standalone container, or not at
 // all). Serving it here also requires this API's origin in the auth server's
-// ORIGINS so passkey ceremonies started in the console verify — see README.
+// ORIGINS so passkey ceremonies started in the console verify; see README.
 if (process.env.SERVE_ADMIN_CONSOLE === "true") {
   app.use(
     "/console",

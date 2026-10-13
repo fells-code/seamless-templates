@@ -6,7 +6,7 @@ import { readAuthConfig, requireAuthConfig, serveAdminConsole } from "./config";
 const COMPLETE = {
   AUTH_SERVER_URL: "http://localhost:5312",
   COOKIE_SIGNING_KEY: "x".repeat(32),
-  API_SERVICE_TOKEN: "service-token",
+  SEAMLESS_SERVICE_TOKEN: "service-token",
   JWKS_KID: "dev-main",
 };
 
@@ -18,7 +18,7 @@ describe("readAuthConfig", () => {
     if (result.ok) return;
     expect(result.problems).toHaveLength(4);
     expect(result.problems.join(" ")).toMatch(
-      /AUTH_SERVER_URL.*COOKIE_SIGNING_KEY.*API_SERVICE_TOKEN.*JWKS_KID/,
+      /AUTH_SERVER_URL.*COOKIE_SIGNING_KEY.*SEAMLESS_SERVICE_TOKEN.*JWKS_KID/,
     );
   });
 
