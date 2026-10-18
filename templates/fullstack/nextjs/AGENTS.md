@@ -30,6 +30,11 @@ when extending this app is to keep using them, not to rebuild them.
   and `hasScopedRole`.
 - `src/components/SignIn.tsx` and `src/components/VerifyMagicLink.tsx`: the sign-in UI, built on
   `useAuth()` and `useAuthClient()`.
+- When a magic link is opened on a different device from the one that asked for it, the auth server
+  answers the verify call with `409 confirmation_required` and does not spend the link.
+  `VerifyMagicLink.tsx` then shows which kind of device asked and when, and only on "Yes, sign in
+  that device" confirms it (`POST /auth/magic-link/verify/{token}/confirm`). The asking device then
+  signs in through its own poll, never this one. Keep the approval step.
 
 ## Rules
 
