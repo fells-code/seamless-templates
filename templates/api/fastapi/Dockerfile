@@ -31,6 +31,9 @@ CMD ["uvicorn", "app.main:build", "--factory", "--host", "0.0.0.0", "--port", "3
 # Last on purpose. See the note at the top of this file before moving it.
 FROM base AS dev
 RUN uv sync --locked
+# The generated stack bind-mounts the source over /app and runs this as root. On a
+# Linux host, __pycache__ under /app would be root's and block removing the project.
+ENV PYTHONPYCACHEPREFIX=/tmp/pycache
 COPY . .
 EXPOSE 3000
 CMD ["uvicorn", "app.main:build", "--factory", "--reload", "--host", "0.0.0.0", "--port", "3000"]

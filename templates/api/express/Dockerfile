@@ -48,6 +48,9 @@ CMD ["npm", "run", "start"]
 
 # Last on purpose. See the note at the top of this file before moving it.
 FROM deps AS dev
+# The generated stack bind-mounts the source over /app and runs this as root. On a
+# Linux host, logs/ under /app would be root's and block removing the project.
+ENV LOG_DIR=/tmp/logs
 COPY . .
 EXPOSE 3000
 CMD ["npm", "run", "dev"]
