@@ -33,7 +33,7 @@ export default function getLogger(moduleName: string): Logger {
   );
 
   if (!isProd) {
-    const logDir = path.resolve("./logs");
+    const logDir = path.resolve(process.env.LOG_DIR || "./logs");
     if (!fs.existsSync(logDir)) {
       fs.mkdirSync(logDir, { recursive: true });
     }
