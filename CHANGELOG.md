@@ -1,5 +1,20 @@
 # seamless-templates
 
+## 0.20.0
+
+### Minor Changes
+
+- 4a364ef: Every template moves to the current Seamless SDKs: `@seamless-auth/react` 0.17 (React Vite, React OAuth and the Next.js starter), `@seamless-auth/react-native` 0.3 (Expo), `@seamless-auth/angular` 0.3, `@seamless-auth/vue` 0.2, `@seamless-auth/svelte` 0.2, `@seamless-auth/express` 0.21 and `@seamless-auth/fastify` 0.12. A new project picks up the magic link confirmation screen, the `authorizedFetch` origin and redirect checks, and same-origin `authorizedFetch` for the Next.js starter. No template code changed.
+- a3e4751: The Next.js starter moves to `@seamless-auth/nextjs` 0.5, which forwards the browser's pre-auth token when a magic link is verified. seamless-auth-api 0.19.0 uses it to sign in a link opened in the browser that requested it.
+- 1ea2c2b: The Next.js starter's magic link page handles the auth server's cross-device confirmation step. When a link is opened on a different device from the one that requested it, the page shows which kind of device asked and when, and offers "Yes, sign in that device" or "No, this wasn't me". Approving confirms the link and tells the reader to return to the other device; declining signs nothing in. The page uses the SDK's `confirmMagicLink` when the installed `@seamless-auth/react` provides it and otherwise posts to the same route through `/auth`.
+- cd5d834: The Express, Fastify, Gin, Axum, FastAPI and Next.js starters read their service token from `SEAMLESS_SERVICE_TOKEN` instead of `API_SERVICE_TOKEN`, the name the managed portal already gives it. The `.env.example` files, startup env checks and hints, READMEs, AGENTS.md files and `template.json` env declarations use the new name. The local auth server still reads the same value as `API_SERVICE_TOKEN`; the `.env.example` comments say so.
+
+  These starters now require `seamless-cli` 0.24.0 (`requires.cliMin`), the first CLI that writes `SEAMLESS_SERVICE_TOKEN` into the generated compose file and into `api/.env` when it connects a managed application. Projects scaffolded from earlier starters keep reading `API_SERVICE_TOKEN` and need no change.
+
+### Patch Changes
+
+- d43d376: Describe `JWKS_KID` correctly in the Express, Fastify, Gin, Axum, FastAPI and Next.js starters. It is the `kid` header on the HS256 service tokens the adapter signs with `API_SERVICE_TOKEN`, not the key id the auth server signs user tokens with. The startup hints, READMEs, the Next.js `.env.example`, and the placeholder table in the repo README now say so.
+
 ## 0.19.1
 
 ### Patch Changes
