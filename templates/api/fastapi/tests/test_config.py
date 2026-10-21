@@ -93,3 +93,25 @@ def test_database_urls(url: str, reject: str, want: str | None, problem: str | N
         assert found is not None and problem in found
     else:
         assert found is None and got == want
+
+
+def test_the_example_secrets_are_refused_outside_development() -> None:
+    env = {
+        **complete(),
+        "COOKIE_SIGNING_KEY": "dev-only-cookie-signing-key-replace-me",
+        "SEAMLESS_SERVICE_TOKEN": "GRAB_FROM_SEAMLESS_AUTH_PORTAL_DEV",
+    }
+    with pytest.raises(config.ConfigError) as err:
+        config.load(env)
+    assert "2 environment problems" in str(err.value)
+    assert "COOKIE_SIGNING_KEY is still the example value" in str(err.value)
+    assert "SEAMLESS_SERVICE_TOKEN is still the example value" in str(err.value)
+
+
+def test_the_example_secrets_are_allowed_in_development() -> None:
+    env = {
+        **complete(),
+        "APP_ENV": "development",
+        "COOKIE_SIGNING_KEY": "dev-only-cookie-signing-key-replace-me",
+    }
+    assert config.load(env).development

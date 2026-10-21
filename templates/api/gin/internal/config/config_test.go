@@ -102,3 +102,31 @@ func TestDatabaseURL(t *testing.T) {
 		})
 	}
 }
+
+func TestTheExampleSecretsAreRefusedOutsideDevelopment(t *testing.T) {
+	values := complete()
+	values["COOKIE_SIGNING_KEY"] = "dev-only-cookie-signing-key-replace-me"
+	values["SEAMLESS_SERVICE_TOKEN"] = "GRAB_FROM_SEAMLESS_AUTH_PORTAL_DEV"
+	_, err := Load(env(values))
+	if err == nil {
+		t.Fatal("loaded the example secrets")
+	}
+	for _, want := range []string{"2 environment problems", "COOKIE_SIGNING_KEY is still the example value", "SEAMLESS_SERVICE_TOKEN is still the example value"} {
+		if !strings.Contains(err.Error(), want) {
+			t.Fatalf("missing %q in %s", want, err)
+		}
+	}
+}
+
+func TestTheExampleSecretsAreAllowedInDevelopment(t *testing.T) {
+	values := complete()
+	values["APP_ENV"] = "development"
+	values["COOKIE_SIGNING_KEY"] = "dev-only-cookie-signing-key-replace-me"
+	cfg, err := Load(env(values))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !cfg.Development {
+		t.Fatal("development not set")
+	}
+}

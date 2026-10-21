@@ -31,6 +31,12 @@ DISCRETE_DB_VARS = ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER"]
 # `seamless init` writes a managed DATABASE_URL with these literal placeholders in
 # place of the credentials, which only the dashboard can show.
 CREDENTIAL_PLACEHOLDERS = {"USER", "PASSWORD"}
+# The values .env.example ships with. They are public, so an API started with one
+# outside development signs cookies anyone can forge.
+EXAMPLE_SECRETS = {
+    "COOKIE_SIGNING_KEY": "dev-only-cookie-signing-key-replace-me",
+    "SEAMLESS_SERVICE_TOKEN": "GRAB_FROM_SEAMLESS_AUTH_PORTAL_DEV",
+}
 
 
 class ConfigError(Exception):
@@ -75,6 +81,21 @@ def load(env: Mapping[str, str] | None = None) -> Config:
     port = get("PORT") or "3000"
     if not port.isdigit():
         problems.append("PORT is not a port number.")
+    development = get("APP_ENV") == "development"
+    for name, example in EXAMPLE_SECRETS.items():
+        if get(name) != example:
+            continue
+        if development:
+            log.warning(
+                "%s is the example value from .env.example. That is fine for local "
+                "development; replace it before deploying.",
+                name,
+            )
+        else:
+            problems.append(
+                f"{name} is still the example value from .env.example, which is public. "
+                "Generate one with `openssl rand -base64 48`."
+            )
 
     if problems:
         heading = (
@@ -102,7 +123,7 @@ def load(env: Mapping[str, str] | None = None) -> Config:
         service_token=values.get("SEAMLESS_SERVICE_TOKEN", ""),
         jwks_kid=get("JWKS_KID"),
         database_url=database_url,
-        development=get("APP_ENV") == "development",
+        development=development,
         port=int(port),
         cookie_domain=get("COOKIE_DOMAIN") or None,
         cookie_prefix=get("AUTH_COOKIE_PREFIX") or "seamless-",

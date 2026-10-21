@@ -26,6 +26,13 @@ export interface AuthConfig {
 export type AuthConfigResult =
   { ok: true; config: AuthConfig } | { ok: false; problems: string[] };
 
+// The values .env.example ships with. They are public, so an application started with
+// one in production signs cookies anyone can forge.
+const EXAMPLE_SECRETS: Record<string, string> = {
+  COOKIE_SIGNING_KEY: "dev-only-cookie-signing-key-replace-me",
+  SEAMLESS_SERVICE_TOKEN: "GRAB_FROM_SEAMLESS_AUTH_PORTAL_DEV",
+};
+
 const REQUIRED = [
   {
     name: "AUTH_SERVER_URL",
@@ -81,6 +88,16 @@ export function readAuthConfig(env: Env = process.env): AuthConfigResult {
     problems.push(
       "COOKIE_SIGNING_KEY is shorter than 32 characters. Generate one with `openssl rand -base64 48`.",
     );
+  }
+
+  if (env.NODE_ENV === "production") {
+    for (const [name, example] of Object.entries(EXAMPLE_SECRETS)) {
+      if (env[name]?.trim() === example) {
+        problems.push(
+          `${name} is still the example value from .env.example, which is public. Generate one with \`openssl rand -base64 48\`.`,
+        );
+      }
+    }
   }
 
   if (problems.length > 0) {
