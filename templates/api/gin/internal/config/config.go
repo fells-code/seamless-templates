@@ -43,6 +43,13 @@ var discreteDBVars = []string{"DB_HOST", "DB_PORT", "DB_NAME", "DB_USER"}
 // in place of the credentials, which only the dashboard can show.
 var credentialPlaceholders = map[string]bool{"USER": true, "PASSWORD": true}
 
+// The values .env.example ships with. They are public, so an API started with one
+// outside development signs cookies anyone can forge.
+var exampleSecrets = []struct{ name, value string }{
+	{"COOKIE_SIGNING_KEY", "dev-only-cookie-signing-key-replace-me"},
+	{"SEAMLESS_SERVICE_TOKEN", "GRAB_FROM_SEAMLESS_AUTH_PORTAL_DEV"},
+}
+
 // Load reads the environment and refuses to start on any problem, naming every
 // one at once: a missing value would otherwise surface as a 500 on the first
 // authenticated request rather than as a failure to boot.
@@ -57,6 +64,18 @@ func Load(getenv func(string) string) (*Config, error) {
 	databaseURL, dbProblem := DatabaseURL(getenv)
 	if dbProblem != "" {
 		problems = append(problems, dbProblem)
+	}
+
+	development := strings.TrimSpace(getenv("APP_ENV")) == "development"
+	for _, example := range exampleSecrets {
+		if strings.TrimSpace(getenv(example.name)) != example.value {
+			continue
+		}
+		if development {
+			slog.Warn(example.name + " is the example value from .env.example. That is fine for local development; replace it before deploying.")
+		} else {
+			problems = append(problems, example.name+" is still the example value from .env.example, which is public. Generate one with `openssl rand -base64 48`.")
+		}
 	}
 
 	if len(problems) > 0 {
@@ -87,7 +106,7 @@ func Load(getenv func(string) string) (*Config, error) {
 	}
 
 	return &Config{
-		Development:       strings.TrimSpace(getenv("APP_ENV")) == "development",
+		Development:       development,
 		Port:              port,
 		AuthServerURL:     strings.TrimSpace(getenv("AUTH_SERVER_URL")),
 		AuthServerIssuer:  strings.TrimSpace(getenv("AUTH_SERVER_ISSUER")),

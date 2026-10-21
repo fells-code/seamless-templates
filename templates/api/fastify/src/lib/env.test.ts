@@ -24,6 +24,7 @@ const MANAGED_VARS = [
   "DB_NAME",
   "DB_USER",
   "DB_PASSWORD",
+  "NODE_ENV",
 ];
 
 function setValidEnvironment() {
@@ -111,6 +112,25 @@ describe("assertEnvironment", () => {
     process.env.DATABASE_URL = "the database on my laptop";
 
     expect(() => assertEnvironment()).toThrow(/not a valid connection string/);
+  });
+
+  it("refuses the example secrets from .env.example in production", () => {
+    setValidEnvironment();
+    process.env.NODE_ENV = "production";
+    process.env.COOKIE_SIGNING_KEY = "dev-only-cookie-signing-key-replace-me";
+    process.env.SEAMLESS_SERVICE_TOKEN = "GRAB_FROM_SEAMLESS_AUTH_PORTAL_DEV";
+
+    expect(() => assertEnvironment()).toThrow(
+      /2 environment problems[\s\S]*COOKIE_SIGNING_KEY is still the example value[\s\S]*SEAMLESS_SERVICE_TOKEN is still the example value/,
+    );
+  });
+
+  it("allows the example secrets in development", () => {
+    setValidEnvironment();
+    process.env.NODE_ENV = "development";
+    process.env.COOKIE_SIGNING_KEY = "dev-only-cookie-signing-key-replace-me";
+
+    expect(() => assertEnvironment()).not.toThrow();
   });
 
   it("treats whitespace as unset", () => {

@@ -28,6 +28,35 @@ describe("readAuthConfig", () => {
     expect(result.ok).toBe(false);
   });
 
+  it("refuses the example secrets from .env.example in production", () => {
+    const result = readAuthConfig({
+      ...COMPLETE,
+      NODE_ENV: "production",
+      COOKIE_SIGNING_KEY: "dev-only-cookie-signing-key-replace-me",
+      SEAMLESS_SERVICE_TOKEN: "GRAB_FROM_SEAMLESS_AUTH_PORTAL_DEV",
+    });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.problems).toEqual([
+        expect.stringMatching(/^COOKIE_SIGNING_KEY is still the example value/),
+        expect.stringMatching(
+          /^SEAMLESS_SERVICE_TOKEN is still the example value/,
+        ),
+      ]);
+    }
+  });
+
+  it("allows the example secrets in development", () => {
+    const result = readAuthConfig({
+      ...COMPLETE,
+      NODE_ENV: "development",
+      COOKIE_SIGNING_KEY: "dev-only-cookie-signing-key-replace-me",
+    });
+
+    expect(result.ok).toBe(true);
+  });
+
   it("builds the handler and session options from one environment", () => {
     const result = readAuthConfig(COMPLETE);
 

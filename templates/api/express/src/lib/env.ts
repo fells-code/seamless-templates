@@ -36,6 +36,19 @@ const REQUIRED: RequiredVar[] = [
 
 const DISCRETE_DB_VARS = ["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER"];
 
+// The values .env.example ships with. They are public, so an API started with one
+// outside development signs cookies anyone can forge.
+const EXAMPLE_SECRETS: Record<string, string> = {
+  COOKIE_SIGNING_KEY: "dev-only-cookie-signing-key-replace-me",
+  SEAMLESS_SERVICE_TOKEN: "GRAB_FROM_SEAMLESS_AUTH_PORTAL_DEV",
+};
+
+function exampleSecretsInUse(): string[] {
+  return Object.entries(EXAMPLE_SECRETS)
+    .filter(([name, example]) => process.env[name]?.trim() === example)
+    .map(([name]) => name);
+}
+
 // `seamless init` writes a managed DATABASE_URL with these literal placeholders
 // in place of the credentials, which only the dashboard can show.
 const CREDENTIAL_PLACEHOLDERS = ["USER", "PASSWORD"];
@@ -113,6 +126,18 @@ export function assertEnvironment(): void {
   const database = databaseProblem();
   if (database) {
     problems.push(database);
+  }
+
+  for (const name of exampleSecretsInUse()) {
+    if (process.env.NODE_ENV === "production") {
+      problems.push(
+        `${name} is still the example value from .env.example, which is public. Generate one with \`openssl rand -base64 48\`.`,
+      );
+    } else {
+      logger.warn(
+        `${name} is the example value from .env.example. That is fine for local development; replace it before deploying.`,
+      );
+    }
   }
 
   if (isBlank(process.env.UI_ORIGINS)) {

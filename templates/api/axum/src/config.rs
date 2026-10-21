@@ -44,6 +44,19 @@ const DISCRETE_DB_VARS: &[&str] = &["DB_HOST", "DB_PORT", "DB_NAME", "DB_USER"];
 // in place of the credentials, which only the dashboard can show.
 const CREDENTIAL_PLACEHOLDERS: &[&str] = &["USER", "PASSWORD"];
 
+// The values .env.example ships with. They are public, so an API started with one
+// outside development signs cookies anyone can forge.
+const EXAMPLE_SECRETS: &[(&str, &str)] = &[
+    (
+        "COOKIE_SIGNING_KEY",
+        "dev-only-cookie-signing-key-replace-me",
+    ),
+    (
+        "SEAMLESS_SERVICE_TOKEN",
+        "GRAB_FROM_SEAMLESS_AUTH_PORTAL_DEV",
+    ),
+];
+
 impl Config {
     /// Reads the environment and refuses to start on any problem, naming every
     /// one at once: a missing value would otherwise surface as a 500 on the first
@@ -67,6 +80,21 @@ impl Config {
                 None
             }
         };
+        let development = get("APP_ENV").as_deref() == Some("development");
+        for (name, example) in EXAMPLE_SECRETS {
+            if get(name).as_deref() != Some(*example) {
+                continue;
+            }
+            if development {
+                tracing::warn!(
+                    "{name} is the example value from .env.example. That is fine for local development; replace it before deploying."
+                );
+            } else {
+                problems.push(format!(
+                    "{name} is still the example value from .env.example, which is public. Generate one with `openssl rand -base64 48`."
+                ));
+            }
+        }
         let port = match get("PORT").map(|p| p.parse::<u16>()) {
             None => 3000,
             Some(Ok(port)) => port,
@@ -103,7 +131,7 @@ impl Config {
         }
 
         Ok(Config {
-            development: get("APP_ENV").as_deref() == Some("development"),
+            development,
             port,
             auth_server_url: get("AUTH_SERVER_URL").unwrap_or_default(),
             auth_server_issuer: get("AUTH_SERVER_ISSUER"),
@@ -283,6 +311,38 @@ mod tests {
         ] {
             assert!(err.contains(want), "missing {want:?} in {err}");
         }
+    }
+
+    #[test]
+    fn the_example_secrets_are_refused_outside_development() {
+        let mut values = complete();
+        values.insert(
+            "COOKIE_SIGNING_KEY",
+            "dev-only-cookie-signing-key-replace-me",
+        );
+        values.insert(
+            "SEAMLESS_SERVICE_TOKEN",
+            "GRAB_FROM_SEAMLESS_AUTH_PORTAL_DEV",
+        );
+        let err = Config::load(env(&values)).unwrap_err();
+        for want in [
+            "2 environment problems",
+            "COOKIE_SIGNING_KEY is still the example value",
+            "SEAMLESS_SERVICE_TOKEN is still the example value",
+        ] {
+            assert!(err.contains(want), "missing {want:?} in {err}");
+        }
+    }
+
+    #[test]
+    fn the_example_secrets_are_allowed_in_development() {
+        let mut values = complete();
+        values.insert("APP_ENV", "development");
+        values.insert(
+            "COOKIE_SIGNING_KEY",
+            "dev-only-cookie-signing-key-replace-me",
+        );
+        assert!(Config::load(env(&values)).unwrap().development);
     }
 
     #[test]
