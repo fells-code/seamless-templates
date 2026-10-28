@@ -139,6 +139,9 @@ cp .env.example .env
 npm run docker:up      # docker compose up --build
 ```
 
+Postgres (`DB_PORT`, default 5432) and the API (3000) are published on 127.0.0.1 only, so they
+are not reachable from other machines on your network.
+
 Follow the API logs or shut the stack down (including the database volume) with:
 
 ```bash

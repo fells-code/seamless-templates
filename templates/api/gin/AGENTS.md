@@ -69,6 +69,7 @@ All configuration is environment variables; see `.env.example`. `APP_ENV`, `PORT
 
 - `go run .`: reads `.env` and serves on http://localhost:3000. `air` reloads on change.
 - `docker compose up --build`: this API plus its own Postgres, without the rest of the stack.
+  Both ports bind to 127.0.0.1.
 - Migrations are SQL files in `migrations/`, embedded in the binary and run on boot.
 - Checks: `gofmt -l .`, `go vet ./...`, `go test ./...`. Tests need no database, auth server or
   network; keep it that way.
