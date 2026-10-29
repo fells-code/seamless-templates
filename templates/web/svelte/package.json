@@ -25,7 +25,7 @@
   },
   "author": "Fells Code LLC",
   "dependencies": {
-    "@seamless-auth/svelte": "^0.2.1"
+    "@seamless-auth/svelte": "^0.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

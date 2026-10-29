@@ -1038,7 +1038,7 @@ requires-dist = [
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2" },
     { name = "psycopg-pool", specifier = ">=3.2" },
     { name = "python-dotenv", specifier = ">=1.0" },
-    { name = "seamless-auth", extras = ["fastapi"], specifier = ">=0.2,<0.3" },
+    { name = "seamless-auth", extras = ["fastapi"], specifier = ">=0.3,<0.4" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.32" },
 ]
 
@@ -1051,15 +1051,15 @@ dev = [
 
 [[package]]
 name = "seamless-auth"
-version = "0.2.0"
+version = "0.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx2" },
     { name = "pyjwt", extra = ["crypto"] },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/dc/4f/6c6eb6e232b63ead4fe252eaef9083dbb6631fa8af29ce30081385445b2b/seamless_auth-0.2.0.tar.gz", hash = "sha256:6d40b6dd1e3f71bab73eaeb7e1f553dc620fcde71c1a77ba48a732de691c28dd", size = 48526, upload-time = "2026-10-08T20:08:24.363Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/26/8a/041ff836cda1a993d3dda0a5f9c1a646d6feeed9f545520ef7e2d66132a6/seamless_auth-0.3.0.tar.gz", hash = "sha256:c2b010edf8c6248a2eee9a80a7d9886c16579ebb9b1106b19cda1cca69ced5ff", size = 59660, upload-time = "2026-10-29T01:11:45.646Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b3/c3/12ce7ea0e6c9131c298960a9e4e13a501d099c635a617b8247d7f75b7036/seamless_auth-0.2.0-py3-none-any.whl", hash = "sha256:23b54a32f5f39b42a72ceee79746967de0a675c8afe50efdb9b7a658a9b82495", size = 41876, upload-time = "2026-10-08T20:08:23.079Z" },
+    { url = "https://files.pythonhosted.org/packages/dd/33/9c2ff0e5999ab4afa210d9f88cbd8a37c3dfd9ec25ed8de7148f3f4f7b2d/seamless_auth-0.3.0-py3-none-any.whl", hash = "sha256:811113b0f1e5d8a7c9d3729949d5993883aa9cb8a70a44437c643c460735cf9b", size = 47296, upload-time = "2026-10-29T01:11:44.212Z" },
 ]
 
 [package.optional-dependencies]

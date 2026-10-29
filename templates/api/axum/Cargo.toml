@@ -8,7 +8,7 @@ license = "Apache-2.0"
 
 [dependencies]
 # The Seamless Auth adapter: /auth, the session guard, and the admin console.
-seamless-auth = "0.2"
+seamless-auth = "0.3"
 axum = "0.8"
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "signal"] }
 # Postgres, with migrations embedded in the binary and run on boot.

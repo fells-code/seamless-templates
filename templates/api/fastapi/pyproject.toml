@@ -6,7 +6,7 @@ requires-python = ">=3.11"
 license = "Apache-2.0"
 dependencies = [
     # The Seamless Auth adapter: /auth, the session guard, and the admin console.
-    "seamless-auth[fastapi]>=0.2,<0.3",
+    "seamless-auth[fastapi]>=0.3,<0.4",
     "uvicorn[standard]>=0.32",
     # Postgres, with a small pool for the request threads.
     "psycopg[binary]>=3.2",
