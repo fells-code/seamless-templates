@@ -24,7 +24,7 @@
   },
   "author": "Fells Code LLC",
   "dependencies": {
-    "@seamless-auth/vue": "^0.2.1",
+    "@seamless-auth/vue": "^0.3.0",
     "vue": "^3.5.42",
     "vue-router": "^5.3.1"
   },

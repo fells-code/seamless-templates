@@ -1509,9 +1509,9 @@ dependencies = [
 
 [[package]]
 name = "seamless-auth"
-version = "0.2.0"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f5db3d25369f246d1370ae7ca99ccf834db3d970c4892a8e201509877fa5154d"
+checksum = "43c5964c62a8e608a84b09283d5fd84266f1c983035536dffa70c5e7fc8999d6"
 dependencies = [
  "axum",
  "http-body-util",
