@@ -68,6 +68,7 @@ All configuration is environment variables; see `.env.example`. `APP_ENV`, `LOG_
 - `uv run uvicorn app.main:build --factory --reload --port 3000`: reads `.env` and serves on
   http://localhost:3000.
 - `docker compose up --build`: this API plus its own Postgres, without the rest of the stack.
+  Both ports bind to 127.0.0.1.
 - Migrations are SQL files in `migrations/`, run on boot.
 - Checks: `uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy`, `uv run pytest`.
   Tests need no database, auth server or network; keep it that way.

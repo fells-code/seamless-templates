@@ -69,6 +69,7 @@ All configuration is environment variables; see `.env.example`. Auth: `AUTH_SERV
 
 - `npm run dev`: runs migrations, then the API with reload on http://localhost:3000.
 - `npm run docker:up`: this API plus its own Postgres, without the rest of the stack.
+  Both ports bind to 127.0.0.1.
 - `npm run migrate`: Sequelize migrations under `migrations/`.
 - `npm run check`: typecheck, lint, format check and Vitest. Tests need no database, auth server or
   network; keep it that way.

@@ -72,6 +72,7 @@ All configuration is environment variables; see `.env.example`. `APP_ENV`, `RUST
 - `cargo run`: reads `.env` and serves on http://localhost:3000. For reload:
   `watchexec --restart --exts rs,toml,sql -- cargo run`.
 - `docker compose up --build`: this API plus its own Postgres, without the rest of the stack.
+  Both ports bind to 127.0.0.1.
 - Migrations are SQL files in `migrations/`, embedded in the binary and run on boot.
 - Checks: `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`. Tests
   need no database, auth server or network; keep it that way.
