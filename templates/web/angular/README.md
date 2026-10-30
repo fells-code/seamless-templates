@@ -49,12 +49,12 @@ your project's API URL (`{{apiUrl}}` in [template.json](template.json)).
 
 ## Docker
 
-The `Dockerfile`'s default target serves the production build with nginx on port 80, writing
+The `Dockerfile`'s default target serves the production build with unprivileged nginx on port 8080, writing
 `API_URL` into `config.js` at startup, so one image runs against any API:
 
 ```bash
 docker build -t my-web .
-docker run -p 5173:80 -e API_URL=http://localhost:3000 my-web
+docker run -p 5173:8080 -e API_URL=http://localhost:3000 my-web
 ```
 
 Its `dev` target runs the development server instead.

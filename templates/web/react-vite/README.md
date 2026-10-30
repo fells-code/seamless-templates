@@ -145,12 +145,12 @@ npm run test:coverage # vitest with a v8 coverage report
 
 ## Docker
 
-The production image builds the Vite app and serves it with nginx. Runtime config is written to
+The production image builds the Vite app and serves it with unprivileged nginx on port 8080. Runtime config is written to
 `/usr/share/nginx/html/config.js` from the container `API_URL` environment variable.
 
 ```bash
 docker build -t seamless-auth-react-starter .
-docker run --rm -p 8080:80 -e API_URL=http://localhost:3000/ seamless-auth-react-starter
+docker run --rm -p 8080:8080 -e API_URL=http://localhost:3000/ seamless-auth-react-starter
 ```
 
 ## License

@@ -11,8 +11,9 @@
 # auth server sends neither in development. Production is opt-in, chosen by the
 # thing doing the deploying.
 #
-# Port 80 and /health are what the generated compose file expects of the web
-# container, in both targets.
+# Port 8080 and /health are what the generated compose file expects of the web
+# container, in both targets. 8080 rather than 80 so the runtime target, which
+# runs as the unprivileged node user, needs no privileged port.
 
 FROM node:24-slim AS deps
 WORKDIR /app
@@ -28,20 +29,23 @@ RUN npm run build
 FROM node:24-slim AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
-ENV PORT=80
+ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
 
-COPY --from=build /app/.next/standalone ./
-COPY --from=build /app/.next/static ./.next/static
-COPY --from=build /app/public ./public
+# node owns /app so the server can write its cache under .next at runtime.
+RUN chown node:node /app
+COPY --from=build --chown=node:node /app/.next/standalone ./
+COPY --from=build --chown=node:node /app/.next/static ./.next/static
+COPY --from=build --chown=node:node /app/public ./public
 
-EXPOSE 80
-HEALTHCHECK CMD node -e "fetch('http://localhost/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+USER node
+EXPOSE 8080
+HEALTHCHECK CMD node -e "fetch('http://localhost:8080/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 CMD ["node", "server.js"]
 
 # Last on purpose. See the note at the top of this file before moving it.
 FROM deps AS dev
 COPY . .
-EXPOSE 80
-HEALTHCHECK CMD node -e "fetch('http://localhost/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
-CMD ["npx", "next", "dev", "--port", "80", "--hostname", "0.0.0.0"]
+EXPOSE 8080
+HEALTHCHECK CMD node -e "fetch('http://localhost:8080/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+CMD ["npx", "next", "dev", "--port", "8080", "--hostname", "0.0.0.0"]
