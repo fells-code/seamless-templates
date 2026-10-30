@@ -61,7 +61,7 @@ Its `dev` target runs the development server instead.
 
 ## Learn More
 
-- [Angular bindings](https://github.com/fells-code/seamless-auth-react/tree/main/packages/angular)
+- [Angular bindings](https://github.com/fells-code/seamless-auth-js/tree/main/packages/angular)
 - [Seamless Auth documentation](https://docs.seamlessauth.com)
 
 ## License

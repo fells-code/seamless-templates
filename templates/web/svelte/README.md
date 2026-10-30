@@ -61,7 +61,7 @@ Its `dev` target runs the development server instead.
 
 ## Learn More
 
-- [SvelteKit bindings](https://github.com/fells-code/seamless-auth-react/tree/main/packages/svelte)
+- [SvelteKit bindings](https://github.com/fells-code/seamless-auth-js/tree/main/packages/svelte)
 - [Seamless Auth documentation](https://docs.seamlessauth.com)
 
 ## License

@@ -65,7 +65,7 @@ Read the user with `const auth = useSeamlessAuth();` and `auth.user.value`, chec
 
 ## Docs
 
-- Vue bindings: https://github.com/fells-code/seamless-auth-react/tree/main/packages/vue
+- Vue bindings: https://github.com/fells-code/seamless-auth-js/tree/main/packages/vue
 - Securing routes: https://docs.seamlessauth.com/build/secure-routes/
 - Cookies, sessions and tokens: https://docs.seamlessauth.com/reference/cookies-sessions-tokens/
 - Everything, for agents: https://docs.seamlessauth.com/llms.txt

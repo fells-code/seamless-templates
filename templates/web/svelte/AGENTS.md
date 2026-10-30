@@ -72,7 +72,7 @@ Link with `resolve()` from `$app/paths`, which takes route ids such as `/(app)/b
 
 ## Docs
 
-- SvelteKit bindings: https://github.com/fells-code/seamless-auth-react/tree/main/packages/svelte
+- SvelteKit bindings: https://github.com/fells-code/seamless-auth-js/tree/main/packages/svelte
 - Securing routes: https://docs.seamlessauth.com/build/secure-routes/
 - Cookies, sessions and tokens: https://docs.seamlessauth.com/reference/cookies-sessions-tokens/
 - Everything, for agents: https://docs.seamlessauth.com/llms.txt

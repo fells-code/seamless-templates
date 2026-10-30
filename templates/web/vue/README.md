@@ -61,7 +61,7 @@ Its `dev` target runs the development server instead.
 
 ## Learn More
 
-- [Vue bindings](https://github.com/fells-code/seamless-auth-react/tree/main/packages/vue)
+- [Vue bindings](https://github.com/fells-code/seamless-auth-js/tree/main/packages/vue)
 - [Seamless Auth documentation](https://docs.seamlessauth.com)
 
 ## License

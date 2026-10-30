@@ -65,7 +65,7 @@ fetch protected data with `authorizedFetch("/your_route")` or `HttpClient`.
 
 ## Docs
 
-- Angular bindings: https://github.com/fells-code/seamless-auth-react/tree/main/packages/angular
+- Angular bindings: https://github.com/fells-code/seamless-auth-js/tree/main/packages/angular
 - Securing routes: https://docs.seamlessauth.com/build/secure-routes/
 - Cookies, sessions and tokens: https://docs.seamlessauth.com/reference/cookies-sessions-tokens/
 - Everything, for agents: https://docs.seamlessauth.com/llms.txt
