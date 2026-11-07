@@ -105,7 +105,8 @@ To grant it once your auth server runs v0.23:
 4. Sign in again. An access token carries the permissions it was issued with, so a grant reaches
    a session at its next token.
 
-The console's Roles page manages permissions and the roles that grant them. It makes these calls on
+The console's Roles page manages permissions and the roles that grant them. It is not in a
+console release yet (the latest is v0.12.0), so until one ships, use the API. The page makes these calls on
 the auth server, which you can also script from a stepped-up admin session:
 
 ```text
