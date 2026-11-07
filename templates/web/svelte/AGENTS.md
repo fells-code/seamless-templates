@@ -56,6 +56,12 @@ Read the user with `const auth = getSeamlessAuth();` and `auth.user`, check a ro
 `auth.hasScopedRole("betaUser")`, and fetch protected data with `auth.authorizedFetch("/your_route")`.
 Link with `resolve()` from `$app/paths`, which takes route ids such as `/(app)/beta`.
 
+To show UI by permission, use `hasPermission` from the SDK, as `src/routes/(app)/beta/+page.svelte` does for
+`reports:read`. It is for display only: the API's permission guard enforces. Permissions need auth
+API v0.23 or later (unreleased). Granting one takes the admin console's Roles page, or
+`POST /admin/permissions` then `PUT /admin/roles/instance/reportViewer/permissions` from a stepped-up
+`admin:write` session; the README has the steps.
+
 ## Configuration
 
 - `VITE_API_URL` in `.env` (see `.env.example`): the companion API origin, read at build or dev time. In the container image, `API_URL` is written into `config.js` as `window.__SEAMLESS_CONFIG__` at startup by `entrypoint.sh`, and wins over `VITE_API_URL`.

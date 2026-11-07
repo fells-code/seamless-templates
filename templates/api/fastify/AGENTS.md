@@ -25,7 +25,7 @@ wired. Your job when extending this app is to keep using it, not to rebuild it.
     `requireUser(seamlessAuthOptions)` preHandler hooks, then the app's routes.
 - `src/hooks/requireUser.ts`: resolves the Seamless user with `getSeamlessUser(req, opts)` and finds
   or creates the local `User` row (`models/user.ts`), keyed by the Seamless user id.
-- `src/routes/beta.ts`: the example route, gated with `requireRole("betaUser")`.
+- `src/routes/reports.ts`: the permission example, gated with `requirePermission("reports:read")`.
 - `src/types/index.d.ts`: adds `request.appUser`. `request.user` is declared by
   `@seamless-auth/fastify` itself.
 - `src/lib/env.ts`: `assertEnvironment()` fails boot on missing auth or database settings.
@@ -58,6 +58,18 @@ For a role, add it per route, as `src/routes/beta.ts` does:
 `app.get("/", { preHandler: requireRole("betaUser") }, handler)`. Public routes go outside
 `secured`. In a handler, the signed-in user is `request.user` (from Seamless: `id`, `email`,
 `phone`, `roles`) and the local record is `request.appUser`.
+
+Permissions work the same way, with the adapter's permission guard:
+
+```ts
+app.get("/", { preHandler: requirePermission("reports:read") }, handler);
+```
+
+Permission names match exactly and need auth API v0.23 or later (unreleased); before that the
+guard answers 403 to everyone. Granting `reports:read` takes the admin console (Roles page) or the
+admin API (`POST /admin/permissions`, then `PUT /admin/roles/instance/reportViewer/permissions`), with a
+stepped-up `admin:write` session; the README has the steps. Do not reimplement the check by
+reading claims yourself.
 
 ## Configuration
 

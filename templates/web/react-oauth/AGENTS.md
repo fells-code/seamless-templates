@@ -66,6 +66,12 @@ Wrap the route element in `RequireAuth`, as `src/App.tsx` does:
 Get the current user with `const { user, isAuthenticated } = useAuth();` and check a role with
 `hasScopedRole("betaUser")`. Fetch protected data with `apiFetch<T>("/your_route")`.
 
+To show UI by permission, use `usePermissions().hasPermission` from `@seamless-auth/react`, as `src/components/ReportsPanel.tsx` does for
+`reports:read`. It is for display only: the API's permission guard enforces. Permissions need auth
+API v0.23 or later (unreleased). Granting one takes the admin console's Roles page, or
+`POST /admin/permissions` then `PUT /admin/roles/instance/reportViewer/permissions` from a stepped-up
+`admin:write` session; the README has the steps.
+
 ## Configuration
 
 - `VITE_API_URL` in `.env` (see `.env.example`): the companion API origin, read at build or dev

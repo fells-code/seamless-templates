@@ -1,5 +1,5 @@
 import { Component, computed, effect, inject, signal } from "@angular/core";
-import { SeamlessAuth } from "@seamless-auth/angular";
+import { hasPermission, SeamlessAuth } from "@seamless-auth/angular";
 
 @Component({
   selector: "app-beta",
@@ -39,6 +39,29 @@ import { SeamlessAuth } from "@seamless-auth/angular";
           }
         </div>
       }
+
+      <div class="space-y-4">
+        <h2 class="text-xl font-semibold text-ink">Permission check</h2>
+        @if (!canReadReports()) {
+          <p class="text-sm text-ink-muted">
+            Your account does not hold the <code>reports:read</code> permission,
+            so the reports call is not made. Permissions need Seamless Auth API
+            v0.23 or later and a role that grants them; the README has the
+            steps.
+          </p>
+        } @else {
+          @if (reportsError()) {
+            <p role="alert" class="text-sm text-ink">{{ reportsError() }}</p>
+          }
+          @if (reports() !== null) {
+            <ul class="space-y-1">
+              @for (report of reports(); track report.id) {
+                <li class="text-sm text-ink">{{ report.title }}</li>
+              }
+            </ul>
+          }
+        }
+      </div>
     </section>
   `,
 })
@@ -55,6 +78,15 @@ export class Beta {
   protected readonly error = signal<string | null>(null);
   protected readonly loading = signal(false);
 
+  // The API guards /reports with reports:read; this only decides what to show.
+  protected readonly canReadReports = computed(() =>
+    hasPermission(this.auth.user(), "reports:read"),
+  );
+  protected readonly reports = signal<{ id: string; title: string }[] | null>(
+    null,
+  );
+  protected readonly reportsError = signal<string | null>(null);
+
   constructor() {
     // authorizedFetch sends the session cookies to the API origin and nowhere
     // else. The API checks the role again: hiding the call here is for display.
@@ -62,6 +94,23 @@ export class Beta {
       if (!this.hasBetaRole() || this.betaUsers() !== null) return;
       void this.load();
     });
+    effect(() => {
+      if (!this.canReadReports() || this.reports() !== null) return;
+      void this.loadReports();
+    });
+  }
+
+  private async loadReports() {
+    this.reportsError.set(null);
+    try {
+      const res = await this.auth.authorizedFetch("/reports");
+      if (!res.ok) throw new Error(`API error: ${res.status}`);
+      this.reports.set((await res.json()).reports);
+    } catch {
+      this.reportsError.set(
+        "The API refused the reports call. Its guard reads the permission from the access token, so sign in again after a new grant.",
+      );
+    }
   }
 
   private async load() {

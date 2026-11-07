@@ -29,6 +29,7 @@ it, not to rebuild it.
   - `require_auth()` puts a `seamless_auth::User` in the request extensions. `require_user` finds
     or creates the local `db::User` (`src/db.rs`) and inserts it too.
   - `require_role("betaUser", ...)` gates the example route.
+  - `auth.require_permission(["reports:read"])` gates `/reports`.
 - `src/config.rs`: reads and checks the environment at boot.
 
 ## Rules
@@ -58,6 +59,20 @@ Add routes to the `app` router in `router`, **before** its `.route_layer(...)` c
 Omit the inner `route_layer` for a route any signed-in user may call. Public routes go on `root`.
 In a handler, take `Extension(user): Extension<db::User>` for the local record, or
 `Extension<seamless_auth::User>` for the session (`id`, `email`, `phone`, `roles`).
+
+Permissions work the same way, with the adapter's permission guard:
+
+```rust
+.route("/reports", get(reports_content).route_layer(
+    auth.require_permission(["reports:read"]).expect("a non-empty permission"),
+))
+```
+
+Permission names match exactly and need auth API v0.23 or later (unreleased); before that the
+guard answers 403 to everyone. Granting `reports:read` takes the admin console (Roles page) or the
+admin API (`POST /admin/permissions`, then `PUT /admin/roles/instance/reportViewer/permissions`), with a
+stepped-up `admin:write` session; the README has the steps. Do not reimplement the check by
+reading claims yourself.
 
 ## Configuration
 

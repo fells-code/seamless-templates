@@ -53,8 +53,10 @@ def test_the_console_is_served_when_enabled() -> None:
 
 
 def test_app_routes_need_a_session() -> None:
-    r = client().get("/beta_users")
-    assert r.status_code == 401
+    for target in ("/beta_users", "/reports"):
+        r = client().get(target)
+        assert r.status_code == 401, target
+        assert r.json() == {"error": "unauthenticated"}, target
 
 
 def test_cors() -> None:

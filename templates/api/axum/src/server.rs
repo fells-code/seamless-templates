@@ -74,6 +74,18 @@ pub fn router(cfg: &Config, auth: &Adapter, pool: PgPool) -> Router {
                 require_role("betaUser", req, next)
             })),
         )
+        // reports:read is the example permission in every Seamless starter, so one
+        // role mapped to it in the admin console opens this route in whichever
+        // starter you scaffolded. Permissions need auth API v0.23 or later: an
+        // older API issues no permissions claim, and this route answers 403 to
+        // everyone until then.
+        .route(
+            "/reports",
+            get(reports_content).route_layer(
+                auth.require_permission(["reports:read"])
+                    .expect("a non-empty permission"),
+            ),
+        )
         .route_layer(middleware::from_fn_with_state(state.clone(), require_user))
         .route_layer(auth.require_auth())
         .with_state(state);
@@ -104,6 +116,17 @@ async fn beta_content(Extension(user): Extension<db::User>) -> Json<serde_json::
     Json(json!({
         "message": "Welcome to the beta program!",
         "access": "You have beta_user privileges.",
+        "user": user,
+    }))
+}
+
+async fn reports_content(Extension(user): Extension<db::User>) -> Json<serde_json::Value> {
+    Json(json!({
+        "message": "Reports for holders of the reports:read permission.",
+        "reports": [
+            { "id": "weekly-signups", "title": "Weekly sign-ups" },
+            { "id": "active-sessions", "title": "Active sessions" },
+        ],
         "user": user,
     }))
 }
@@ -383,9 +406,11 @@ mod tests {
 
     #[tokio::test]
     async fn app_routes_need_a_session() {
-        let (status, _, text) = send(app(false).await, "GET", "/beta_users", &[], "").await;
-        assert_eq!(status, 401);
-        assert!(text.contains("unauthenticated"), "{text}");
+        for target in ["/beta_users", "/reports"] {
+            let (status, _, text) = send(app(false).await, "GET", target, &[], "").await;
+            assert_eq!(status, 401, "{target}");
+            assert!(text.contains("unauthenticated"), "{target}: {text}");
+        }
     }
 
     #[tokio::test]

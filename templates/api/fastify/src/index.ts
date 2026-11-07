@@ -13,6 +13,7 @@ import { connectToDb } from "./db.js";
 import { initializeModels } from "../models/index.js";
 
 import beta from "./routes/beta.js";
+import reports from "./routes/reports.js";
 import { requireUser } from "./hooks/requireUser.js";
 import {
   assertEnvironment,
@@ -169,6 +170,7 @@ await app.register(async (api) => {
     secured.addHook("preHandler", requireUser(seamlessAuthOptions));
 
     await secured.register(beta, { prefix: "/beta_users" });
+    await secured.register(reports, { prefix: "/reports" });
   });
 });
 

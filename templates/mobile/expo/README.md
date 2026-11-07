@@ -96,6 +96,43 @@ add `https://<rpid>` plus the Android origin to its `ORIGINS` (keep the web orig
 - A tunnel that changes hostname on restart changes the RP ID, which invalidates every passkey
   registered against the old one. Use a stable domain.
 
+## Permissions
+
+The home screen offers a Load reports button that calls `GET /reports` (`app/(app)/index.tsx`, with
+`hasPermission` from `@seamless-auth/react-native`) only when the signed-in user holds the
+`reports:read` permission. That check only decides what to show: the API's permission guard on `GET
+/reports` is what enforces, and it refuses a session without the permission whatever the UI renders.
+The permissions come from the last session read, so a new grant shows up after the next sign-in.
+`reports:read` is the example permission in every Seamless starter, and the API starters serve `GET
+/reports` behind it.
+
+**This needs Seamless Auth API v0.23 or later, which is not released yet.** An older API issues
+access tokens with no `permissions` claim, so the user carries no permissions on API v0.22: the UI
+stays hidden and the API answers 403 to everyone.
+
+To grant it once your auth server runs v0.23:
+
+1. Sign in to the admin console as an admin with `admin:write` (the `OWNER_EMAIL` account
+   `seamless init` sets up has it), with a passkey or authenticator app enrolled: permission
+   changes need a fresh step-up.
+2. Add a `reportViewer` role to the instance's `available_roles`, on the console's system config page
+   or with `seamless config set available_roles`. That replaces the whole list, so include the
+   roles you already have (`seamless config get available_roles` shows them).
+3. Create the permission `reports:read`, and grant it to the `reportViewer` instance role.
+4. Give your user the `reportViewer` role.
+5. Sign in again. An access token carries the permissions it was issued with, so a grant reaches
+   a session at its next token.
+
+The console's Roles page manages permissions and the roles that grant them. It needs console v0.13.0 or later.
+The page makes these calls on the auth server, which you can also script from a stepped-up admin session:
+
+```text
+POST /admin/permissions                              {"name": "reports:read"}
+PUT  /admin/roles/instance/reportViewer/permissions  {"permissions": ["reports:read"]}
+```
+
+The `PUT` replaces everything the role grants, so list any permissions it already has.
+
 ## Project Layout
 
 ```

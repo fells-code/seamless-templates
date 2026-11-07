@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import createSeamlessAuthServer, {
   createSeamlessConsoleProxy,
   requireAuth,
+  requirePermission,
   requireRole,
   SeamlessAuthServerOptions,
   SeamlessAuthMessagingOptions,
@@ -13,6 +14,7 @@ import { connectToDb } from "./db.js";
 import { initializeModels } from "../models/index.js";
 
 import beta from "./routes/beta.js";
+import reports from "./routes/reports.js";
 import { requireUser } from "./middleware/requireUser.js";
 import {
   assertEnvironment,
@@ -158,6 +160,11 @@ app.use(
 
 app.use(requireUser(seamlessAuthOptions));
 app.use("/beta_users", requireRole("betaUser"), beta);
+// reports:read is the example permission in every Seamless starter, so one role
+// mapped to it in the admin console opens this route in whichever starter you
+// scaffolded. Permissions need auth API v0.23 or later: an older API issues no
+// permissions claim, and this route answers 403 to everyone until then.
+app.use("/reports", requirePermission("reports:read"), reports);
 
 const models = await initializeModels();
 

@@ -19,6 +19,7 @@ current user from the session, and protects an example route by role.
 - Automatic user resolution: `requireUser` finds or creates a local `User` keyed by the Seamless
   Auth user id, and exposes it as `req.appUser`.
 - Role-based access: `GET /beta_users` is gated by `requireRole("beta_user")`.
+- Permission-based access: `GET /reports` is gated by `requirePermission("reports:read")`.
 - A boot-time environment check that refuses to start on missing configuration and names every
   problem at once.
 - Sequelize + Postgres with migrations that run automatically on boot.
@@ -165,6 +166,43 @@ npm run db:create      # create the database if it is missing
 | ALL    | `/auth/*`     | Seamless Auth server-mode adapter                                                                     |
 | GET    | `/console/*`  | Seamless admin dashboard, reverse-proxied from the auth server (only when `SERVE_ADMIN_CONSOLE=true`) |
 | GET    | `/beta_users` | Example route, restricted to the `beta_user` role                                                     |
+| GET    | `/reports`    | Example route, restricted to the `reports:read` permission (auth API v0.23 or later)                  |
+
+## Permissions
+
+`GET /reports` is guarded by `requirePermission("reports:read")` from `@seamless-auth/express`
+(mounted in [src/index.ts](src/index.ts)). The guard reads the permissions on the verified access
+token, matches them exactly (`reports:write` does not grant `reports:read`), and answers `403
+{"error":"insufficient_permission"}` to a session without the permission. `reports:read` is the
+example permission in every Seamless starter, so one grant opens the matching route and UI whichever
+starters you combine.
+
+**This needs Seamless Auth API v0.23 or later, which is not released yet.** An older API issues
+access tokens with no `permissions` claim, so on API v0.22 the guard denies every request and
+`/reports` answers 403 to everyone. That is the guard failing closed, not a fault in this starter.
+
+To open `/reports` once your auth server runs v0.23:
+
+1. Sign in to the admin console as an admin with `admin:write` (the `OWNER_EMAIL` account
+   `seamless init` sets up has it), with a passkey or authenticator app enrolled: permission
+   changes need a fresh step-up.
+2. Add a `reportViewer` role to the instance's `available_roles`, on the console's system config page
+   or with `seamless config set available_roles`. That replaces the whole list, so include the
+   roles you already have (`seamless config get available_roles` shows them).
+3. Create the permission `reports:read`, and grant it to the `reportViewer` instance role.
+4. Give your user the `reportViewer` role.
+5. Sign in again. An access token carries the permissions it was issued with, so a grant reaches
+   a session at its next token.
+
+The console's Roles page manages permissions and the roles that grant them. It needs console v0.13.0 or later.
+The page makes these calls on the auth server, which you can also script from a stepped-up admin session:
+
+```text
+POST /admin/permissions                              {"name": "reports:read"}
+PUT  /admin/roles/instance/reportViewer/permissions  {"permissions": ["reports:read"]}
+```
+
+The `PUT` replaces everything the role grants, so list any permissions it already has.
 
 ## Admin console
 

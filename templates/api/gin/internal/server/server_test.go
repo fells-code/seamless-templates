@@ -96,11 +96,13 @@ func TestTheConsoleIsServedWhenEnabled(t *testing.T) {
 }
 
 func TestAppRoutesNeedASession(t *testing.T) {
-	rec := do(router(t, nil), "GET", "/beta_users", nil, "")
-	var body map[string]any
-	_ = json.Unmarshal(rec.Body.Bytes(), &body)
-	if rec.Code != 401 || body["error"] != "unauthenticated" {
-		t.Fatalf("%d %q", rec.Code, rec.Body.String())
+	for _, target := range []string{"/beta_users", "/reports"} {
+		rec := do(router(t, nil), "GET", target, nil, "")
+		var body map[string]any
+		_ = json.Unmarshal(rec.Body.Bytes(), &body)
+		if rec.Code != 401 || body["error"] != "unauthenticated" {
+			t.Fatalf("%s: %d %q", target, rec.Code, rec.Body.String())
+		}
 	}
 }
 

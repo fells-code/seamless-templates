@@ -90,6 +90,12 @@ func New(cfg *config.Config, auth *seamlessauth.Adapter, pool *pgxpool.Pool) *gi
 	profiles := &profileClient{url: strings.TrimRight(cfg.AuthServerURL, "/") + "/users/me", client: &http.Client{Timeout: 10 * time.Second}}
 	app := r.Group("/", requireSession(auth), requireUser(pool, profiles))
 	app.GET("/beta_users", requireRole("betaUser"), betaContent)
+	// reports:read is the example permission in every Seamless starter, so one
+	// role mapped to it in the admin console opens this route in whichever
+	// starter you scaffolded. Permissions need auth API v0.23 or later: an older
+	// API issues no permissions claim, and this route answers 403 to everyone
+	// until then.
+	app.GET("/reports", requirePermission(auth, "reports:read"), reportsContent)
 
 	return r
 }
@@ -102,6 +108,17 @@ func betaContent(c *gin.Context) {
 	})
 }
 
+func reportsContent(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Reports for holders of the reports:read permission.",
+		"reports": []gin.H{
+			{"id": "weekly-signups", "title": "Weekly sign-ups"},
+			{"id": "active-sessions", "title": "Active sessions"},
+		},
+		"user": c.MustGet(userKey),
+	})
+}
+
 const (
 	sessionKey = "seamlessUser"
 	userKey    = "appUser"
@@ -110,9 +127,21 @@ const (
 // requireSession runs the adapter's guard: 401 without a session, 403 for a
 // cross-site state change on a cookie session.
 func requireSession(auth *seamlessauth.Adapter) gin.HandlerFunc {
+	return adapterGuard(auth.RequireAuth)
+}
+
+// requirePermission runs the adapter's permission guard, which also answers 403
+// insufficient_permission unless the session holds one of permissions.
+func requirePermission(auth *seamlessauth.Adapter, permissions ...string) gin.HandlerFunc {
+	return adapterGuard(auth.RequirePermission(permissions...))
+}
+
+// adapterGuard runs one of the adapter's net/http guards as Gin middleware. A
+// guard that refuses has already answered the request.
+func adapterGuard(guard func(http.Handler) http.Handler) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var user *seamlessauth.User
-		auth.RequireAuth(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
+		guard(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
 			user, _ = seamlessauth.UserFromContext(r.Context())
 			c.Request = r
 		})).ServeHTTP(c.Writer, c.Request)
