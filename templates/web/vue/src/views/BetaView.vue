@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useSeamlessAuth } from "@seamless-auth/vue";
+import { hasPermission, useSeamlessAuth } from "@seamless-auth/vue";
 import { computed, ref, watchEffect } from "vue";
 
 const auth = useSeamlessAuth();
@@ -25,6 +25,27 @@ watchEffect(async () => {
       "The API rejected this request. This usually means the user does not have the required role.";
   } finally {
     loading.value = false;
+  }
+});
+
+// The API guards /reports with reports:read; this only decides what to show.
+const canReadReports = computed(() =>
+  hasPermission(auth.user.value, "reports:read"),
+);
+const reports = ref<{ id: string; title: string }[] | null>(null);
+const reportsError = ref<string | null>(null);
+
+watchEffect(async () => {
+  if (!canReadReports.value || reports.value !== null) return;
+
+  reportsError.value = null;
+  try {
+    const res = await auth.authorizedFetch("/reports");
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    reports.value = (await res.json()).reports;
+  } catch {
+    reportsError.value =
+      "The API refused the reports call. Its guard reads the permission from the access token, so sign in again after a new grant.";
   }
 });
 </script>
@@ -62,6 +83,29 @@ watchEffect(async () => {
         v-if="betaUsers !== null"
         class="overflow-x-auto rounded-card border border-line bg-surface-raised p-4 text-sm"
         >{{ JSON.stringify(betaUsers, null, 2) }}</pre>
+    </div>
+
+    <div class="space-y-4">
+      <h2 class="text-xl font-semibold text-ink">Permission check</h2>
+      <p v-if="!canReadReports" class="text-sm text-ink-muted">
+        Your account does not hold the <code>reports:read</code> permission, so
+        the reports call is not made. Permissions need Seamless Auth API v0.23
+        or later and a role that grants them; the README has the steps.
+      </p>
+      <template v-else>
+        <p v-if="reportsError" role="alert" class="text-sm text-ink">
+          {{ reportsError }}
+        </p>
+        <ul v-if="reports !== null" class="space-y-1">
+          <li
+            v-for="report in reports"
+            :key="report.id"
+            class="text-sm text-ink"
+          >
+            {{ report.title }}
+          </li>
+        </ul>
+      </template>
     </div>
   </section>
 </template>

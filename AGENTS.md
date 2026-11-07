@@ -71,8 +71,9 @@ guidance may extend them but must not contradict them.
     cookie or password code, and the real commands). Every path, export, env var and command
     it names must exist in that template, so update it with any change that moves one.
 - `shared/react-app/`: the source of truth for what both React starters share (the design tokens in
-  `index.css`, the app shell layout, the UI kit under `components/kit`, and the fetch seam under
-  `lib/` that the kit calls). The CLI copies exactly
+  `index.css`, the app shell layout, the UI kit under `components/kit`, the fetch seam under
+  `lib/` that the kit calls, and `components/ReportsPanel.tsx`, the permission-gated panel on the
+  Session page). The CLI copies exactly
   one template directory into a new project, so a template cannot reference anything outside itself.
   Each template therefore carries a committed copy, written by `npm run sync:shared`. Edit the file
   under `shared/react-app/`, never a template's copy. The Next.js, Angular, Vue and SvelteKit

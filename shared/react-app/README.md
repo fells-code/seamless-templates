@@ -1,8 +1,8 @@
 # Shared React sources
 
 The source of truth for the parts of the React starters that must stay identical:
-the design tokens, the app shell layout, the UI kit, and the fetch seam the kit
-calls.
+the design tokens, the app shell layout, the UI kit, the fetch seam the kit
+calls, and the permission-gated reports panel on the Session page.
 
 Both `templates/web/react-vite` and `templates/web/react-oauth` carry a committed
 copy of everything here. The Next.js, Angular, Vue and SvelteKit starters carry

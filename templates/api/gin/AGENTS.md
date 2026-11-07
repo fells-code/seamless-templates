@@ -28,6 +28,8 @@ this app is to keep using it, not to rebuild it.
   - `requireSession` runs `auth.RequireAuth` and stores the `*seamlessauth.User` under
     `sessionKey`. `requireUser` finds or creates the local user (`internal/db`) under `userKey`.
   - `requireRole("betaUser")` gates the example route.
+  - `requirePermission(auth, "reports:read")` gates `/reports`, running the adapter's
+    `RequirePermission` guard.
 - `internal/config/config.go`: reads and checks the environment at boot.
 - `main.go`: startup, migrations and graceful shutdown.
 
@@ -56,6 +58,18 @@ app.GET("/beta_users", requireRole("betaUser"), betaContent)
 Drop `requireRole(...)` for a route any signed-in user may call. Public routes go on `r`, not on
 `app`. In a handler, the session user is `c.MustGet(sessionKey).(*seamlessauth.User)` (`ID`,
 `Email`, `Phone`, `Roles`) and the local record is `c.MustGet(userKey)`.
+
+Permissions work the same way, with the adapter's permission guard:
+
+```go
+app.GET("/reports", requirePermission(auth, "reports:read"), reportsContent)
+```
+
+Permission names match exactly and need auth API v0.23 or later (unreleased); before that the
+guard answers 403 to everyone. Granting `reports:read` takes the admin console (Roles page) or the
+admin API (`POST /admin/permissions`, then `PUT /admin/roles/instance/betaUser/permissions`), with a
+stepped-up `admin:write` session; the README has the steps. Do not reimplement the check by
+reading claims yourself.
 
 ## Configuration
 

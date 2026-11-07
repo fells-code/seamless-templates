@@ -156,6 +156,23 @@ def create_app(
             "user": user.as_json(),
         }
 
+    # reports:read is the example permission in every Seamless starter, so one role
+    # mapped to it in the admin console opens this route in whichever starter you
+    # scaffolded. Permissions need auth API v0.23 or later: an older API issues no
+    # permissions claim, and this route answers 403 to everyone until then.
+    reports_reader = RequireUser(auth, permissions=["reports:read"])
+
+    @app.get("/reports", dependencies=[Depends(reports_reader)])
+    def reports(user: db.User = Depends(app_user)) -> dict[str, Any]:  # noqa: B008
+        return {
+            "message": "Reports for holders of the reports:read permission.",
+            "reports": [
+                {"id": "weekly-signups", "title": "Weekly sign-ups"},
+                {"id": "active-sessions", "title": "Active sessions"},
+            ],
+            "user": user.as_json(),
+        }
+
     return app
 
 

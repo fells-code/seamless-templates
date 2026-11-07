@@ -32,6 +32,14 @@
       "to": "src/layouts/Layout.tsx"
     },
     {
+      "from": "components/ReportsPanel.tsx",
+      "to": "src/components/ReportsPanel.tsx"
+    },
+    {
+      "from": "components/ReportsPanel.test.tsx",
+      "to": "src/components/ReportsPanel.test.tsx"
+    },
+    {
       "from": "components/kit",
       "to": "src/components/kit"
     },

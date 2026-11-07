@@ -24,6 +24,7 @@ already wired. Your job when extending this app is to keep using it, not to rebu
   - `requireAuth({...})`, which rejects requests without a valid session and sets `req.user`.
   - `requireUser(seamlessAuthOptions)`, which sets `req.appUser`.
   - `requireRole("betaUser")` on `/beta_users`.
+  - `requirePermission("reports:read")` on `/reports` (`src/routes/reports.ts`).
 - `src/middleware/requireUser.ts`: resolves the Seamless user with `getSeamlessUser(req, opts)` and
   finds or creates the local `User` row (`models/user.ts`), keyed by the Seamless user id.
 - `src/types/index.d.ts`: types `req.user` (`SeamlessAuthUser`) and `req.appUser`.
@@ -52,6 +53,18 @@ routers there, after those two lines, the way the example does:
 ```ts
 app.use("/beta_users", requireRole("betaUser"), beta);
 ```
+
+Permissions work the same way, with the adapter's permission guard:
+
+```ts
+app.use("/reports", requirePermission("reports:read"), reports);
+```
+
+Permission names match exactly and need auth API v0.23 or later (unreleased); before that the
+guard answers 403 to everyone. Granting `reports:read` takes the admin console (Roles page) or the
+admin API (`POST /admin/permissions`, then `PUT /admin/roles/instance/betaUser/permissions`), with a
+stepped-up `admin:write` session; the README has the steps. Do not reimplement the check by
+reading claims yourself.
 
 Drop `requireRole(...)` for a route any signed-in user may call. Anything that must stay public
 goes above the `requireAuth` call. In a handler, the signed-in user is `req.user` (from Seamless:

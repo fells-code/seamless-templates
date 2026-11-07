@@ -55,6 +55,20 @@ Drop the `require_role` dependency for a route any signed-in user may call. A ro
 on neither `session_user` nor `app_user` is public. Take `session: User = Depends(session_user)`
 for the session (`id`, `email`, `phone`, `roles`) or `Depends(app_user)` for the local record.
 
+Permissions work the same way, with the adapter's permission guard:
+
+```python
+reports_reader = RequireUser(auth, permissions=["reports:read"])
+
+@app.get("/reports", dependencies=[Depends(reports_reader)])
+```
+
+Permission names match exactly and need auth API v0.23 or later (unreleased); before that the
+guard answers 403 to everyone. Granting `reports:read` takes the admin console (Roles page) or the
+admin API (`POST /admin/permissions`, then `PUT /admin/roles/instance/betaUser/permissions`), with a
+stepped-up `admin:write` session; the README has the steps. Do not reimplement the check by
+reading claims yourself.
+
 ## Configuration
 
 All configuration is environment variables; see `.env.example`. `APP_ENV`, `LOG_LEVEL`, `PORT`,

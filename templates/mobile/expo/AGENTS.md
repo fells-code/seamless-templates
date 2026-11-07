@@ -55,6 +55,12 @@ const authorizedFetch = useAuthorizedFetch();
 const response = await authorizedFetch("/beta_users");
 ```
 
+To show UI by permission, use `hasPermission` from the SDK, as `app/(app)/index.tsx` does for
+`reports:read`. It is for display only: the API's permission guard enforces. Permissions need auth
+API v0.23 or later (unreleased). Granting one takes the admin console's Roles page, or
+`POST /admin/permissions` then `PUT /admin/roles/instance/betaUser/permissions` from a stepped-up
+`admin:write` session; the README has the steps.
+
 ## Configuration
 
 - `EXPO_PUBLIC_API_URL` in `.env` (see `.env.example`): the companion API origin, inlined at build

@@ -49,6 +49,12 @@ Add `canActivate: [authGuard]` to the route, as `src/app/app.routes.ts` does:
 Read the user with `inject(SeamlessAuth).user()`, check a role with `hasScopedRole("betaUser")`, and
 fetch protected data with `authorizedFetch("/your_route")` or `HttpClient`.
 
+To show UI by permission, use `hasPermission` from the SDK, as `src/app/pages/beta.ts` does for
+`reports:read`. It is for display only: the API's permission guard enforces. Permissions need auth
+API v0.23 or later (unreleased). Granting one takes the admin console's Roles page, or
+`POST /admin/permissions` then `PUT /admin/roles/instance/betaUser/permissions` from a stepped-up
+`admin:write` session; the README has the steps.
+
 ## Configuration
 
 - `API_URL` in `.env` (see `.env.example`): the companion API origin. The Angular CLI does not read `.env`, so `npm run dev` and `npm run build` first run `scripts/write-config.mjs`, which writes it into `public/config.js` as `window.__SEAMLESS_CONFIG__` (gitignored). In the container image, `entrypoint.sh` writes the same file from `API_URL` at startup.

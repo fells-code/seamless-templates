@@ -26,6 +26,8 @@ when extending this app is to keep using them, not to rebuild them.
   `src/components/Providers.tsx`.
 - `src/proxy.ts`: redirects signed-out visitors to `/login` with `hasSeamlessSession`, for the
   paths in its `matcher`.
+- `src/app/api/reports/route.ts`: an API route guarded with `requirePermission("reports:read", ...)`;
+  `src/components/ReportsAccess.tsx` shows it with `usePermissions().hasPermission`, for display only.
 - `src/app/api/beta-users/route.ts`: an API route guarded on the server with `getSeamlessClaims`
   and `hasScopedRole`.
 - `src/components/SignIn.tsx` and `src/components/VerifyMagicLink.tsx`: the sign-in UI, built on
@@ -68,6 +70,25 @@ A page: add its path to the `matcher` in `src/proxy.ts` so signed-out visitors a
 still check the claims in any data it loads. In client components, the current user is
 `const { user, isAuthenticated } = useAuth();`, and `useAuthorizedFetch()` calls your own API
 routes (see `src/components/BetaAccess.tsx`). Roles are managed in the Seamless admin console.
+
+Permissions work the same way, with the adapter's permission guard:
+
+```ts
+export async function GET(request: Request) {
+  const route = requirePermission(
+    "reports:read",
+    handler,
+    requireAuthConfig().handler,
+  );
+  return route(request, undefined);
+}
+```
+
+Permission names match exactly and need auth API v0.23 or later (unreleased); before that the
+guard answers 403 to everyone. Granting `reports:read` takes the admin console (Roles page) or the
+admin API (`POST /admin/permissions`, then `PUT /admin/roles/instance/betaUser/permissions`), with a
+stepped-up `admin:write` session; the README has the steps. Do not reimplement the check by
+reading claims yourself.
 
 ## Configuration
 

@@ -88,6 +88,42 @@ the `betaUser` role. Grant it from the Seamless admin console (see Admin
 console), then sign in
 again so the new role is in your session.
 
+## Permissions
+
+`GET /api/reports` is guarded by `requirePermission("reports:read", ...)` from
+`@seamless-auth/nextjs`, in [src/app/api/reports/route.ts](src/app/api/reports/route.ts). The Beta
+page shows the reports through `src/components/ReportsAccess.tsx` only when
+`usePermissions().hasPermission("reports:read")`, which is for display: the route is what enforces.
+The guard reads the permissions on the verified access token, matches them exactly (`reports:write`
+does not grant `reports:read`), and answers `403 {"error":"insufficient_permission"}` to a session
+without the permission. `reports:read` is the example permission in every Seamless starter, so one
+grant opens the matching route and UI whichever starters you combine.
+
+**This needs Seamless Auth API v0.23 or later, which is not released yet.** An older API issues
+access tokens with no `permissions` claim, so on API v0.22 the guard denies every request and
+`/api/reports` answers 403 to everyone. That is the guard failing closed, not a fault in this
+starter.
+
+To open `/api/reports` once your auth server runs v0.23:
+
+1. Sign in to the admin console as an admin with `admin:write` (the `OWNER_EMAIL` account
+   `seamless init` sets up has it), with a passkey or authenticator app enrolled: permission
+   changes need a fresh step-up.
+2. Create the permission `reports:read`, and grant it to the `betaUser` instance role.
+3. Give your user the `betaUser` role.
+4. Sign in again. An access token carries the permissions it was issued with, so a grant reaches
+   a session at its next token.
+
+The console's Roles page manages permissions and the roles that grant them. It makes these calls on
+the auth server, which you can also script from a stepped-up admin session:
+
+```text
+POST /admin/permissions                          {"name": "reports:read"}
+PUT  /admin/roles/instance/betaUser/permissions  {"permissions": ["reports:read"]}
+```
+
+The `PUT` replaces everything the role grants, so list any permissions it already has.
+
 ## Admin console
 
 With `SERVE_ADMIN_CONSOLE=true` (the default, and what

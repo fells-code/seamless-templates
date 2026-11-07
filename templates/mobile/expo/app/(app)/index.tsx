@@ -1,12 +1,17 @@
-import { useAuth, useAuthorizedFetch } from "@seamless-auth/react-native";
+import {
+  hasPermission,
+  useAuth,
+  useAuthorizedFetch,
+} from "@seamless-auth/react-native";
 import React, { useState } from "react";
 
 import { Body, Button, ErrorNote, Screen, Title } from "@/ui";
 
 /**
- * Signed in. Shows the session and calls a route on the companion API that
- * sits behind `requireAuth`, carrying the access token with one refresh on a
- * 401, which is what `useAuthorizedFetch` does.
+ * Signed in. Shows the session and calls routes on the companion API that
+ * sit behind `requireAuth`, carrying the access token with one refresh on a
+ * 401, which is what `useAuthorizedFetch` does. /reports also needs the
+ * reports:read permission.
  */
 export default function Home() {
   const { user, credentials, logout, hasScopedRole } = useAuth();
@@ -14,10 +19,14 @@ export default function Home() {
   const [result, setResult] = useState("");
   const [error, setError] = useState("");
 
-  const callApi = async () => {
+  // The API guards /reports with reports:read and refuses anyone without it.
+  // Checking here only decides whether to offer the button.
+  const canReadReports = hasPermission(user, "reports:read");
+
+  const callApi = async (path: string) => {
     setError("");
     try {
-      const response = await authorizedFetch("/beta_users");
+      const response = await authorizedFetch(path);
       if (!response.ok) {
         setError(`The API answered ${response.status}.`);
         return;
@@ -38,9 +47,16 @@ export default function Home() {
 
       <Button
         title="Call the protected API"
-        onPress={callApi}
+        onPress={() => void callApi("/beta_users")}
         variant="secondary"
       />
+      {canReadReports && (
+        <Button
+          title="Load reports"
+          onPress={() => void callApi("/reports")}
+          variant="secondary"
+        />
+      )}
       <ErrorNote>{error}</ErrorNote>
       {result ? <Body>{result}</Body> : null}
 

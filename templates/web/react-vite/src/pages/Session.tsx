@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@seamless-auth/react";
 import type { Credential } from "@seamless-auth/react";
+import ReportsPanel from "../components/ReportsPanel";
 
 // The API serializes every timestamp as an ISO 8601 string, so these arrive as
 // strings rather than dates.
@@ -199,6 +200,15 @@ export default function Session() {
               </Link>
               .
             </p>
+          </Card>
+        </Section>
+
+        <Section
+          title="Permissions"
+          description="Permissions come from the roles a user holds. The API guards GET /reports with reports:read, and this page only mirrors that check to decide what to show."
+        >
+          <Card>
+            <ReportsPanel />
           </Card>
         </Section>
 
