@@ -52,7 +52,7 @@ fetch protected data with `authorizedFetch("/your_route")` or `HttpClient`.
 To show UI by permission, use `hasPermission` from the SDK, as `src/app/pages/beta.ts` does for
 `reports:read`. It is for display only: the API's permission guard enforces. Permissions need auth
 API v0.23 or later (unreleased). Granting one takes the admin console's Roles page, or
-`POST /admin/permissions` then `PUT /admin/roles/instance/betaUser/permissions` from a stepped-up
+`POST /admin/permissions` then `PUT /admin/roles/instance/reportViewer/permissions` from a stepped-up
 `admin:write` session; the README has the steps.
 
 ## Configuration

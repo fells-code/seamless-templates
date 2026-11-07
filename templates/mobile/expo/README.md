@@ -115,9 +115,12 @@ To grant it once your auth server runs v0.23:
 1. Sign in to the admin console as an admin with `admin:write` (the `OWNER_EMAIL` account
    `seamless init` sets up has it), with a passkey or authenticator app enrolled: permission
    changes need a fresh step-up.
-2. Create the permission `reports:read`, and grant it to the `betaUser` instance role.
-3. Give your user the `betaUser` role.
-4. Sign in again. An access token carries the permissions it was issued with, so a grant reaches
+2. Add a `reportViewer` role to the instance's `available_roles`, on the console's system config page
+   or with `seamless config set available_roles`. That replaces the whole list, so include the
+   roles you already have (`seamless config get available_roles` shows them).
+3. Create the permission `reports:read`, and grant it to the `reportViewer` instance role.
+4. Give your user the `reportViewer` role.
+5. Sign in again. An access token carries the permissions it was issued with, so a grant reaches
    a session at its next token.
 
 The console's Roles page manages permissions and the roles that grant them. It is not in a
@@ -125,8 +128,8 @@ console release yet (the latest is v0.12.0), so until one ships, use the API. Th
 the auth server, which you can also script from a stepped-up admin session:
 
 ```text
-POST /admin/permissions                          {"name": "reports:read"}
-PUT  /admin/roles/instance/betaUser/permissions  {"permissions": ["reports:read"]}
+POST /admin/permissions                              {"name": "reports:read"}
+PUT  /admin/roles/instance/reportViewer/permissions  {"permissions": ["reports:read"]}
 ```
 
 The `PUT` replaces everything the role grants, so list any permissions it already has.

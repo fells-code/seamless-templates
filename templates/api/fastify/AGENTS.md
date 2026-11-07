@@ -67,7 +67,7 @@ app.get("/", { preHandler: requirePermission("reports:read") }, handler);
 
 Permission names match exactly and need auth API v0.23 or later (unreleased); before that the
 guard answers 403 to everyone. Granting `reports:read` takes the admin console (Roles page) or the
-admin API (`POST /admin/permissions`, then `PUT /admin/roles/instance/betaUser/permissions`), with a
+admin API (`POST /admin/permissions`, then `PUT /admin/roles/instance/reportViewer/permissions`), with a
 stepped-up `admin:write` session; the README has the steps. Do not reimplement the check by
 reading claims yourself.
 

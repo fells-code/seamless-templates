@@ -69,7 +69,7 @@ Get the current user with `const { user, isAuthenticated } = useAuth();` and che
 To show UI by permission, use `usePermissions().hasPermission` from `@seamless-auth/react`, as `src/components/ReportsPanel.tsx` does for
 `reports:read`. It is for display only: the API's permission guard enforces. Permissions need auth
 API v0.23 or later (unreleased). Granting one takes the admin console's Roles page, or
-`POST /admin/permissions` then `PUT /admin/roles/instance/betaUser/permissions` from a stepped-up
+`POST /admin/permissions` then `PUT /admin/roles/instance/reportViewer/permissions` from a stepped-up
 `admin:write` session; the README has the steps.
 
 ## Configuration

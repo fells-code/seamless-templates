@@ -2,7 +2,7 @@
 "seamless-templates": minor
 ---
 
-Show permission guards in the starters. Every API starter, and the Next.js starter, serves `GET /reports` (`/api/reports` in Next.js) behind its adapter's permission guard for `reports:read`, beside the existing `betaUser` role route. The React starters show the reports on the Session page with `usePermissions().hasPermission`, and the Angular, Vue, SvelteKit and Expo starters gate their reports UI with `hasPermission`; the server guard is what enforces. Each README and AGENTS.md has the steps to create the permission and grant it to a role.
+Show permission guards in the starters. Every API starter, and the Next.js starter, serves `GET /reports` (`/api/reports` in Next.js) behind its adapter's permission guard for `reports:read`, beside the existing `betaUser` role route. The React starters show the reports on the Session page with `usePermissions().hasPermission`, and the Angular, Vue, SvelteKit and Expo starters gate their reports UI with `hasPermission`; the server guard is what enforces. Each README and AGENTS.md has the steps to add a dedicated `reportViewer` role, create the permission and grant it to that role.
 
 Permissions need Seamless Auth API v0.23 or later. On v0.22 access tokens carry no permissions, so the guarded route answers 403 to everyone and the UI stays hidden.
 
