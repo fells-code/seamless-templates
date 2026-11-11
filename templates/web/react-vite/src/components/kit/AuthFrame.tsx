@@ -80,12 +80,11 @@ export default function AuthFrame({
           {children}
 
           {/* Under the form and at footnote weight, because the application has
-              to read as the owner's rather than as a demo of ours. It is the
-              mark a printer leaves on an invitation, not a banner.
+              to read as the owner's rather than as a demo of ours.
 
-              `noopener` without `noreferrer`: the referrer is the only way
-              either product sees that a generated application sent someone. */}
-          <p className="mt-12 flex flex-wrap justify-center gap-x-3 gap-y-1 text-center text-xs text-ink-muted">
+              `noopener` without `noreferrer`: the referrer is the only way we
+              see that a generated application sent someone. */}
+          <p className="mt-12 text-center text-xs text-ink-muted">
             <a
               className="transition-colors hover:text-ink"
               href="https://seamlessauth.com"
@@ -93,15 +92,6 @@ export default function AuthFrame({
               rel="noopener"
             >
               Secured by Seamless Auth
-            </a>
-            <span aria-hidden>&middot;</span>
-            <a
-              className="transition-colors hover:text-ink"
-              href="https://seamlessidea.com"
-              target="_blank"
-              rel="noopener"
-            >
-              Made with Seamless Idea
             </a>
           </p>
         </div>

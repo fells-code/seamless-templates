@@ -15,15 +15,13 @@ function renderFrame() {
 }
 
 describe("AuthFrame", () => {
-  it("carries both marks, each linked out", () => {
+  it("carries the Seamless Auth mark, linked out, and no other", () => {
     renderFrame();
 
     expect(
       screen.getByRole("link", { name: "Secured by Seamless Auth" }),
     ).toHaveAttribute("href", "https://seamlessauth.com");
-    expect(
-      screen.getByRole("link", { name: "Made with Seamless Idea" }),
-    ).toHaveAttribute("href", "https://seamlessidea.com");
+    expect(screen.queryByText(/Seamless Idea/)).not.toBeInTheDocument();
   });
 
   it("says which application this is on a phone, not only on a desktop", () => {
