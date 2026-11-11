@@ -121,7 +121,7 @@ not grant `reports:read`), and answers `403 {"error":"insufficient_permission"}`
 without the permission. `reports:read` is the example permission in every Seamless starter, so one
 grant opens the matching route and UI whichever starters you combine.
 
-**This needs Seamless Auth API v0.23 or later, which is not released yet.** An older API issues
+**This needs Seamless Auth API v0.23.0 or later.** An older API issues
 access tokens with no `permissions` claim, so on API v0.22 the guard denies every request and
 `/reports` answers 403 to everyone. That is the guard failing closed, not a fault in this starter.
 

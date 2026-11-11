@@ -91,7 +91,7 @@ permission whatever the UI renders. The permissions come from the last session r
 shows up after the next sign-in. `reports:read` is the example permission in every Seamless starter,
 and the API starters serve `GET /reports` behind it.
 
-**This needs Seamless Auth API v0.23 or later, which is not released yet.** An older API issues
+**This needs Seamless Auth API v0.23.0 or later.** An older API issues
 access tokens with no `permissions` claim, so the user carries no permissions on API v0.22: the UI
 stays hidden and the API answers 403 to everyone.
 
