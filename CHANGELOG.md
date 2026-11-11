@@ -1,5 +1,11 @@
 # seamless-templates
 
+## 0.22.1
+
+### Patch Changes
+
+- cadb8bc: Template READMEs now say the permission guard needs Seamless Auth API v0.23.0 or later, instead of calling v0.23 unreleased. The React starters' sign-in screen drops the "Made with Seamless Idea" link, since that product is discontinued, and keeps "Secured by Seamless Auth".
+
 ## 0.22.0
 
 ### Minor Changes
