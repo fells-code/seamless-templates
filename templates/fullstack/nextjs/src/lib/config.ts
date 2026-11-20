@@ -124,6 +124,15 @@ export function readAuthConfig(env: Env = process.env): AuthConfigResult {
   // unset, which leaves the adapter checking against AUTH_SERVER_URL. The server
   // signs its issuer as both `iss` and `aud`, so it is the audience too.
   const authServerIssuer = env.AUTH_SERVER_ISSUER?.trim() || undefined;
+  // Other web origins allowed to make state-changing requests to /auth, for a
+  // browser app hosted apart from this one. This application's own pages are
+  // same-origin and pass without being listed. Passed even when empty, because
+  // without a list the adapter lets a same-site or fetch-metadata-less request
+  // through with any Origin.
+  const allowedOrigins = (env.UI_ORIGINS ?? "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
   return {
     ok: true,
@@ -136,6 +145,7 @@ export function readAuthConfig(env: Env = process.env): AuthConfigResult {
         serviceSecret,
         jwksKid,
         cookieDomain: env.COOKIE_DOMAIN?.trim() || undefined,
+        allowedOrigins,
         ...cookieNames,
         messaging: captureEnabled(env)
           ? captureMessaging

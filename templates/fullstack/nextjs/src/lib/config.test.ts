@@ -112,6 +112,28 @@ describe("readAuthConfig", () => {
     expect(result.config.session.refreshCookieName).toBe("app-refresh");
   });
 
+  it("passes UI_ORIGINS to the handler as its allowed origins", () => {
+    const result = readAuthConfig({
+      ...COMPLETE,
+      UI_ORIGINS: " http://localhost:5174, ,https://app.example.com ",
+    });
+
+    if (!result.ok) throw new Error("expected a valid config");
+    expect(result.config.handler.allowedOrigins).toEqual([
+      "http://localhost:5174",
+      "https://app.example.com",
+    ]);
+  });
+
+  it("sets an empty origin allow-list when UI_ORIGINS is unset or blank", () => {
+    for (const env of [COMPLETE, { ...COMPLETE, UI_ORIGINS: " " }]) {
+      const result = readAuthConfig(env);
+
+      if (!result.ok) throw new Error("expected a valid config");
+      expect(result.config.handler.allowedOrigins).toEqual([]);
+    }
+  });
+
   it("logs codes to the console only in development", () => {
     const dev = readAuthConfig({ ...COMPLETE, NODE_ENV: "development" });
     const prod = readAuthConfig({ ...COMPLETE, NODE_ENV: "production" });

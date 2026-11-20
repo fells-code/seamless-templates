@@ -31,7 +31,11 @@ const PORT = process.env.PORT || 3000;
 const logger = getLogger("index");
 
 const rawOrigins = process.env.UI_ORIGINS;
-const allowedOrigins = rawOrigins?.split(",").map((o) => o.trim()) ?? [];
+const allowedOrigins =
+  rawOrigins
+    ?.split(",")
+    .map((o) => o.trim())
+    .filter(Boolean) ?? [];
 const cookieDomain = process.env.COOKIE_DOMAIN?.trim() || undefined;
 
 const cookiePrefix = process.env.AUTH_COOKIE_PREFIX?.trim() || "seamless-";
@@ -113,6 +117,10 @@ const seamlessAuthOptions: SeamlessAuthServerOptions = {
   audience: authServerAudience(),
   jwksKid: process.env.JWKS_KID!,
   cookieDomain,
+  // Without a list the adapter lets a same-site or fetch-metadata-less request
+  // through with any Origin. Passing UI_ORIGINS, even empty, makes it refuse
+  // one from an origin CORS would not admit either.
+  allowedOrigins,
   ...cookieNames,
   messaging: devMessaging,
 };
@@ -155,6 +163,7 @@ app.use(
     authServerUrl: seamlessAuthOptions.authServerUrl,
     authServerIssuer: seamlessAuthOptions.authServerIssuer,
     audience: seamlessAuthOptions.audience,
+    allowedOrigins: seamlessAuthOptions.allowedOrigins,
   }),
 );
 

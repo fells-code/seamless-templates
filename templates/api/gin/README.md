@@ -52,7 +52,7 @@ cp .env.example .env
 | `AUTH_SERVER_URL`                                         | URL of your Seamless Auth server                                                                                                                      |
 | `AUTH_SERVER_ISSUER`                                      | Optional. The issuer the auth server signs with, when it differs from `AUTH_SERVER_URL` (see Running locally)                                         |
 | `SERVE_ADMIN_CONSOLE`                                     | `true` to serve the admin dashboard from this API at `/console`; `false` when it is hosted elsewhere                                                  |
-| `UI_ORIGINS`                                              | Comma-separated web origins allowed by CORS                                                                                                           |
+| `UI_ORIGINS`                                              | Comma-separated web origins allowed by CORS, also passed to the adapter as `allowedOrigins` so other origins cannot sign in or change state           |
 | `COOKIE_DOMAIN`                                           | Optional cookie domain for production, for example `.example.com`                                                                                     |
 | `AUTH_COOKIE_PREFIX`                                      | Prefix for this application's auth cookie names, so several Seamless apps can run on one host without signing each other out. Defaults to `seamless-` |
 | `COOKIE_SIGNING_KEY`                                      | Secret used to sign API-generated cookies (32 characters or more)                                                                                     |

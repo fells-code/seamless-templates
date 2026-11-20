@@ -93,7 +93,7 @@ reading claims yourself.
 ## Configuration
 
 All configuration is environment variables; see `.env.example`: `AUTH_SERVER_URL`,
-`AUTH_SERVER_ISSUER`, `SEAMLESS_SERVICE_TOKEN`, `JWKS_KID`, `COOKIE_SIGNING_KEY`, `SERVE_ADMIN_CONSOLE`,
+`AUTH_SERVER_ISSUER`, `SEAMLESS_SERVICE_TOKEN`, `JWKS_KID`, `COOKIE_SIGNING_KEY`, `SERVE_ADMIN_CONSOLE`, `UI_ORIGINS`,
 `COOKIE_DOMAIN`, `AUTH_COOKIE_PREFIX`. `SEAMLESS_VERIFY_CAPTURE` exists only for the CLI's
 conformance suite; never set it on a deployment. Never commit `.env` or hardcode these values.
 
