@@ -17,13 +17,15 @@ FROM nginxinc/nginx-unprivileged:alpine
 USER root
 
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+COPY security-headers.conf /etc/nginx/seamless/security-headers.conf.template
 COPY --from=builder /app/dist /usr/share/nginx/html
 
 COPY entrypoint.sh /entrypoint.sh
 
-# The entrypoint writes config.js into the web root at start.
+# The entrypoint writes config.js into the web root, and the security headers
+# into /etc/nginx/seamless, at start.
 RUN chmod +x /entrypoint.sh \
-  && chown -R nginx:nginx /usr/share/nginx/html
+  && chown -R nginx:nginx /usr/share/nginx/html /etc/nginx/seamless
 
 USER nginx
 
