@@ -36,13 +36,14 @@ jobs:
 
       # Every template is checked on each supported Node version (engines >=22):
       # the oldest supported LTS, the development default from .nvmrc, and the
-      # newest release.
+      # newest release line. That is pinned rather than `latest`, which setup-node
+      # resolved to a Node 27 alpha that the Angular CLI refuses to run on.
       - name: Compute build matrix
         id: matrix
         run: |
           set -euo pipefail
           templates="$(node scripts/validate-templates.mjs --matrix)"
-          matrix="$(jq -c '[.[] as $t | ("22", "24", "latest") as $n | $t + {node: $n}]' <<< "${templates}")"
+          matrix="$(jq -c '[.[] as $t | ("22", "24", "26") as $n | $t + {node: $n}]' <<< "${templates}")"
           echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
 
       # Templates that are not npm projects, found by their toolchain's manifest.
