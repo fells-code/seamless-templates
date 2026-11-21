@@ -48,6 +48,10 @@ def build_adapter(cfg: config.Config, http_client: httpx2.Client | None = None) 
         service_secret=cfg.service_token,
         jwks_kid=cfg.jwks_kid,
         cookie_domain=cfg.cookie_domain,
+        # Without a list the adapter lets a same-site or fetch-metadata-less request
+        # through with any Origin. Passing UI_ORIGINS, even empty, makes it refuse
+        # one from an origin CORS would not admit either.
+        allowed_origins=cfg.ui_origins,
         access_cookie_name=f"{prefix}access",
         refresh_cookie_name=f"{prefix}refresh",
         registration_cookie_name=f"{prefix}ephemeral",

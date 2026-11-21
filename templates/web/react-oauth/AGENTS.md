@@ -15,7 +15,7 @@ the auth server, and can enroll a passkey afterwards. Auth is already wired thro
   `AuthProvider` calls the companion API's `/auth/*` routes, where the Seamless server adapter
   forwards to the auth server and sets httpOnly session cookies on the API's origin. The browser
   sends them on every request; no token is ever visible to this code.
-- The API must list this app's origin in its `UI_ORIGINS` for CORS.
+- The API must list this app's origin in its `UI_ORIGINS`, for CORS and for the auth adapter's origin check.
 
 ## Where auth lives
 

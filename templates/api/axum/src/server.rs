@@ -27,7 +27,11 @@ pub fn adapter(cfg: &Config) -> Result<Adapter, BuildError> {
         .service_secret(&cfg.service_token)
         .jwks_kid(&cfg.jwks_kid)
         .session_cookie_names(format!("{prefix}access"), format!("{prefix}refresh"))
-        .flow_cookie_names(format!("{prefix}ephemeral"), format!("{prefix}ephemeral"));
+        .flow_cookie_names(format!("{prefix}ephemeral"), format!("{prefix}ephemeral"))
+        // Without a list the adapter lets a same-site or fetch-metadata-less
+        // request through with any Origin. Passing UI_ORIGINS, even empty, makes
+        // it refuse one from an origin CORS would not admit either.
+        .allowed_origins(cfg.ui_origins.iter().cloned());
     if let Some(issuer) = &cfg.auth_server_issuer {
         builder = builder.auth_server_issuer(issuer);
     }
