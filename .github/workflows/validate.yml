@@ -165,3 +165,33 @@ jobs:
 
       - name: Production image
         run: docker build --target runtime .
+
+  # The nginx web starters: their production image, run with an API_URL, must
+  # send the security headers on the SPA document at / and on a deep route.
+  web-security-headers:
+    name: Security headers ${{ matrix.template }}
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        template: [react-vite, react-oauth, angular, vue, svelte]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build and start the production image
+        run: |
+          docker build -t web-headers "templates/web/${{ matrix.template }}"
+          docker run -d --name web-headers -p 127.0.0.1:8080:8080 \
+            -e API_URL=http://localhost:3000/ web-headers
+          for _ in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:8080/health >/dev/null 2>&1 && exit 0
+            sleep 1
+          done
+          docker logs web-headers
+          exit 1
+
+      - name: Check the headers
+        run: scripts/check-security-headers.sh http://127.0.0.1:8080 http://localhost:3000
