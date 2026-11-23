@@ -23,7 +23,8 @@ EXPOSE 5173
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173", "--strictPort"]
 
 FROM deps AS builder
-RUN npm run build
+RUN npm run build \
+  && node scripts/csp-script-hashes.mjs build > /app/script-hashes
 
 # Unprivileged nginx runs as user nginx (uid 101) and listens on 8080, so the
 # container needs neither root nor a privileged port.
@@ -31,6 +32,7 @@ FROM nginxinc/nginx-unprivileged:alpine AS runtime
 USER root
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/build /usr/share/nginx/html
+COPY --from=builder /app/script-hashes /etc/nginx/csp-script-hashes
 COPY entrypoint.sh /entrypoint.sh
 # The entrypoint writes config.js into the web root at start.
 RUN chmod +x /entrypoint.sh \

@@ -190,6 +190,11 @@ docker build -t seamless-auth-react-starter .
 docker run --rm -p 8080:8080 -e API_URL=http://localhost:3000/ seamless-auth-react-starter
 ```
 
+nginx sends a Content-Security-Policy, `X-Frame-Options: DENY`, `nosniff` and a Referrer-Policy on every
+response, written by `entrypoint.sh` at start. It adds the origin of `API_URL` to the policy's
+`connect-src`, so the app can reach only its own origin and that API. A page that loads from another
+origin (an analytics script, a CDN font) needs that origin added to the policy in `entrypoint.sh`.
+
 ## License
 
 Apache-2.0
