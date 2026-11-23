@@ -47,7 +47,8 @@ already do both.
 
 Both need nothing beyond the companion API running. The code screen uppercases what you type
 because the auth API's codes are six letters. The magic link screen polls `/magic-link/check`
-until the link has been opened anywhere, then the session arrives; no deep link is required.
+until the link has been opened and, on a device other than the one that asked, approved. Then
+the session arrives; no deep link is required.
 
 ## Passkeys need a domain
 

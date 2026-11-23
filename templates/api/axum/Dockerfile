@@ -1,13 +1,15 @@
 # Two targets from one file, so dev and production cannot drift apart.
 #
 #   docker compose up --build        -> dev, rebuilt on change by watchexec
-#   docker build .                   -> dev, because it is the last stage
-#   docker build --target runtime .  -> a release binary on a distroless base
+#   docker build .                   -> runtime, because it is the last stage
+#   docker build --target dev .      -> dev
 #
-# `dev` is deliberately last, which makes it the default. Everything that
-# consumes this template expects `build: .` to produce a reloading container and
-# bind-mounts the source over /app. That is also why cargo builds into /target:
-# the mount would hide anything built under /app.
+# `runtime` is deliberately last, which makes it the default: a plain
+# `docker build .`, or a platform that builds the default stage, ships a release
+# binary on a distroless nonroot base. Anything that wants the dev stage
+# (docker-compose.yml, the generated stack) selects it with `target: dev`. That
+# stack bind-mounts the source over /app, which is why cargo builds into
+# /target: the mount would hide anything built under /app.
 
 FROM rust:1.99-bookworm AS base
 WORKDIR /app
@@ -22,12 +24,6 @@ RUN cargo build --release --locked
 COPY . .
 RUN touch src/main.rs && cargo build --release --locked && cp /target/release/seamless-api /seamless-api
 
-FROM gcr.io/distroless/cc-debian12:nonroot AS runtime
-COPY --from=build /seamless-api /seamless-api
-EXPOSE 3000
-ENTRYPOINT ["/seamless-api"]
-
-# Last on purpose. See the note at the top of this file before moving it.
 FROM base AS dev
 ARG TARGETARCH
 ARG WATCHEXEC_VERSION=2.8.0
@@ -38,3 +34,9 @@ RUN cargo build --locked
 COPY . .
 EXPOSE 3000
 CMD ["watchexec", "--restart", "--exts", "rs,toml,sql", "--", "cargo", "run", "--locked"]
+
+# Last on purpose, so a plain `docker build .` produces the production image.
+FROM gcr.io/distroless/cc-debian12:nonroot AS runtime
+COPY --from=build /seamless-api /seamless-api
+EXPOSE 3000
+ENTRYPOINT ["/seamless-api"]

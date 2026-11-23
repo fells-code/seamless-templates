@@ -1,19 +1,15 @@
 import { StrictMode } from "react";
 import { act, fireEvent, render, screen } from "@testing-library/react";
+import { SeamlessAuthError } from "@seamless-auth/client";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import VerifyMagicLink from "./VerifyMagicLink";
 
 const router = { replace: vi.fn(), refresh: vi.fn() };
-const client: {
-  verifyMagicLink: ReturnType<typeof vi.fn>;
-  checkMagicLink: ReturnType<typeof vi.fn>;
-  authorizedFetch: ReturnType<typeof vi.fn>;
-  confirmMagicLink?: ReturnType<typeof vi.fn>;
-} = {
+const client = {
   verifyMagicLink: vi.fn(),
+  confirmMagicLink: vi.fn(),
   checkMagicLink: vi.fn(),
-  authorizedFetch: vi.fn(),
 };
 const auth = { refreshSession: vi.fn() };
 const posted: unknown[] = [];
@@ -31,72 +27,114 @@ class FakeChannel {
   close() {}
 }
 
+const ok = { data: { message: "Success" }, error: null };
+const unauthenticated = {
+  data: null,
+  error: new SeamlessAuthError("unauthenticated", 401),
+};
+const requestedAt = "2026-10-16T14:05:00.000Z";
+
+function heldForConfirmation(sameDevice: boolean, requestedFrom?: object) {
+  return {
+    data: null,
+    error: new SeamlessAuthError("confirmation_required", 409, {
+      error: "confirmation_required",
+      message: "Confirm this sign-in.",
+      requestedFrom: requestedFrom ?? { deviceClass: "macos", requestedAt },
+      sameDevice,
+    }),
+  };
+}
+
+function openLink(url = "/verify-magiclink?token=token-1#code=code-1") {
+  window.history.replaceState(null, "", url);
+}
+
 describe("VerifyMagicLink", () => {
   beforeEach(() => {
     vi.stubGlobal("BroadcastChannel", FakeChannel);
     posted.length = 0;
     router.replace.mockReset();
     client.verifyMagicLink.mockReset();
-    client.authorizedFetch.mockReset();
-    delete client.confirmMagicLink;
-    client.checkMagicLink
-      .mockReset()
-      .mockResolvedValue({ data: { message: "Success" }, error: null });
+    client.confirmMagicLink.mockReset().mockResolvedValue(ok);
+    client.checkMagicLink.mockReset().mockResolvedValue(ok);
     auth.refreshSession
       .mockReset()
       .mockResolvedValue({ data: {}, error: null });
+    openLink();
   });
 
-  // Strict Mode runs effects twice in development. The link is single use, so
-  // a second request answers "already used", and treating that as the outcome
-  // turned every development sign-in by link into a failure.
-  it("spends the token once under Strict Mode and signs in", async () => {
-    client.verifyMagicLink.mockResolvedValue({ data: {}, error: null });
+  // Strict Mode runs effects twice in development. The link is single use and
+  // its address is stripped on the first read, so the remount has to reuse the
+  // first read and the first request.
+  it("confirms a link opened on the device that asked, once, and signs in", async () => {
+    client.verifyMagicLink.mockResolvedValue(heldForConfirmation(true));
 
     await act(async () => {
       render(
         <StrictMode>
-          <VerifyMagicLink token="token-1" />
+          <VerifyMagicLink />
         </StrictMode>,
       );
     });
 
     expect(client.verifyMagicLink).toHaveBeenCalledTimes(1);
-    expect(client.checkMagicLink).toHaveBeenCalledTimes(1);
+    expect(client.verifyMagicLink).toHaveBeenCalledWith("token-1");
+    expect(client.confirmMagicLink).toHaveBeenCalledTimes(1);
+    expect(client.confirmMagicLink).toHaveBeenCalledWith("token-1", "code-1");
     expect(router.replace).toHaveBeenCalledWith("/session");
-    expect(posted).toEqual([{ type: "MAGIC_LINK_AUTH_SUCCESS" }]);
+    expect(posted).toContainEqual({ type: "MAGIC_LINK_AUTH_SUCCESS" });
   });
 
-  // Opened on another device there is no pre-auth cookie here, so nothing to
-  // collect: the device that asked signs in, and this one must not pretend to.
-  it("sends the reader back to the device that asked when no session lands here", async () => {
-    client.verifyMagicLink.mockResolvedValue({ data: {}, error: null });
-    client.checkMagicLink.mockResolvedValue({
-      data: null,
-      error: Object.assign(new Error("unauthenticated"), { status: 401 }),
-    });
-    auth.refreshSession.mockResolvedValue({
-      data: null,
-      error: Object.assign(new Error("unauthenticated"), { status: 401 }),
-    });
+  it("takes the token and code out of the address bar", async () => {
+    openLink("/verify-magiclink?token=token-1&ref=mail#code=code-1");
+    client.verifyMagicLink.mockResolvedValue(heldForConfirmation(true));
 
     await act(async () => {
-      render(<VerifyMagicLink token="token-1" />);
+      render(<VerifyMagicLink />);
+    });
+
+    expect(window.location.pathname).toBe("/verify-magiclink");
+    expect(window.location.search).toBe("?ref=mail");
+    expect(window.location.hash).toBe("");
+  });
+
+  // An older auth API uses a same-device link on the verify call itself.
+  it("signs in when the verify call already used the link", async () => {
+    client.verifyMagicLink.mockResolvedValue(ok);
+
+    await act(async () => {
+      render(<VerifyMagicLink />);
+    });
+
+    expect(client.confirmMagicLink).not.toHaveBeenCalled();
+    expect(router.replace).toHaveBeenCalledWith("/session");
+  });
+
+  // Opened in another browser on the device that asked there is no pre-auth
+  // cookie here, so nothing to collect: the tab that asked signs in, and this
+  // one must not pretend to.
+  it("sends the reader back to the tab that asked when no session lands here", async () => {
+    client.verifyMagicLink.mockResolvedValue(heldForConfirmation(true));
+    client.checkMagicLink.mockResolvedValue(unauthenticated);
+    auth.refreshSession.mockResolvedValue(unauthenticated);
+
+    await act(async () => {
+      render(<VerifyMagicLink />);
     });
 
     expect(screen.getByText("You are verified")).toBeInTheDocument();
-    expect(posted).toEqual([{ type: "MAGIC_LINK_AUTH_SUCCESS" }]);
     expect(router.replace).not.toHaveBeenCalled();
   });
 
   it("says so when the link has been used or has expired", async () => {
     client.verifyMagicLink.mockResolvedValue({
       data: null,
-      error: new Error("used"),
+      error: new SeamlessAuthError("used", 400),
     });
 
     await act(async () => {
-      render(<VerifyMagicLink token="token-1" />);
+      render(<VerifyMagicLink />);
     });
 
     expect(screen.getByText("This link did not work")).toBeInTheDocument();
@@ -104,25 +142,13 @@ describe("VerifyMagicLink", () => {
   });
 
   describe("when the link is opened on another device", () => {
-    const requestedAt = "2026-10-16T14:05:00.000Z";
-
     beforeEach(() => {
-      client.verifyMagicLink.mockResolvedValue({
-        data: null,
-        error: Object.assign(new Error("confirmation_required"), {
-          status: 409,
-          body: {
-            error: "confirmation_required",
-            message: "Confirm this sign-in.",
-            requestedFrom: { deviceClass: "macos", requestedAt },
-          },
-        }),
-      });
+      client.verifyMagicLink.mockResolvedValue(heldForConfirmation(false));
     });
 
-    it("shows where and when the link was requested, without spending it", async () => {
+    it("shows where and when the link was requested, without using it", async () => {
       await act(async () => {
-        render(<VerifyMagicLink token="token-1" />);
+        render(<VerifyMagicLink />);
       });
 
       const when = new Date(requestedAt).toLocaleString(undefined, {
@@ -130,25 +156,21 @@ describe("VerifyMagicLink", () => {
         timeStyle: "short",
       });
       expect(
-        screen.getByText(`This link was requested from a Mac, ${when}.`, {
+        screen.getByText(`A sign-in was requested from a Mac on ${when}.`, {
           exact: false,
         }),
       ).toBeInTheDocument();
       expect(
         screen.getByRole("button", { name: "Yes, sign in that device" }),
       ).toBeInTheDocument();
+      expect(client.confirmMagicLink).not.toHaveBeenCalled();
       expect(client.checkMagicLink).not.toHaveBeenCalled();
-      expect(posted).toEqual([]);
       expect(router.replace).not.toHaveBeenCalled();
     });
 
-    it("approves through the SDK and sends the reader back to the other device", async () => {
-      client.confirmMagicLink = vi
-        .fn()
-        .mockResolvedValue({ data: { message: "Success" }, error: null });
-
+    it("approves with the code from the link and sends the reader back", async () => {
       await act(async () => {
-        render(<VerifyMagicLink token="token-1" />);
+        render(<VerifyMagicLink />);
       });
       await act(async () => {
         fireEvent.click(
@@ -156,41 +178,19 @@ describe("VerifyMagicLink", () => {
         );
       });
 
-      expect(client.confirmMagicLink).toHaveBeenCalledWith("token-1");
-      expect(client.authorizedFetch).not.toHaveBeenCalled();
+      expect(client.confirmMagicLink).toHaveBeenCalledWith("token-1", "code-1");
       expect(screen.getByText("Sign-in approved")).toBeInTheDocument();
       expect(router.replace).not.toHaveBeenCalled();
-    });
-
-    it("falls back to the /auth route when the SDK has no confirmMagicLink", async () => {
-      client.authorizedFetch.mockResolvedValue(
-        new Response(JSON.stringify({ message: "Success" }), { status: 200 }),
-      );
-
-      await act(async () => {
-        render(<VerifyMagicLink token="token/1" />);
-      });
-      await act(async () => {
-        fireEvent.click(
-          screen.getByRole("button", { name: "Yes, sign in that device" }),
-        );
-      });
-
-      expect(client.authorizedFetch).toHaveBeenCalledWith(
-        "/auth/magic-link/verify/token%2F1/confirm",
-        { method: "POST" },
-      );
-      expect(screen.getByText("Sign-in approved")).toBeInTheDocument();
     });
 
     it("keeps the choice open when approving fails", async () => {
-      client.confirmMagicLink = vi.fn().mockResolvedValue({
+      client.confirmMagicLink.mockResolvedValue({
         data: null,
-        error: Object.assign(new Error("expired"), { status: 400 }),
+        error: new SeamlessAuthError("expired", 400),
       });
 
       await act(async () => {
-        render(<VerifyMagicLink token="token-1" />);
+        render(<VerifyMagicLink />);
       });
       await act(async () => {
         fireEvent.click(
@@ -206,10 +206,8 @@ describe("VerifyMagicLink", () => {
     });
 
     it("signs nothing in when the reader declines", async () => {
-      client.confirmMagicLink = vi.fn();
-
       await act(async () => {
-        render(<VerifyMagicLink token="token-1" />);
+        render(<VerifyMagicLink />);
       });
       fireEvent.click(
         screen.getByRole("button", { name: "No, this wasn't me" }),
@@ -218,32 +216,38 @@ describe("VerifyMagicLink", () => {
       expect(screen.getByText("Nothing was signed in")).toBeInTheDocument();
       expect(screen.getByText(/ignore the email/)).toBeInTheDocument();
       expect(client.confirmMagicLink).not.toHaveBeenCalled();
-      expect(client.authorizedFetch).not.toHaveBeenCalled();
     });
 
     it("names an automated client and tolerates a missing time", async () => {
       client.verifyMagicLink.mockResolvedValue({
         data: null,
-        error: Object.assign(new Error("confirmation_required"), {
-          status: 409,
-          body: { details: { requestedFrom: { deviceClass: "bot" } } },
+        error: new SeamlessAuthError("confirmation_required", 409, {
+          details: {
+            error: "confirmation_required",
+            requestedFrom: { deviceClass: "bot" },
+            sameDevice: false,
+          },
         }),
       });
 
       await act(async () => {
-        render(<VerifyMagicLink token="token-1" />);
+        render(<VerifyMagicLink />);
       });
 
       expect(
-        screen.getByText("This link was requested from an automated client.", {
+        screen.getByText("A sign-in was requested from an automated client.", {
           exact: false,
         }),
       ).toBeInTheDocument();
     });
   });
 
-  it("fails without a token, asking nothing", () => {
-    render(<VerifyMagicLink />);
+  it("fails without a token, asking nothing", async () => {
+    openLink("/verify-magiclink");
+
+    await act(async () => {
+      render(<VerifyMagicLink />);
+    });
 
     expect(screen.getByText("This link did not work")).toBeInTheDocument();
     expect(client.verifyMagicLink).not.toHaveBeenCalled();

@@ -32,11 +32,15 @@ when extending this app is to keep using them, not to rebuild them.
   and `hasScopedRole`.
 - `src/components/SignIn.tsx` and `src/components/VerifyMagicLink.tsx`: the sign-in UI, built on
   `useAuth()` and `useAuthClient()`.
-- When a magic link is opened on a different device from the one that asked for it, the auth server
-  answers the verify call with `409 confirmation_required` and does not spend the link.
-  `VerifyMagicLink.tsx` then shows which kind of device asked and when, and only on "Yes, sign in
-  that device" confirms it (`POST /auth/magic-link/verify/{token}/confirm`). The asking device then
-  signs in through its own poll, never this one. Keep the approval step.
+- The emailed link is `/verify-magiclink?token=...#code=...`, and the auth server accepts no other
+  path unless `magic_link_redirect_uris` is configured. `VerifyMagicLink.tsx` reads it with
+  `takeMagicLinkParams` (which also strips it from the address bar) and verifies it with
+  `verifyMagicLinkSignIn` from `@seamless-auth/client`. The server holds every link until it is
+  confirmed with the fragment's code; the helper confirms on its own when the server reports the
+  link was opened on the device that asked. Opened on another device, the page shows which kind of
+  device asked and when, and only on "Yes, sign in that device" calls `confirmMagicLinkSignIn`. The
+  asking device then signs in through its own poll, never this one. Keep the approval step, and
+  never read the code from the server or log the link.
 
 ## Rules
 
