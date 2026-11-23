@@ -1,5 +1,22 @@
 # seamless-templates
 
+## 0.23.0
+
+### Minor Changes
+
+- a118d0a: The Express, Fastify, FastAPI, Axum, Gin and Next.js Dockerfiles now end with the production `runtime` stage, so a plain `docker build .`, or a platform that builds the default stage, ships the production server instead of the dev server, which ran as root and logged one-time codes and magic links. The dev stage is chosen with `--target dev`, as each api template's `docker-compose.yml` already does. A compose file that builds one of these templates with no `target` now gets the production image, which does not run under a source bind mount: the CLI's generated compose file must set `target: dev` on the `api` service and on the Next.js `web` service before it moves to this release.
+
+### Patch Changes
+
+- 663c1b9: The Express and Fastify starters' `npm start` now runs the server with `NODE_ENV=production`, not only the migration step. A deployment that copied a `.env` holding `NODE_ENV=development` no longer switches on the development messaging handlers, which log one-time codes and magic links instead of sending them.
+- 812f35c: The web, fullstack and mobile starters move to the Seamless Auth SDK releases that support magic links carrying a code in their fragment (`/verify-magiclink?token=...#code=...`): `@seamless-auth/react` 0.21.0, `@seamless-auth/angular` 0.6.0, `@seamless-auth/vue` 0.5.0, `@seamless-auth/svelte` 0.5.0, `@seamless-auth/nextjs` 0.11.0 and `@seamless-auth/react-native` 0.6.0. The bundled verify screens strip the link from the address bar, confirm on their own when the link is opened on the device that asked for it, and send the code when the reader approves another device.
+
+  The Next.js starter's own verify page now uses `takeMagicLinkParams`, `verifyMagicLinkSignIn`, `finishMagicLinkSignIn` and `confirmMagicLinkSignIn` from `@seamless-auth/client`, a new direct dependency at 0.11.0. It reads the code from the fragment, which only the browser sees, so it no longer takes the token from the page's search parameters. It keeps working against auth APIs that do not send a code.
+
+  No starter passes its own magic link `redirectUri`, so every link goes to the auth API's default, `<frontend URL>/verify-magiclink`, which each web starter serves.
+
+- d89c7ad: The React, React OAuth, Angular, Vue and SvelteKit starters now send a Content-Security-Policy, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff` and `Referrer-Policy: strict-origin-when-cross-origin` on the SPA document and every other response. The container entrypoint writes the headers to an include that the server block and each nginx location pull in, because nginx dropped the server-level headers in locations that set their own, the `index.html` one included. The policy allows scripts from the app's origin only (the SvelteKit bootstrap script by its hash), and the origin of `API_URL` is added to `connect-src`. The Angular build no longer inlines critical CSS, which needed an inline script. The Next.js starter sends the same headers from `next.config.ts`, with inline scripts allowed because Next.js boots pages from them. The deprecated `X-XSS-Protection` header is gone.
+
 ## 0.22.2
 
 ### Patch Changes
