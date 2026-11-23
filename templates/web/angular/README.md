@@ -97,9 +97,9 @@ docker run -p 5173:8080 -e API_URL=http://localhost:3000 my-web
 Its `dev` target runs the development server instead.
 
 nginx sends a Content-Security-Policy, `X-Frame-Options: DENY`, `nosniff` and a Referrer-Policy on every
-response, from `security-headers.conf`. The entrypoint adds the origin of `API_URL` to the policy's
+response, written by `entrypoint.sh` at start. It adds the origin of `API_URL` to the policy's
 `connect-src`, so the app can reach only its own origin and that API. A page that loads from another
-origin (an analytics script, a CDN font) needs that origin added to `security-headers.conf`.
+origin (an analytics script, a CDN font) needs that origin added to the policy in `entrypoint.sh`.
 
 ## Learn More
 
