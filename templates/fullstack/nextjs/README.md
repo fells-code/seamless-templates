@@ -167,10 +167,10 @@ The tests use Vitest and need no auth server or network.
 The `Dockerfile` has two targets, both serving on port 8080 with a `/health`
 route:
 
-| Command                           | Target              | Runs                                                                    |
-| --------------------------------- | ------------------- | ----------------------------------------------------------------------- |
-| `docker build .`                  | `dev` (the default) | `next dev`, for the local stack: source bind-mounted, codes in the logs |
-| `docker build --target runtime .` | `runtime`           | the standalone production server (`output: "standalone"`)               |
+| Command                       | Target                  | Runs                                                                    |
+| ----------------------------- | ----------------------- | ----------------------------------------------------------------------- |
+| `docker build .`              | `runtime` (the default) | the standalone production server (`output: "standalone"`)               |
+| `docker build --target dev .` | `dev`                   | `next dev`, for the local stack: source bind-mounted, codes in the logs |
 
 Deploy the `runtime` target, which runs as the unprivileged `node` user. Set the
 environment variables above at runtime; the image runs on the Node.js runtime,

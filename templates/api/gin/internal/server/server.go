@@ -32,9 +32,9 @@ func NewAdapter(cfg *config.Config) (*seamlessauth.Adapter, error) {
 		ServiceSecret:    cfg.ServiceToken,
 		JWKSKid:          cfg.JWKSKid,
 		CookieDomain:     cfg.CookieDomain,
-		// Without a list the adapter lets a same-site or fetch-metadata-less
-		// request through with any Origin. Passing UI_ORIGINS, even empty (a
-		// non-nil slice), makes it refuse one from an origin CORS would not admit.
+		// Passing UI_ORIGINS, even empty (a non-nil slice), holds the Origin of a
+		// state-changing request to the origins CORS admits, rather than to the
+		// adapter's default rule for an unset list.
 		AllowedOrigins:         append([]string{}, cfg.UIOrigins...),
 		AccessCookieName:       cfg.CookiePrefix + "access",
 		RefreshCookieName:      cfg.CookiePrefix + "refresh",

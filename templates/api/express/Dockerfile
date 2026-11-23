@@ -1,16 +1,17 @@
 # Two targets from one file, so dev and production cannot drift apart.
 #
 #   docker compose up --build        -> dev, tsx watch, full toolchain
-#   docker build .                   -> dev, because it is the last stage
-#   docker build --target runtime .  -> compiled, no compiler, runs npm start
+#   docker build .                   -> runtime, because it is the last stage
+#   docker build --target dev .      -> dev
 #
-# `dev` is deliberately last, which makes it the default. Everything that already
-# consumes this template expects `build: .` to produce a watchable container and
-# bind-mounts the source over /app to get reload. A production image under that
-# mount has its compiled dist masked by a source tree that has no dist, and dies
-# with MODULE_NOT_FOUND before it listens. Production is therefore opt-in, chosen
-# by the thing doing the deploying, and the default stays what every existing
-# caller already assumes.
+# `runtime` is deliberately last, which makes it the default: a plain
+# `docker build .`, or a platform that builds the default stage, ships the
+# compiled server running as `node` with NODE_ENV=production. The dev stage runs
+# as root with development messaging, which logs one-time codes and magic links,
+# so it is never the default. Anything that wants it (docker-compose.yml, the
+# generated stack) selects it with `target: dev`. That stack bind-mounts the
+# source over /app for reload, which would mask the runtime image's compiled
+# dist.
 #
 # The dependency layer is keyed on the lock file alone. That is deliberate: two
 # projects scaffolded from this template share the layer, so the second image to
@@ -25,6 +26,15 @@ FROM deps AS build
 COPY . .
 RUN npm run build
 
+FROM deps AS dev
+# The generated stack bind-mounts the source over /app and runs this as root. On a
+# Linux host, logs/ under /app would be root's and block removing the project.
+ENV LOG_DIR=/tmp/logs
+COPY . .
+EXPOSE 3000
+CMD ["npm", "run", "dev"]
+
+# Last on purpose, so a plain `docker build .` produces the production image.
 FROM node:24-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
@@ -45,12 +55,3 @@ COPY .sequelizerc ./
 USER node
 EXPOSE 3000
 CMD ["npm", "run", "start"]
-
-# Last on purpose. See the note at the top of this file before moving it.
-FROM deps AS dev
-# The generated stack bind-mounts the source over /app and runs this as root. On a
-# Linux host, logs/ under /app would be root's and block removing the project.
-ENV LOG_DIR=/tmp/logs
-COPY . .
-EXPOSE 3000
-CMD ["npm", "run", "dev"]

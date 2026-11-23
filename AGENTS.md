@@ -179,6 +179,10 @@ validation step skips directory checks for those entries.
   mirror the Express starter's routes, environment contract and behaviour; change them together.
   Their Docker dev target must build outside `/app`, because the CLI's compose file bind-mounts the
   source over it.
+- Every Dockerfile ends with its production stage (`runtime` in the api and Next.js templates, nginx
+  in the web ones), so a plain `docker build .` never ships a dev server. A compose file that wants
+  the dev stage selects it with `target: dev`, as each api template's `docker-compose.yml` does and
+  as the CLI's generated compose file must.
 - The mobile template's `build` is `expo export` for iOS and Android, which bundles the JavaScript
   without Xcode or the Android SDK, so the templates CI matrix can run it. It proves the bundle, not
   a native binary; its screens are exercised on a simulator, and only its pure modules are under
